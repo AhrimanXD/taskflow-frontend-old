@@ -16,8 +16,40 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  function validateForm() {
+    const newErrors = {};
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))
+      newErrors.email = "Invalid email";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+  async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
+    setErrors({});
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const { data } = await api.post(
+        "/auth/login",
+        {
+          username: email,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      );
+      console.log("Login Successful", data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <Center h="100vh">
@@ -32,6 +64,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
               size="md"
+              error={errors.email}
               required
             />
             <PasswordInput
@@ -44,7 +77,7 @@ function Login() {
             <Button
               type="submit"
               fullWidth
-              variant="outline"
+              variant="filled"
               color="black"
               size="md"
               mt="md"
