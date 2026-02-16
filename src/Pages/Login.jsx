@@ -8,7 +8,7 @@ import {
   Title,
   Center,
 } from "@mantine/core";
-import api from "../services/api.js";
+import { authService } from "../services/api.js";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -32,18 +32,10 @@ function Login() {
       return;
     }
     try {
-      const { data } = await api.post(
-        "/auth/login",
-        {
-          username: email,
-          password: password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        },
-      );
+      const { data } = await authService.login({
+        username: email,
+        password: password,
+      });
       console.log("Login Successful", data);
     } catch (error) {
       console.log(error);
