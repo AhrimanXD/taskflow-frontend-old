@@ -6,6 +6,7 @@ import {
   Stack,
   Paper,
   Title,
+  Center,
 } from "@mantine/core";
 import api from "../services/api.js";
 
@@ -13,7 +14,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   function validateForm() {
@@ -30,10 +31,10 @@ function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setIsSubmitting(true);
+    setLoading(true);
     setErrors({});
     if (!validateForm()) {
-      setIsSubmitting(false);
+      setLoading(false);
       return;
     }
     try {
@@ -46,20 +47,12 @@ function Register() {
     } catch (error) {
       console.log(error);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        padding: "1rem",
-      }}
-    >
+    <Center h="100vh">
       <Paper shadow="md" p="xl" withBorder radius="md" w={400}>
         <Title order={2} ta="center" mb="md">
           Register
@@ -101,14 +94,15 @@ function Register() {
               variant="filled"
               color="black"
               size="md"
-              loading={isSubmitting}
+              mt="md"
+              loading={loading}
             >
               Create Account
             </Button>
           </Stack>
         </form>
       </Paper>
-    </div>
+    </Center>
   );
 }
 
