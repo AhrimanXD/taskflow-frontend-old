@@ -8,7 +8,7 @@ import {
   Title,
   Center,
 } from "@mantine/core";
-import api from "../services/api.js";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const { register } = useAuth();
 
   function validateForm() {
     const newErrors = {};
@@ -38,12 +39,8 @@ function Register() {
       return;
     }
     try {
-      const response = await api.post("auth/register", {
-        username,
-        email,
-        password,
-      });
-      console.log("Succes:", response);
+      await register(username, email, password);
+      console.log("LoggedIn");
     } catch (error) {
       console.log(error);
     } finally {

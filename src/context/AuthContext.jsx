@@ -17,17 +17,24 @@ export function AuthProvider({ children }) {
 
   const register = async (username, email, password) => {
     await authService.register({ username, email, password });
-    await login(username, password);
+    await login(email, password);
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    setLoggedIn(false);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ login, register, user, loggedIn }}>
+    <AuthContext.Provider value={{ login, register, logout, user, loggedIn }}>
       {children}
     </AuthContext.Provider>
   );
 }
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
+};
