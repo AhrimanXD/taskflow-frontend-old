@@ -8,13 +8,14 @@ import {
   Title,
   Center,
 } from "@mantine/core";
-import { authService } from "../services/api.js";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   function validateForm() {
     const newErrors = {};
@@ -32,11 +33,8 @@ function Login() {
       return;
     }
     try {
-      const { data } = await authService.login({
-        username: email,
-        password: password,
-      });
-      console.log("Login Successful", data);
+      await login(email, password);
+      console.log("Login Successful");
     } catch (error) {
       console.log(error);
     } finally {
