@@ -7,7 +7,9 @@ import {
   Paper,
   Title,
   Center,
+  Alert,
 } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Register() {
@@ -17,6 +19,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const { register } = useAuth();
+  const navigate = useNavigate();
 
   function validateForm() {
     const newErrors = {};
@@ -40,9 +43,10 @@ function Register() {
     }
     try {
       await register(username, email, password);
-      console.log("LoggedIn");
+      navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.log(error);
+      const detail = error?.response?.data?.detail;
+      setErrors({ form: detail || "Registration failed. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -56,6 +60,11 @@ function Register() {
         </Title>
         <form onSubmit={handleSubmit}>
           <Stack gap="md">
+            {errors.form && (
+              <Alert color="red" variant="light">
+                {errors.form}
+              </Alert>
+            )}
             <TextInput
               label="Email"
               value={email}

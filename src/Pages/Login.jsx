@@ -7,7 +7,9 @@ import {
   Paper,
   Title,
   Center,
+  Alert,
 } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -16,6 +18,7 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   function validateForm() {
     const newErrors = {};
@@ -34,9 +37,10 @@ function Login() {
     }
     try {
       await login(email, password);
-      console.log("Login Successful");
+      navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.log(error);
+      const detail = error?.response?.data?.detail;
+      setErrors({ form: detail || "Login failed. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -49,6 +53,11 @@ function Login() {
             <Title ta="center" order={2}>
               Sign In
             </Title>
+            {errors.form && (
+              <Alert color="red" variant="light">
+                {errors.form}
+              </Alert>
+            )}
             <TextInput
               label="Email"
               value={email}
