@@ -1,5 +1,5 @@
 import { Container, Title, Button, Group, Text, Paper } from "@mantine/core";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-context";
 
 function Dashboard() {
   const { user, logout } = useAuth();
