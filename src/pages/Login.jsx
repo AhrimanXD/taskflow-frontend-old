@@ -4,13 +4,14 @@ import {
   PasswordInput,
   Button,
   Stack,
-  Paper,
-  Title,
-  Center,
+  Group,
+  Text,
+  Anchor,
   Alert,
 } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
+import AuthShell from "../components/AuthShell";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -27,6 +28,7 @@ function Login() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
@@ -45,49 +47,48 @@ function Login() {
       setLoading(false);
     }
   }
+
   return (
-    <Center h="100vh">
-      <Paper w={400} shadow="md" p="xl" withBorder radius="md">
-        <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            <Title ta="center" order={2}>
-              Sign In
-            </Title>
-            {errors.form && (
-              <Alert color="red" variant="light">
-                {errors.form}
-              </Alert>
-            )}
-            <TextInput
-              label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-              size="md"
-              error={errors.email}
-              required
-            />
-            <PasswordInput
-              label="Password"
-              value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-              size="md"
-              required
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="filled"
-              color="black"
-              size="md"
-              mt="md"
-              loading={loading}
-            >
-              Sign In
-            </Button>
-          </Stack>
-        </form>
-      </Paper>
-    </Center>
+    <AuthShell title="Welcome back" subtitle="Sign in to your account to continue.">
+      <form onSubmit={handleSubmit} noValidate>
+        <Stack gap="md">
+          {errors.form && (
+            <Alert color="red" variant="light" radius="md">
+              {errors.form}
+            </Alert>
+          )}
+          <TextInput
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.currentTarget.value)}
+            size="md"
+            error={errors.email}
+            required
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.currentTarget.value)}
+            size="md"
+            required
+          />
+          <Button type="submit" fullWidth size="md" mt="xs" loading={loading}>
+            Sign in
+          </Button>
+        </Stack>
+      </form>
+
+      <Group justify="center" gap={6}>
+        <Text c="dimmed" size="sm">
+          Don&apos;t have an account?
+        </Text>
+        <Anchor component={Link} to="/register" size="sm" fw={500}>
+          Create one
+        </Anchor>
+      </Group>
+    </AuthShell>
   );
 }
 

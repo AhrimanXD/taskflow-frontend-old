@@ -4,13 +4,14 @@ import {
   PasswordInput,
   Button,
   Stack,
-  Paper,
-  Title,
-  Center,
+  Group,
+  Text,
+  Anchor,
   Alert,
 } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
+import AuthShell from "../components/AuthShell";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -53,62 +54,59 @@ function Register() {
   }
 
   return (
-    <Center h="100vh">
-      <Paper shadow="md" p="xl" withBorder radius="md" w={400}>
-        <Title order={2} ta="center" mb="md">
-          Register
-        </Title>
-        <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            {errors.form && (
-              <Alert color="red" variant="light">
-                {errors.form}
-              </Alert>
-            )}
-            <TextInput
-              label="Email"
-              value={email}
-              placeholder="youremail@example.com"
-              withAsterisk
-              size="md"
-              error={errors.email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-              required
-            />
-            <TextInput
-              label="Username"
-              value={username}
-              placeholder="yourusername"
-              withAsterisk
-              size="md"
-              error={errors.username}
-              onChange={(e) => setUsername(e.currentTarget.value)}
-              required
-            />
-            <PasswordInput
-              label="Password"
-              value={password}
-              size="md"
-              withAsterisk
-              error={errors.password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-              required
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="filled"
-              color="black"
-              size="md"
-              mt="md"
-              loading={loading}
-            >
-              Create Account
-            </Button>
-          </Stack>
-        </form>
-      </Paper>
-    </Center>
+    <AuthShell
+      title="Create your account"
+      subtitle="Start organizing work with your team."
+    >
+      <form onSubmit={handleSubmit} noValidate>
+        <Stack gap="md">
+          {errors.form && (
+            <Alert color="red" variant="light" radius="md">
+              {errors.form}
+            </Alert>
+          )}
+          <TextInput
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.currentTarget.value)}
+            size="md"
+            error={errors.email}
+            required
+          />
+          <TextInput
+            label="Username"
+            placeholder="yourusername"
+            value={username}
+            onChange={(e) => setUsername(e.currentTarget.value)}
+            size="md"
+            error={errors.username}
+            required
+          />
+          <PasswordInput
+            label="Password"
+            placeholder="At least 6 characters"
+            value={password}
+            onChange={(e) => setPassword(e.currentTarget.value)}
+            size="md"
+            error={errors.password}
+            required
+          />
+          <Button type="submit" fullWidth size="md" mt="xs" loading={loading}>
+            Create account
+          </Button>
+        </Stack>
+      </form>
+
+      <Group justify="center" gap={6}>
+        <Text c="dimmed" size="sm">
+          Already have an account?
+        </Text>
+        <Anchor component={Link} to="/login" size="sm" fw={500}>
+          Sign in
+        </Anchor>
+      </Group>
+    </AuthShell>
   );
 }
 
