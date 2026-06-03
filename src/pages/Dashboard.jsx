@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Container,
@@ -8,22 +8,36 @@ import {
   Text,
   Button,
   SimpleGrid,
-  Loader,
+  TextInput,
+  Select,
+  SegmentedControl,
   Center,
   Alert,
   Modal,
-  Paper,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { taskService } from "../services/api";
 import AppHeader from "../components/AppHeader";
 import TaskCard from "../components/TaskCard";
+import TaskBoard from "../components/TaskBoard";
+import TaskSkeleton from "../components/TaskSkeleton";
 import TaskFormModal from "../components/TaskFormModal";
+import EmptyState from "../components/EmptyState";
+import { IconSearch, IconBoard, IconGrid, IconInbox, IconPlus } from "../components/icons";
+import { filterAndSortTasks } from "../utils/tasks";
+
+const VIEW_KEY = "taskflow:view";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("newest");
+  const [view, setView] = useState(
+    () => localStorage.getItem(VIEW_KEY) || "board"
+  );
 
   const [formOpened, formHandlers] = useDisclosure(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -48,6 +62,16 @@ function Dashboard() {
     };
   }, []);
 
+  function changeView(value) {
+    setView(value);
+    localStorage.setItem(VIEW_KEY, value);
+  }
+
+  const visibleTasks = useMemo(
+    () => filterAndSortTasks(tasks, { query, sort }),
+    [tasks, query, sort]
+  );
+
   function openCreate() {
     setEditingTask(null);
     formHandlers.open();
@@ -71,10 +95,7 @@ function Dashboard() {
   async function handleStatusChange(task, status) {
     if (task.status === status) return;
     const previous = tasks;
-    // optimistic update
-    setTasks((prev) =>
-      prev.map((t) => (t.id === task.id ? { ...t, status } : t))
-    );
+    setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status } : t)));
     try {
       const res = await taskService.update(task.id, { status });
       setTasks((prev) => prev.map((t) => (t.id === task.id ? res.data : t)));
@@ -97,19 +118,135 @@ function Dashboard() {
     }
   }
 
+  function renderContent() {
+    if (loading) {
+      return (
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <TaskSkeleton key={i} />
+          ))}
+        </SimpleGrid>
+      );
+    }
+
+    if (tasks.length === 0) {
+      return (
+        <EmptyState
+          icon={<IconInbox />}
+          title="No tasks yet"
+          description="Create your first task to start tracking your work."
+          action={
+            <Button mt="sm" leftSection={<IconPlus />} onClick={openCreate}>
+              Create a task
+            </Button>
+          }
+        />
+      );
+    }
+
+    if (visibleTasks.length === 0) {
+      return (
+        <EmptyState
+          icon={<IconSearch size={24} />}
+          title="No matching tasks"
+          description="No tasks match your search. Try a different term."
+          action={
+            <Button mt="sm" variant="default" onClick={() => setQuery("")}>
+              Clear search
+            </Button>
+          }
+        />
+      );
+    }
+
+    if (view === "board") {
+      return (
+        <TaskBoard
+          tasks={visibleTasks}
+          onEdit={openEdit}
+          onDelete={setTaskToDelete}
+          onStatusChange={handleStatusChange}
+        />
+      );
+    }
+
+    return (
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+        {visibleTasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={openEdit}
+            onDelete={setTaskToDelete}
+            onStatusChange={handleStatusChange}
+          />
+        ))}
+      </SimpleGrid>
+    );
+  }
+
   return (
     <Box mih="100vh" bg="var(--mantine-color-gray-0)">
       <AppHeader />
 
       <Container size="lg" py="xl">
-        <Group justify="space-between" mb="lg">
+        <Group justify="space-between" mb="lg" wrap="nowrap">
           <div>
             <Title order={2}>My Tasks</Title>
             <Text c="dimmed" size="sm">
               Everything on your plate.
             </Text>
           </div>
-          <Button onClick={openCreate}>New task</Button>
+          <Button leftSection={<IconPlus />} onClick={openCreate}>
+            New task
+          </Button>
+        </Group>
+
+        <Group justify="space-between" mb="lg" gap="sm" wrap="wrap">
+          <TextInput
+            placeholder="Search tasks…"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            leftSection={<IconSearch />}
+            style={{ flex: 1, minWidth: 220 }}
+          />
+          <Group gap="sm">
+            <Select
+              value={sort}
+              onChange={(v) => setSort(v || "newest")}
+              allowDeselect={false}
+              w={150}
+              data={[
+                { value: "newest", label: "Newest first" },
+                { value: "oldest", label: "Oldest first" },
+                { value: "title", label: "Title A–Z" },
+              ]}
+            />
+            <SegmentedControl
+              value={view}
+              onChange={changeView}
+              data={[
+                {
+                  value: "board",
+                  label: (
+                    <Center style={{ gap: 6 }}>
+                      <IconBoard />
+                      <span>Board</span>
+                    </Center>
+                  ),
+                },
+                {
+                  value: "grid",
+                  label: (
+                    <Center style={{ gap: 6 }}>
+                      <IconGrid />
+                      <span>Grid</span>
+                    </Center>
+                  ),
+                },
+              ]}
+            />
+          </Group>
         </Group>
 
         {error && (
@@ -118,35 +255,7 @@ function Dashboard() {
           </Alert>
         )}
 
-        {loading ? (
-          <Center py={80}>
-            <Loader />
-          </Center>
-        ) : tasks.length === 0 ? (
-          <Paper withBorder radius="md" p="xl">
-            <Stack align="center" gap="xs" py="xl">
-              <Title order={4}>No tasks yet</Title>
-              <Text c="dimmed" size="sm" ta="center">
-                Create your first task to start tracking your work.
-              </Text>
-              <Button mt="sm" onClick={openCreate}>
-                Create a task
-              </Button>
-            </Stack>
-          </Paper>
-        ) : (
-          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
-            {tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onEdit={openEdit}
-                onDelete={setTaskToDelete}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
-          </SimpleGrid>
-        )}
+        {renderContent()}
       </Container>
 
       <TaskFormModal
