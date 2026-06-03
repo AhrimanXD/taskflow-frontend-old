@@ -7,14 +7,12 @@ import {
   Button,
   Stack,
   Group,
-  Alert,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { TASK_STATUSES } from "../constants/tasks";
 
 function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
 
   const form = useForm({
     initialValues: { title: "", description: "", status: "pending" },
@@ -31,14 +29,12 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
         description: initialValues?.description ?? "",
         status: initialValues?.status ?? "pending",
       });
-      setError(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened, initialValues]);
 
   async function submit(values) {
     setSubmitting(true);
-    setError(null);
     try {
       await onSubmit({
         title: values.title.trim(),
@@ -46,10 +42,8 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
         status: values.status,
       });
       onClose();
-    } catch (e) {
-      setError(
-        e?.response?.data?.detail || "Something went wrong. Please try again."
-      );
+    } catch {
+      // Failure is surfaced via a toast by the mutation; keep the modal open.
     } finally {
       setSubmitting(false);
     }
@@ -64,11 +58,6 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
     >
       <form onSubmit={form.onSubmit(submit)}>
         <Stack>
-          {error && (
-            <Alert color="red" variant="light">
-              {error}
-            </Alert>
-          )}
           <TextInput
             label="Title"
             placeholder="What needs doing?"

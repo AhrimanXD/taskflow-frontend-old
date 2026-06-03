@@ -7,6 +7,7 @@ import {
   Avatar,
   UnstyledButton,
 } from "@mantine/core";
+import { IconChevronDown, IconLogout } from "@tabler/icons-react";
 import { useAuth } from "../context/auth-context";
 
 function AppHeader() {
@@ -45,19 +46,24 @@ function AppHeader() {
           <Menu position="bottom-end" withinPortal width={200}>
             <Menu.Target>
               <UnstyledButton>
-                <Group gap="xs">
+                <Group gap={6}>
                   <Avatar color="indigo" radius="xl" size={32}>
                     {initial}
                   </Avatar>
                   <Text size="sm" fw={500} visibleFrom="xs">
                     {user?.username}
                   </Text>
+                  <IconChevronDown size={16} stroke={1.5} />
                 </Group>
               </UnstyledButton>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>{user?.email}</Menu.Label>
-              <Menu.Item color="red" onClick={logout}>
+              <Menu.Item
+                color="red"
+                leftSection={<IconLogout size={16} />}
+                onClick={logout}
+              >
                 Log out
               </Menu.Item>
             </Menu.Dropdown>
