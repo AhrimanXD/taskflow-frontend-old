@@ -35,12 +35,20 @@ export const workspaceService = {
   create: (data) => api.post("workspaces", data),
   update: (id, data) => api.patch(`workspaces/${id}`, data),
   remove: (id) => api.delete(`workspaces/${id}`),
-  // member endpoints (backend increment #2 — wired up but not yet live)
-  members: (id) => api.get(`workspaces/${id}/members`),
-  addMember: (id, data) => api.post(`workspaces/${id}/members`, data),
-  updateMember: (id, userId, data) =>
-    api.patch(`workspaces/${id}/members/${userId}`, data),
-  removeMember: (id, userId) => api.delete(`workspaces/${id}/members/${userId}`),
+};
+
+// Invite-only membership (backend increment #2)
+export const invitationService = {
+  // invitations the current user has received
+  listMine: (params) => api.get("invitations", { params }),
+  accept: (id) => api.post(`invitations/${id}/accept`),
+  decline: (id) => api.post(`invitations/${id}/decline`),
+  revoke: (id) => api.post(`invitations/${id}/revoke`),
+  // invitations sent within a workspace (owner/admin)
+  listForWorkspace: (workspaceId, params) =>
+    api.get(`workspaces/${workspaceId}/invitations`, { params }),
+  create: (workspaceId, data) =>
+    api.post(`workspaces/${workspaceId}/invitations`, data),
 };
 
 export default api;

@@ -6,12 +6,44 @@ import {
   Menu,
   Avatar,
   UnstyledButton,
+  Anchor,
+  Badge,
 } from "@mantine/core";
 import { IconChevronDown, IconLogout } from "@tabler/icons-react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
+import { useMyInvitations } from "../hooks/useInvitations";
+
+const NAV = [
+  { label: "Tasks", to: "/dashboard" },
+  { label: "Workspaces", to: "/workspaces" },
+  { label: "Invitations", to: "/invitations" },
+];
+
+function BrandMark() {
+  return (
+    <Box
+      style={{
+        width: 30,
+        height: 30,
+        borderRadius: 8,
+        display: "grid",
+        placeItems: "center",
+        background:
+          "linear-gradient(150deg, var(--mantine-color-indigo-6), var(--mantine-color-violet-7))",
+        color: "white",
+        fontWeight: 800,
+      }}
+    >
+      T
+    </Box>
+  );
+}
 
 function AppHeader() {
   const { user, logout } = useAuth();
+  const { pathname } = useLocation();
+  const { data: pendingInvites = [] } = useMyInvitations("pending");
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
 
   return (
@@ -24,23 +56,41 @@ function AppHeader() {
     >
       <Container size="lg">
         <Group justify="space-between" h={60}>
-          <Group gap="xs">
-            <Box
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 8,
-                display: "grid",
-                placeItems: "center",
-                background:
-                  "linear-gradient(150deg, var(--mantine-color-indigo-6), var(--mantine-color-violet-7))",
-                color: "white",
-                fontWeight: 800,
-              }}
-            >
-              T
-            </Box>
-            <Text fw={700}>TaskFlow</Text>
+          <Group gap="xl">
+            <Group gap="xs">
+              <BrandMark />
+              <Text fw={700} visibleFrom="xs">
+                TaskFlow
+              </Text>
+            </Group>
+
+            <Group gap="lg">
+              {NAV.map((item) => {
+                const active = pathname.startsWith(item.to);
+                const showBadge =
+                  item.to === "/invitations" && pendingInvites.length > 0;
+                return (
+                  <Anchor
+                    key={item.to}
+                    component={Link}
+                    to={item.to}
+                    underline="never"
+                    c={active ? "indigo" : "dimmed"}
+                    fw={active ? 600 : 500}
+                    size="sm"
+                  >
+                    <Group gap={6} wrap="nowrap">
+                      {item.label}
+                      {showBadge && (
+                        <Badge size="sm" circle variant="filled" color="indigo">
+                          {pendingInvites.length}
+                        </Badge>
+                      )}
+                    </Group>
+                  </Anchor>
+                );
+              })}
+            </Group>
           </Group>
 
           <Menu position="bottom-end" withinPortal width={200}>
@@ -50,7 +100,7 @@ function AppHeader() {
                   <Avatar color="indigo" radius="xl" size={32}>
                     {initial}
                   </Avatar>
-                  <Text size="sm" fw={500} visibleFrom="xs">
+                  <Text size="sm" fw={500} visibleFrom="sm">
                     {user?.username}
                   </Text>
                   <IconChevronDown size={16} stroke={1.5} />
