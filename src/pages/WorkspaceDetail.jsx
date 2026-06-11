@@ -13,9 +13,15 @@ import {
   Alert,
   Loader,
   Center,
+  Tabs,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconArrowLeft, IconSend } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconSend,
+  IconClipboardList,
+  IconUsersGroup,
+} from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useWorkspace } from "../hooks/useWorkspaces";
@@ -25,6 +31,7 @@ import {
   useRevokeInvitation,
 } from "../hooks/useInvitations";
 import PageShell from "../components/PageShell";
+import WorkspaceTasks from "../components/WorkspaceTasks";
 
 const STATUS_COLORS = {
   pending: "yellow",
@@ -210,16 +217,32 @@ function WorkspaceDetail() {
         </div>
       </Group>
 
-      <Card withBorder radius="md" padding="lg">
-        <Title order={4} mb="md">
-          Members & invitations
-        </Title>
-        <InviteManager workspaceId={workspaceId} />
-      </Card>
+      <Tabs defaultValue="tasks" keepMounted={false}>
+        <Tabs.List mb="lg">
+          <Tabs.Tab value="tasks" leftSection={<IconClipboardList size={16} />}>
+            Tasks
+          </Tabs.Tab>
+          <Tabs.Tab value="members" leftSection={<IconUsersGroup size={16} />}>
+            Members & invitations
+          </Tabs.Tab>
+        </Tabs.List>
 
-      <Text c="dimmed" size="xs" mt="md">
-        A members list will appear here once the backend exposes it.
-      </Text>
+        <Tabs.Panel value="tasks">
+          <WorkspaceTasks workspaceId={workspaceId} />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="members">
+          <Card withBorder radius="md" padding="lg">
+            <Title order={4} mb="md">
+              Members & invitations
+            </Title>
+            <InviteManager workspaceId={workspaceId} />
+          </Card>
+          <Text c="dimmed" size="xs" mt="md">
+            A members list will appear here once the backend exposes it.
+          </Text>
+        </Tabs.Panel>
+      </Tabs>
     </PageShell>
   );
 }

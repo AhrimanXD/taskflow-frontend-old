@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@mantine/core": "^8.3.14",
+    "@mantine/dates": "^8.3.18",
     "@mantine/form": "^8.3.14",
     "@mantine/hooks": "^8.3.14",
     "@mantine/modals": "^8.3.18",
@@ -19,6 +20,7 @@
     "@tabler/icons-react": "^3.44.0",
     "@tanstack/react-query": "^5.101.0",
     "axios": "^1.13.5",
+    "dayjs": "^1.11.21",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"

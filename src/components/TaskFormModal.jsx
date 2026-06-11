@@ -9,13 +9,15 @@ import {
   Group,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { DateInput } from "@mantine/dates";
+import { IconCalendar } from "@tabler/icons-react";
 import { TASK_STATUSES } from "../constants/tasks";
 
 function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm({
-    initialValues: { title: "", description: "", status: "pending" },
+    initialValues: { title: "", description: "", status: "pending", due_date: null },
     validate: {
       title: (v) => (!v || v.trim().length === 0 ? "Title is required" : null),
     },
@@ -28,6 +30,8 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
         title: initialValues?.title ?? "",
         description: initialValues?.description ?? "",
         status: initialValues?.status ?? "pending",
+        // server sends an ISO datetime; DateInput (v8) wants "YYYY-MM-DD"
+        due_date: initialValues?.due_date ? initialValues.due_date.slice(0, 10) : null,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,6 +44,7 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
         title: values.title.trim(),
         description: values.description?.trim() ? values.description.trim() : null,
         status: values.status,
+        due_date: values.due_date || null,
       });
       onClose();
     } catch {
@@ -78,6 +83,13 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode }) {
             data={TASK_STATUSES}
             allowDeselect={false}
             {...form.getInputProps("status")}
+          />
+          <DateInput
+            label="Due date"
+            placeholder="Pick a date (optional)"
+            clearable
+            leftSection={<IconCalendar size={16} />}
+            {...form.getInputProps("due_date")}
           />
           <Group justify="flex-end" mt="sm">
             <Button variant="default" onClick={onClose}>
