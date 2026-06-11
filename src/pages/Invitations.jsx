@@ -44,7 +44,7 @@ function Invitations() {
         {invites.map((inv) => {
           const busy = respond.isPending && respond.variables?.id === inv.id;
           return (
-            <Card key={inv.id} withBorder radius="md" padding="md">
+            <Card key={inv.id} withBorder padding="md" className="tf-card">
               <Stack gap="xs">
                 <Group justify="space-between" wrap="nowrap">
                   <Text fw={600} lineClamp={1}>

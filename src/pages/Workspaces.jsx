@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Card,
   Badge,
+  Avatar,
   Menu,
   ActionIcon,
   Anchor,
@@ -99,7 +100,7 @@ function Workspaces() {
         {workspaces.map((ws) => {
           const isOwner = ws.owner_id === user?.id;
           return (
-            <Card key={ws.id} withBorder radius="md" padding="md">
+            <Card key={ws.id} withBorder padding="md" className="tf-card">
               <Group justify="space-between" align="flex-start" wrap="nowrap">
                 <Anchor
                   component={Link}
@@ -108,14 +109,30 @@ function Workspaces() {
                   c="inherit"
                   style={{ flex: 1, minWidth: 0 }}
                 >
-                  <Text fw={600} lineClamp={1}>
-                    {ws.name}
-                  </Text>
-                  {ws.description && (
-                    <Text c="dimmed" size="sm" lineClamp={2}>
-                      {ws.description}
-                    </Text>
-                  )}
+                  <Group gap="sm" wrap="nowrap">
+                    <Avatar
+                      variant="gradient"
+                      gradient={{ from: "indigo", to: "violet", deg: 150 }}
+                      radius="md"
+                      size={38}
+                    >
+                      {ws.name?.[0]?.toUpperCase() ?? "W"}
+                    </Avatar>
+                    <div style={{ minWidth: 0 }}>
+                      <Text fw={600} lineClamp={1}>
+                        {ws.name}
+                      </Text>
+                      {ws.description ? (
+                        <Text c="dimmed" size="sm" lineClamp={1}>
+                          {ws.description}
+                        </Text>
+                      ) : (
+                        <Text c="dimmed" size="sm" fs="italic">
+                          No description
+                        </Text>
+                      )}
+                    </div>
+                  </Group>
                 </Anchor>
 
                 {isOwner && (

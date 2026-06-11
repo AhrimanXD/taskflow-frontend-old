@@ -1,7 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  Box,
-  Container,
   Group,
   Title,
   Text,
@@ -28,7 +26,7 @@ import {
   useUpdateTask,
   useDeleteTask,
 } from "../hooks/useTasks";
-import AppHeader from "../components/AppHeader";
+import PageShell from "../components/PageShell";
 import TaskCard from "../components/TaskCard";
 import TaskBoard from "../components/TaskBoard";
 import TaskSkeleton from "../components/TaskSkeleton";
@@ -177,11 +175,8 @@ function Dashboard() {
   }
 
   return (
-    <Box mih="100vh" bg="var(--mantine-color-gray-0)">
-      <AppHeader />
-
-      <Container size="lg" py="xl">
-        <Group justify="space-between" mb="lg" wrap="nowrap">
+    <PageShell>
+      <Group justify="space-between" mb="lg" wrap="nowrap">
           <div>
             <Title order={2}>My Tasks</Title>
             <Text c="dimmed" size="sm">
@@ -241,7 +236,6 @@ function Dashboard() {
         </Group>
 
         {renderContent()}
-      </Container>
 
       <TaskFormModal
         opened={formOpened}
@@ -250,7 +244,7 @@ function Dashboard() {
         initialValues={editingTask}
         mode={editingTask ? "edit" : "create"}
       />
-    </Box>
+    </PageShell>
   );
 }
 

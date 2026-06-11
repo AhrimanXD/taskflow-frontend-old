@@ -8,8 +8,17 @@ import {
   UnstyledButton,
   Anchor,
   Badge,
+  ActionIcon,
+  Tooltip,
+  useMantineColorScheme,
+  useComputedColorScheme,
 } from "@mantine/core";
-import { IconChevronDown, IconLogout } from "@tabler/icons-react";
+import {
+  IconChevronDown,
+  IconLogout,
+  IconMoon,
+  IconSun,
+} from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useMyInvitations } from "../hooks/useInvitations";
@@ -26,17 +35,37 @@ function BrandMark() {
       style={{
         width: 30,
         height: 30,
-        borderRadius: 8,
+        borderRadius: 9,
         display: "grid",
         placeItems: "center",
-        background:
-          "linear-gradient(150deg, var(--mantine-color-indigo-6), var(--mantine-color-violet-7))",
+        background: "var(--tf-brand-gradient)",
         color: "white",
         fontWeight: 800,
+        boxShadow: "0 2px 8px rgba(76, 110, 245, 0.35)",
       }}
     >
       T
     </Box>
+  );
+}
+
+function ColorSchemeToggle() {
+  const { setColorScheme } = useMantineColorScheme();
+  const computed = useComputedColorScheme("light");
+  const dark = computed === "dark";
+
+  return (
+    <Tooltip label={dark ? "Light mode" : "Dark mode"}>
+      <ActionIcon
+        variant="default"
+        size="lg"
+        radius="md"
+        aria-label="Toggle color scheme"
+        onClick={() => setColorScheme(dark ? "light" : "dark")}
+      >
+        {dark ? <IconSun size={18} /> : <IconMoon size={18} />}
+      </ActionIcon>
+    </Tooltip>
   );
 }
 
@@ -47,24 +76,18 @@ function AppHeader() {
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
 
   return (
-    <Box
-      component="header"
-      style={{
-        background: "white",
-        borderBottom: "1px solid var(--mantine-color-gray-3)",
-      }}
-    >
+    <Box component="header" className="tf-header">
       <Container size="lg">
         <Group justify="space-between" h={60}>
           <Group gap="xl">
             <Group gap="xs">
               <BrandMark />
-              <Text fw={700} visibleFrom="xs">
+              <Text fw={700} visibleFrom="xs" style={{ letterSpacing: "-0.02em" }}>
                 TaskFlow
               </Text>
             </Group>
 
-            <Group gap="lg">
+            <Group gap={4}>
               {NAV.map((item) => {
                 const active = pathname.startsWith(item.to);
                 const showBadge =
@@ -75,6 +98,8 @@ function AppHeader() {
                     component={Link}
                     to={item.to}
                     underline="never"
+                    className="tf-nav-link"
+                    data-active={active || undefined}
                     c={active ? "indigo" : "dimmed"}
                     fw={active ? 600 : 500}
                     size="sm"
@@ -93,31 +118,40 @@ function AppHeader() {
             </Group>
           </Group>
 
-          <Menu position="bottom-end" withinPortal width={200}>
-            <Menu.Target>
-              <UnstyledButton>
-                <Group gap={6}>
-                  <Avatar color="indigo" radius="xl" size={32}>
-                    {initial}
-                  </Avatar>
-                  <Text size="sm" fw={500} visibleFrom="sm">
-                    {user?.username}
-                  </Text>
-                  <IconChevronDown size={16} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>{user?.email}</Menu.Label>
-              <Menu.Item
-                color="red"
-                leftSection={<IconLogout size={16} />}
-                onClick={logout}
-              >
-                Log out
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          <Group gap="sm">
+            <ColorSchemeToggle />
+
+            <Menu position="bottom-end" withinPortal width={200}>
+              <Menu.Target>
+                <UnstyledButton>
+                  <Group gap={6}>
+                    <Avatar
+                      variant="gradient"
+                      gradient={{ from: "indigo", to: "violet", deg: 150 }}
+                      radius="xl"
+                      size={32}
+                    >
+                      {initial}
+                    </Avatar>
+                    <Text size="sm" fw={500} visibleFrom="sm">
+                      {user?.username}
+                    </Text>
+                    <IconChevronDown size={16} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>{user?.email}</Menu.Label>
+                <Menu.Item
+                  color="red"
+                  leftSection={<IconLogout size={16} />}
+                  onClick={logout}
+                >
+                  Log out
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
         </Group>
       </Container>
     </Box>

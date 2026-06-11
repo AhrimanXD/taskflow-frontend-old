@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function NotFound() {
   return (
-    <Center h="100vh" bg="var(--mantine-color-gray-0)">
+    <Center h="100vh" bg="var(--tf-page-bg)">
       <Stack align="center" gap="xs">
         <Text fw={800} fz={64} c="indigo" lh={1}>
           404

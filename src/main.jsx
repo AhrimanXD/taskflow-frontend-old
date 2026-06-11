@@ -15,9 +15,30 @@ const theme = createTheme({
   primaryColor: "indigo",
   defaultRadius: "md",
   fontFamily:
-    "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
   headings: { fontWeight: "700" },
   cursorType: "pointer",
+  components: {
+    // Tight tracking on headings — the "Linear look"
+    Title: {
+      styles: { root: { letterSpacing: "-0.02em" } },
+    },
+    Card: {
+      defaultProps: { radius: "lg" },
+    },
+    Paper: {
+      defaultProps: { radius: "lg" },
+    },
+    Modal: {
+      defaultProps: {
+        radius: "lg",
+        overlayProps: { backgroundOpacity: 0.45, blur: 3 },
+      },
+    },
+    Badge: {
+      styles: { root: { textTransform: "none", fontWeight: 600 } },
+    },
+  },
 });
 
 const queryClient = new QueryClient({

@@ -6,4 +6,104 @@ body,
 
 body {
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Surface tokens (light + dark) ------------------------------------ */
+/* Layering: page < column < card. The column uses a translucent layer so   */
+/* cards keep contrast against it in both color schemes.                    */
+:root {
+  --tf-page-bg: var(--mantine-color-gray-0);
+  --tf-column-bg: var(--mantine-color-gray-1);
+  --tf-header-bg: rgba(255, 255, 255, 0.82);
+  --tf-brand-gradient: linear-gradient(
+    150deg,
+    var(--mantine-color-indigo-5) 0%,
+    var(--mantine-color-violet-6) 100%
+  );
+}
+
+[data-mantine-color-scheme="dark"] {
+  --tf-page-bg: var(--mantine-color-dark-8);
+  --tf-column-bg: rgba(255, 255, 255, 0.04);
+  --tf-header-bg: rgba(20, 21, 23, 0.78);
+}
+
+::selection {
+  background: var(--mantine-color-indigo-2);
+  color: var(--mantine-color-dark-7);
+}
+
+/* ---- App header -------------------------------------------------------- */
+.tf-header {
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  background: var(--tf-header-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.tf-nav-link {
+  padding: 6px 12px;
+  border-radius: var(--mantine-radius-md);
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.tf-nav-link:hover {
+  background: var(--mantine-color-default-hover);
+}
+
+.tf-nav-link[data-active="true"] {
+  background: var(--mantine-color-indigo-light);
+}
+
+/* ---- Cards ------------------------------------------------------------- */
+.tf-card {
+  transition: transform 140ms ease, box-shadow 140ms ease,
+    border-color 140ms ease;
+}
+
+.tf-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+/* ---- Board columns ------------------------------------------------------ */
+.tf-column {
+  background: var(--tf-column-bg);
+  border-radius: var(--mantine-radius-lg);
+  padding: 10px;
+}
+
+/* ---- Subtle entrance for page content ---------------------------------- */
+@keyframes tf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tf-page {
+  animation: tf-fade-up 200ms ease-out;
+}
+
+/* ---- Thin scrollbars for board overflow -------------------------------- */
+.tf-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tf-scroll::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-default-border);
+  border-radius: 4px;
+}
+
+.tf-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

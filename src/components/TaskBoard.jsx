@@ -6,7 +6,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
   const groups = groupByStatus(tasks);
 
   return (
-    <Box style={{ overflowX: "auto" }} pb="sm">
+    <Box className="tf-scroll" style={{ overflowX: "auto" }} pb="sm">
       <Group align="flex-start" gap="lg" wrap="nowrap">
         {[...groups.entries()].map(([status, columnTasks]) => (
           <TaskColumn

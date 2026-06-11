@@ -35,7 +35,14 @@ function TaskCard({
     task.assignee_id != null && task.assignee_id === currentUserId;
 
   return (
-    <Card withBorder radius="md" padding="md">
+    <Card
+      withBorder
+      padding="md"
+      className="tf-card"
+      style={{
+        borderLeft: `3px solid var(--mantine-color-${meta.color}-5)`,
+      }}
+    >
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
           <Text fw={600} lineClamp={1}>

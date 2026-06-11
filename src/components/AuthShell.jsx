@@ -37,8 +37,11 @@ function AuthShell({ title, subtitle, children }) {
         style={{
           flex: 1,
           color: "white",
-          background:
+          background: [
+            "radial-gradient(at 80% 0%, rgba(255,255,255,0.18) 0px, transparent 50%)",
+            "radial-gradient(at 0% 100%, rgba(0,0,0,0.22) 0px, transparent 50%)",
             "linear-gradient(150deg, var(--mantine-color-indigo-6) 0%, var(--mantine-color-violet-7) 100%)",
+          ].join(", "),
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -92,7 +95,7 @@ function AuthShell({ title, subtitle, children }) {
         align="center"
         justify="center"
         p="xl"
-        bg="var(--mantine-color-gray-0)"
+        bg="var(--tf-page-bg)"
       >
         <Stack w="100%" maw={400} gap="xl">
           <Group gap="xs" hiddenFrom="md">
