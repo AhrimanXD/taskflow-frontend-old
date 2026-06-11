@@ -21,12 +21,26 @@ export const authService = {
   me: () => api.get("auth/me"),
 };
 
+// Personal tasks (/api/tasks — owner-scoped, no workspace)
 export const taskService = {
   list: (params) => api.get("tasks", { params }),
   get: (id) => api.get(`tasks/${id}`),
   create: (data) => api.post("tasks", data),
   update: (id, data) => api.patch(`tasks/${id}`, data),
   remove: (id) => api.delete(`tasks/${id}`),
+};
+
+// Workspace tasks (/api/workspaces/{id}/tasks — membership-scoped, backend #3)
+export const workspaceTaskService = {
+  list: (workspaceId, params) =>
+    api.get(`workspaces/${workspaceId}/tasks`, { params }),
+  get: (workspaceId, id) => api.get(`workspaces/${workspaceId}/tasks/${id}`),
+  create: (workspaceId, data) =>
+    api.post(`workspaces/${workspaceId}/tasks`, data),
+  update: (workspaceId, id, data) =>
+    api.patch(`workspaces/${workspaceId}/tasks/${id}`, data),
+  remove: (workspaceId, id) =>
+    api.delete(`workspaces/${workspaceId}/tasks/${id}`),
 };
 
 export const workspaceService = {

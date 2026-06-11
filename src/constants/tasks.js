@@ -1,6 +1,6 @@
 export const TASK_STATUSES = [
   { value: "pending", label: "Pending", color: "gray" },
-  { value: "in_progress", label: "In progress", color: "blue" },
+  { value: "ongoing", label: "Ongoing", color: "blue" },
   { value: "completed", label: "Completed", color: "green" },
 ];
 
