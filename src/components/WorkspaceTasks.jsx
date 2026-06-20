@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  Box,
   Group,
   Text,
   Button,
@@ -8,6 +9,7 @@ import {
   SegmentedControl,
   Center,
   Alert,
+  Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
@@ -25,6 +27,7 @@ import {
   useDeleteTask,
 } from "../hooks/useTasks";
 import { useAuth } from "../context/auth-context";
+import { useWorkspaceSocket } from "../hooks/useWorkspaceSocket";
 import TaskCard from "./TaskCard";
 import TaskBoard from "./TaskBoard";
 import TaskSkeleton from "./TaskSkeleton";
@@ -34,11 +37,44 @@ import { filterAndSortTasks } from "../utils/tasks";
 
 const VIEW_KEY = "taskflow:ws-view";
 
+const CONN_META = {
+  connected: { color: "teal", label: "Live", tip: "Realtime updates are on" },
+  connecting: { color: "yellow", label: "Connecting…", tip: "Connecting to live updates" },
+  reconnecting: {
+    color: "orange",
+    label: "Reconnecting…",
+    tip: "Connection dropped — retrying",
+  },
+};
+
+// Unobtrusive realtime status pill for the board toolbar.
+function LiveIndicator({ status }) {
+  const meta = CONN_META[status] ?? CONN_META.connecting;
+  return (
+    <Tooltip label={meta.tip} withArrow>
+      <Group gap={6} wrap="nowrap" style={{ cursor: "default" }}>
+        <Box
+          w={8}
+          h={8}
+          style={{
+            borderRadius: "50%",
+            backgroundColor: `var(--mantine-color-${meta.color}-6)`,
+          }}
+        />
+        <Text size="xs" c="dimmed">
+          {meta.label}
+        </Text>
+      </Group>
+    </Tooltip>
+  );
+}
+
 // The shared task board, scoped to one workspace. Any member can create,
 // edit, and assign; deleting someone else's task is rejected by the server
 // (creator or owner/admin only) and surfaces as a toast.
 function WorkspaceTasks({ workspaceId }) {
   const { user } = useAuth();
+  const { status: connStatus } = useWorkspaceSocket(workspaceId);
   const { data: tasks = [], isLoading, isError } = useTasks(workspaceId);
   const createTask = useCreateTask(workspaceId);
   const updateTask = useUpdateTask(workspaceId);
@@ -194,6 +230,7 @@ function WorkspaceTasks({ workspaceId }) {
           style={{ flex: 1, minWidth: 200 }}
         />
         <Group gap="sm">
+          <LiveIndicator status={connStatus} />
           <SegmentedControl
             value={view}
             onChange={changeView}

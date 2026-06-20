@@ -36,7 +36,12 @@ export function useCreateTask(workspaceId) {
   return useMutation({
     mutationFn: async (data) => (await serviceFor(workspaceId).create(data)).data,
     onSuccess: (task) => {
-      qc.setQueryData(key, (old = []) => [task, ...old]);
+      // Idempotent insert: the realtime socket may have already added this
+      // task (the server broadcasts before returning the HTTP response), so
+      // dedupe by id to avoid a duplicate card.
+      qc.setQueryData(key, (old = []) =>
+        old.some((t) => t.id === task.id) ? old : [task, ...old]
+      );
       notifications.show({ message: "Task created", color: "teal" });
     },
     onError: (err) =>
