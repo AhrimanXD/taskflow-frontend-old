@@ -44,7 +44,8 @@ function Register() {
     }
     try {
       await register(username, email, password);
-      navigate("/dashboard", { replace: true });
+      // New accounts land in onboarding (create workspace → invite team).
+      navigate("/onboarding", { replace: true });
     } catch (error) {
       const detail = error?.response?.data?.detail;
       setErrors({ form: detail || "Registration failed. Please try again." });
