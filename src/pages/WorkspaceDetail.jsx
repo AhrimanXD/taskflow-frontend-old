@@ -14,6 +14,8 @@ import {
   Loader,
   Center,
   Tabs,
+  Avatar,
+  Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
@@ -24,7 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
-import { useWorkspace } from "../hooks/useWorkspaces";
+import { useWorkspace, useWorkspaceMembers } from "../hooks/useWorkspaces";
 import {
   useWorkspaceInvitations,
   useCreateInvitation,
@@ -39,6 +41,80 @@ const STATUS_COLORS = {
   declined: "gray",
   revoked: "red",
 };
+
+const ROLE_COLORS = { owner: "brand", admin: "violet", member: "gray" };
+
+// Deterministic avatar tint from a username, so each person reads consistently.
+const AVATAR_COLORS = [
+  "#2f6cf6", "#16b364", "#e84393", "#f5821f", "#6a5bf6", "#0ea5e9", "#d23f4f",
+];
+function avatarColor(name = "") {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+
+function MemberAvatar({ username, size = 32 }) {
+  return (
+    <Avatar
+      size={size}
+      radius="xl"
+      style={{ background: avatarColor(username), color: "#fff" }}
+    >
+      {username?.[0]?.toUpperCase() ?? "?"}
+    </Avatar>
+  );
+}
+
+// Overlapping avatar stack for the workspace header (reference "people" pattern).
+function MemberStack({ workspaceId }) {
+  const { data: members = [] } = useWorkspaceMembers(workspaceId);
+  if (members.length === 0) return null;
+  const shown = members.slice(0, 5);
+  const extra = members.length - shown.length;
+  return (
+    <Tooltip label={`${members.length} member${members.length === 1 ? "" : "s"}`}>
+      <Group gap={0} className="tf-avatar-stack" style={{ cursor: "default" }}>
+        {shown.map((m) => (
+          <MemberAvatar key={m.user_id} username={m.user?.username} size={30} />
+        ))}
+        {extra > 0 && (
+          <Avatar size={30} radius="xl" color="gray">
+            +{extra}
+          </Avatar>
+        )}
+      </Group>
+    </Tooltip>
+  );
+}
+
+function MembersList({ workspaceId }) {
+  const { data: members = [], isLoading } = useWorkspaceMembers(workspaceId);
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+  return (
+    <Stack gap="sm">
+      {members.map((m) => (
+        <Group key={m.user_id} justify="space-between" wrap="nowrap">
+          <Group gap="sm" wrap="nowrap">
+            <MemberAvatar username={m.user?.username} />
+            <Text fw={600} fz="sm">
+              {m.user?.username}
+            </Text>
+          </Group>
+          <Badge variant="light" color={ROLE_COLORS[m.role] ?? "gray"} tt="capitalize">
+            {m.role}
+          </Badge>
+        </Group>
+      ))}
+    </Stack>
+  );
+}
 
 function InviteManager({ workspaceId }) {
   const invitesQuery = useWorkspaceInvitations(workspaceId, "pending");
@@ -130,7 +206,7 @@ function InviteManager({ workspaceId }) {
                 <Text size="sm" fw={500}>
                   {inv.invitee?.username}
                 </Text>
-                <Badge size="sm" variant="light" color="indigo">
+                <Badge size="sm" variant="light" color="brand">
                   {inv.role}
                 </Badge>
                 <Badge size="sm" variant="light" color={STATUS_COLORS[inv.status]}>
@@ -201,11 +277,11 @@ function WorkspaceDetail() {
         </Group>
       </Anchor>
 
-      <Group justify="space-between" align="flex-start" mt="sm" mb="lg">
+      <Group justify="space-between" align="flex-start" mt="sm" mb="lg" wrap="nowrap">
         <div>
           <Group gap="sm">
             <Title order={2}>{workspace.name}</Title>
-            <Badge variant="light" color={isOwner ? "indigo" : "gray"}>
+            <Badge variant="light" color={isOwner ? "brand" : "gray"}>
               {isOwner ? "Owner" : "Member"}
             </Badge>
           </Group>
@@ -215,6 +291,7 @@ function WorkspaceDetail() {
             </Text>
           )}
         </div>
+        <MemberStack workspaceId={workspaceId} />
       </Group>
 
       <Tabs defaultValue="tasks" keepMounted={false}>
@@ -232,15 +309,20 @@ function WorkspaceDetail() {
         </Tabs.Panel>
 
         <Tabs.Panel value="members">
-          <Card withBorder radius="md" padding="lg">
-            <Title order={4} mb="md">
-              Members & invitations
-            </Title>
-            <InviteManager workspaceId={workspaceId} />
-          </Card>
-          <Text c="dimmed" size="xs" mt="md">
-            A members list will appear here once the backend exposes it.
-          </Text>
+          <Stack gap="lg">
+            <Card withBorder radius="lg" padding="lg">
+              <Title order={4} mb="md">
+                Members
+              </Title>
+              <MembersList workspaceId={workspaceId} />
+            </Card>
+            <Card withBorder radius="lg" padding="lg">
+              <Title order={4} mb="md">
+                Invitations
+              </Title>
+              <InviteManager workspaceId={workspaceId} />
+            </Card>
+          </Stack>
         </Tabs.Panel>
       </Tabs>
     </PageShell>

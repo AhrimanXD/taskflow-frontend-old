@@ -15,14 +15,22 @@ function LogoMark({ size = 40, radius = 12 }) {
         borderRadius: radius,
         display: "grid",
         placeItems: "center",
-        background: "rgba(255, 255, 255, 0.15)",
-        color: "white",
-        fontWeight: 800,
-        fontSize: size * 0.5,
+        background: "rgba(255, 255, 255, 0.16)",
         backdropFilter: "blur(4px)",
       }}
     >
-      T
+      <svg
+        width={size * 0.5}
+        height={size * 0.5}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 6L9 17l-5-5" />
+      </svg>
     </Box>
   );
 }
@@ -39,8 +47,8 @@ function AuthShell({ title, subtitle, children }) {
           color: "white",
           background: [
             "radial-gradient(at 80% 0%, rgba(255,255,255,0.18) 0px, transparent 50%)",
-            "radial-gradient(at 0% 100%, rgba(0,0,0,0.22) 0px, transparent 50%)",
-            "linear-gradient(150deg, var(--mantine-color-indigo-6) 0%, var(--mantine-color-violet-7) 100%)",
+            "radial-gradient(at 0% 100%, rgba(0,0,0,0.18) 0px, transparent 50%)",
+            "var(--tf-auth-gradient)",
           ].join(", "),
           display: "flex",
           flexDirection: "column",
@@ -49,8 +57,8 @@ function AuthShell({ title, subtitle, children }) {
       >
         <Group gap="sm">
           <LogoMark />
-          <Text fw={700} fz="xl">
-            TaskFlow
+          <Text fw={800} fz="xl" style={{ letterSpacing: "-0.02em" }}>
+            Taskflow
           </Text>
         </Group>
 
@@ -99,23 +107,22 @@ function AuthShell({ title, subtitle, children }) {
       >
         <Stack w="100%" maw={400} gap="xl">
           <Group gap="xs" hiddenFrom="md">
-            <Box
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 9,
-                display: "grid",
-                placeItems: "center",
-                background:
-                  "linear-gradient(150deg, var(--mantine-color-indigo-6), var(--mantine-color-violet-7))",
-                color: "white",
-                fontWeight: 800,
-              }}
-            >
-              T
+            <Box className="tf-brandmark" style={{ width: 32, height: 32, borderRadius: 9 }}>
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
             </Box>
-            <Text fw={700} fz="lg">
-              TaskFlow
+            <Text fw={800} fz="lg" style={{ letterSpacing: "-0.02em" }}>
+              Taskflow
             </Text>
           </Group>
 

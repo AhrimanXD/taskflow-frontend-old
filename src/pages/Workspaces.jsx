@@ -112,7 +112,7 @@ function Workspaces() {
                   <Group gap="sm" wrap="nowrap">
                     <Avatar
                       variant="gradient"
-                      gradient={{ from: "indigo", to: "violet", deg: 150 }}
+                      gradient={{ from: "#2f6cf6", to: "#5b8bff", deg: 135 }}
                       radius="md"
                       size={38}
                     >
@@ -152,7 +152,7 @@ function Workspaces() {
               </Group>
 
               <Group justify="space-between" mt="md">
-                <Badge variant="light" color={isOwner ? "indigo" : "gray"}>
+                <Badge variant="light" color={isOwner ? "brand" : "gray"}>
                   {isOwner ? "Owner" : "Member"}
                 </Badge>
                 <Anchor component={Link} to={`/workspaces/${ws.id}`} size="xs">

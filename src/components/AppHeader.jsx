@@ -31,20 +31,19 @@ const NAV = [
 
 function BrandMark() {
   return (
-    <Box
-      style={{
-        width: 30,
-        height: 30,
-        borderRadius: 9,
-        display: "grid",
-        placeItems: "center",
-        background: "var(--tf-brand-gradient)",
-        color: "white",
-        fontWeight: 800,
-        boxShadow: "0 2px 8px rgba(76, 110, 245, 0.35)",
-      }}
-    >
-      T
+    <Box className="tf-brandmark" style={{ width: 30, height: 30, borderRadius: 9 }}>
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M20 6L9 17l-5-5" />
+      </svg>
     </Box>
   );
 }
@@ -80,11 +79,16 @@ function AppHeader() {
       <Container size="lg">
         <Group justify="space-between" h={60}>
           <Group gap="xl">
-            <Group gap="xs">
+            <Group gap={10}>
               <BrandMark />
-              <Text fw={700} visibleFrom="xs" style={{ letterSpacing: "-0.02em" }}>
-                TaskFlow
-              </Text>
+              <Box visibleFrom="xs" style={{ lineHeight: 1.1 }}>
+                <Text fw={800} fz={18} style={{ letterSpacing: "-0.02em" }}>
+                  Taskflow
+                </Text>
+                <Text className="tf-mono" fz={10} c="dimmed">
+                  realtime · collaborative
+                </Text>
+              </Box>
             </Group>
 
             <Group gap={4}>
@@ -100,14 +104,14 @@ function AppHeader() {
                     underline="never"
                     className="tf-nav-link"
                     data-active={active || undefined}
-                    c={active ? "indigo" : "dimmed"}
-                    fw={active ? 600 : 500}
+                    c={active ? "brand" : "dimmed"}
+                    fw={active ? 700 : 600}
                     size="sm"
                   >
                     <Group gap={6} wrap="nowrap">
                       {item.label}
                       {showBadge && (
-                        <Badge size="sm" circle variant="filled" color="indigo">
+                        <Badge size="sm" circle variant="filled" color="brand">
                           {pendingInvites.length}
                         </Badge>
                       )}
@@ -127,7 +131,7 @@ function AppHeader() {
                   <Group gap={6}>
                     <Avatar
                       variant="gradient"
-                      gradient={{ from: "indigo", to: "violet", deg: 150 }}
+                      gradient={{ from: "#2f6cf6", to: "#5b8bff", deg: 135 }}
                       radius="xl"
                       size={32}
                     >

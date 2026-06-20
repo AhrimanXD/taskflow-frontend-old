@@ -11,11 +11,11 @@ function EmptyState({ icon, title, description, action }) {
         {icon && (
           <ThemeIcon
             variant="gradient"
-            gradient={{ from: "indigo", to: "violet", deg: 150 }}
+            gradient={{ from: "#2f6cf6", to: "#5b8bff", deg: 135 }}
             size={56}
             radius="xl"
             mb="xs"
-            style={{ boxShadow: "0 8px 24px rgba(76, 110, 245, 0.35)" }}
+            style={{ boxShadow: "0 8px 24px rgba(47, 108, 246, 0.35)" }}
           >
             {icon}
           </ThemeIcon>

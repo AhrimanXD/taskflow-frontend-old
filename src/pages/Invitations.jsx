@@ -50,7 +50,7 @@ function Invitations() {
                   <Text fw={600} lineClamp={1}>
                     {inv.workspace?.name}
                   </Text>
-                  <Badge variant="light" color="indigo">
+                  <Badge variant="light" color="brand">
                     {inv.role}
                   </Badge>
                 </Group>

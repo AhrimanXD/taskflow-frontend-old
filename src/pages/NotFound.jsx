@@ -5,7 +5,7 @@ function NotFound() {
   return (
     <Center h="100vh" bg="var(--tf-page-bg)">
       <Stack align="center" gap="xs">
-        <Text fw={800} fz={64} c="indigo" lh={1}>
+        <Text fw={800} fz={64} c="brand" lh={1}>
           404
         </Text>
         <Title order={3}>Page not found</Title>

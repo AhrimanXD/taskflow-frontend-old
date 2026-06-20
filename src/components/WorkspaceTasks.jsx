@@ -39,30 +39,51 @@ import { filterAndSortTasks } from "../utils/tasks";
 const VIEW_KEY = "taskflow:ws-view";
 
 const CONN_META = {
-  connected: { color: "teal", label: "Live", tip: "Realtime updates are on" },
-  connecting: { color: "yellow", label: "Connecting…", tip: "Connecting to live updates" },
+  connected: {
+    label: "Live",
+    tip: "Realtime updates are on",
+    dot: "var(--tf-online)",
+    text: "var(--tf-done-text)",
+    bg: "var(--tf-done-bg)",
+    pulse: true,
+  },
+  connecting: {
+    label: "Connecting",
+    tip: "Connecting to live updates",
+    dot: "var(--mantine-color-yellow-6)",
+    text: "var(--mantine-color-yellow-7)",
+    bg: "var(--mantine-color-yellow-light)",
+    pulse: false,
+  },
   reconnecting: {
-    color: "orange",
-    label: "Reconnecting…",
+    label: "Reconnecting",
     tip: "Connection dropped — retrying",
+    dot: "var(--mantine-color-orange-6)",
+    text: "var(--mantine-color-orange-7)",
+    bg: "var(--mantine-color-orange-light)",
+    pulse: false,
   },
 };
 
-// Unobtrusive realtime status pill for the board toolbar.
+// Unobtrusive realtime status pill for the board toolbar (reference "● Live").
 function LiveIndicator({ status }) {
   const meta = CONN_META[status] ?? CONN_META.connecting;
   return (
     <Tooltip label={meta.tip} withArrow>
-      <Group gap={6} wrap="nowrap" style={{ cursor: "default" }}>
+      <Group
+        gap={6}
+        h={28}
+        px={11}
+        wrap="nowrap"
+        style={{ background: meta.bg, borderRadius: 20, cursor: "default" }}
+      >
         <Box
-          w={8}
-          h={8}
-          style={{
-            borderRadius: "50%",
-            backgroundColor: `var(--mantine-color-${meta.color}-6)`,
-          }}
+          w={7}
+          h={7}
+          className={meta.pulse ? "tf-pulse" : undefined}
+          style={{ borderRadius: "50%", backgroundColor: meta.dot }}
         />
-        <Text size="xs" c="dimmed">
+        <Text className="tf-mono" fz={11} fw={600} style={{ color: meta.text }}>
           {meta.label}
         </Text>
       </Group>

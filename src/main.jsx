@@ -11,15 +11,45 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 
+// Brand blue scale anchored on #2f6cf6 (Mantine uses index 6 as the filled shade).
+const brand = [
+  "#eef3ff",
+  "#dce6ff",
+  "#b6c9ff",
+  "#8da9fc",
+  "#5b8bff",
+  "#3f78f8",
+  "#2f6cf6",
+  "#2459d9",
+  "#1c49b4",
+  "#163c93",
+];
+
+// Neutral slate dark scale so dark surfaces read like the reference (#171a1f).
+const dark = [
+  "#c9ccd1",
+  "#a6abb3",
+  "#7c828b",
+  "#565c66",
+  "#363b43",
+  "#262b32",
+  "#1f242b",
+  "#171a1f",
+  "#121519",
+  "#0c0e11",
+];
+
 const theme = createTheme({
-  primaryColor: "indigo",
+  primaryColor: "brand",
+  primaryShade: { light: 6, dark: 5 },
+  colors: { brand, dark },
   defaultRadius: "md",
   fontFamily:
-    "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-  headings: { fontWeight: "700" },
+    "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  fontFamilyMonospace: "'JetBrains Mono', ui-monospace, SFMono-Regular, monospace",
+  headings: { fontWeight: "800" },
   cursorType: "pointer",
   components: {
-    // Tight tracking on headings — the "Linear look"
     Title: {
       styles: { root: { letterSpacing: "-0.02em" } },
     },
@@ -32,7 +62,7 @@ const theme = createTheme({
     Modal: {
       defaultProps: {
         radius: "lg",
-        overlayProps: { backgroundOpacity: 0.45, blur: 3 },
+        overlayProps: { backgroundOpacity: 0.5, blur: 3 },
       },
     },
     Badge: {

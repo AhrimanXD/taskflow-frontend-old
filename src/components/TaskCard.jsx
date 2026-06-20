@@ -1,16 +1,20 @@
 import {
   Card,
+  Box,
   Group,
   Stack,
   Text,
-  Badge,
   Menu,
   ActionIcon,
   UnstyledButton,
   Tooltip,
   Avatar,
 } from "@mantine/core";
-import { IconCalendar, IconUserCircle } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconDots,
+  IconChevronDown,
+} from "@tabler/icons-react";
 import { TASK_STATUSES, statusMeta } from "../constants/tasks";
 
 function dueMeta(task) {
@@ -41,32 +45,45 @@ function TaskCard({
   const assigneeLabel = assignedToMe
     ? "You"
     : assignee?.username ?? `#${task.assignee_id}`;
+  const hasFooter = due || task.assignee_id != null;
 
   return (
-    <Card
-      withBorder
-      padding="md"
-      className="tf-card"
-      style={{
-        borderLeft: `3px solid var(--mantine-color-${meta.color}-5)`,
-      }}
-    >
-      <Group justify="space-between" align="flex-start" wrap="nowrap">
-        <Stack gap={4} style={{ flex: 1, minWidth: 0 }}>
-          <Text fw={600} lineClamp={1}>
-            {task.title}
-          </Text>
-          {task.description && (
-            <Text c="dimmed" size="sm" lineClamp={2}>
-              {task.description}
-            </Text>
-          )}
-        </Stack>
+    <Card withBorder radius="lg" padding="md" className="tf-card">
+      {/* status (clickable) + actions */}
+      <Group justify="space-between" align="center" wrap="nowrap" mb={8}>
+        <Menu position="bottom-start" withinPortal>
+          <Menu.Target>
+            <UnstyledButton>
+              <Group gap={7} wrap="nowrap">
+                <Box
+                  w={8}
+                  h={8}
+                  style={{
+                    borderRadius: "50%",
+                    backgroundColor: `var(--mantine-color-${meta.color}-6)`,
+                  }}
+                />
+                <Text fz={11} fw={700} c="dimmed" tt="uppercase" className="tf-mono">
+                  {meta.label}
+                </Text>
+                <IconChevronDown size={12} stroke={2.5} color="var(--tf-text-3)" />
+              </Group>
+            </UnstyledButton>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Set status</Menu.Label>
+            {TASK_STATUSES.map((s) => (
+              <Menu.Item key={s.value} onClick={() => onStatusChange(task, s.value)}>
+                {s.label}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
 
         <Menu position="bottom-end" withinPortal>
           <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" aria-label="Task actions">
-              ⋯
+            <ActionIcon variant="subtle" color="gray" size="sm" aria-label="Task actions">
+              <IconDots size={16} />
             </ActionIcon>
           </Menu.Target>
           <Menu.Dropdown>
@@ -85,26 +102,44 @@ function TaskCard({
         </Menu>
       </Group>
 
-      <Group justify="space-between" mt="md">
-        <Menu position="bottom-start" withinPortal>
-          <Menu.Target>
-            <UnstyledButton>
-              <Badge color={meta.color} variant="light" style={{ cursor: "pointer" }}>
-                {meta.label}
-              </Badge>
-            </UnstyledButton>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Label>Set status</Menu.Label>
-            {TASK_STATUSES.map((s) => (
-              <Menu.Item key={s.value} onClick={() => onStatusChange(task, s.value)}>
-                {s.label}
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
+      <Stack gap={4}>
+        <Text fw={600} fz={14} lineClamp={2} style={{ lineHeight: 1.35 }}>
+          {task.title}
+        </Text>
+        {task.description && (
+          <Text c="dimmed" size="sm" lineClamp={2}>
+            {task.description}
+          </Text>
+        )}
+      </Stack>
 
-        <Group gap={6}>
+      {hasFooter && (
+        <Group
+          justify="space-between"
+          align="center"
+          wrap="nowrap"
+          mt={12}
+          pt={10}
+          style={{ borderTop: "1px solid var(--tf-border)" }}
+        >
+          {due ? (
+            <Group gap={5} wrap="nowrap">
+              <IconCalendar
+                size={13}
+                color={due.overdue ? "var(--mantine-color-red-6)" : "var(--tf-text-3)"}
+              />
+              <Text
+                fz={11}
+                fw={600}
+                c={due.overdue ? "red" : "dimmed"}
+              >
+                {due.label}
+              </Text>
+            </Group>
+          ) : (
+            <span />
+          )}
+
           {task.assignee_id != null && (
             <Tooltip
               label={
@@ -115,41 +150,24 @@ function TaskCard({
                     : `Assigned to user #${task.assignee_id}`
               }
             >
-              <Badge
-                variant="light"
-                color={assignedToMe ? "teal" : "gray"}
-                leftSection={
-                  assignee ? (
-                    <Avatar size={14} radius="xl" color={assignedToMe ? "teal" : "gray"}>
-                      {assignee.username?.[0]?.toUpperCase() ?? "?"}
-                    </Avatar>
-                  ) : (
-                    <IconUserCircle size={12} />
-                  )
-                }
-              >
-                {assigneeLabel}
-              </Badge>
+              <Group gap={6} wrap="nowrap">
+                <Avatar
+                  size={22}
+                  radius="xl"
+                  variant={assignedToMe ? "gradient" : "filled"}
+                  gradient={{ from: "#2f6cf6", to: "#5b8bff", deg: 135 }}
+                  color="gray"
+                >
+                  {(assignee?.username ?? assigneeLabel)?.[0]?.toUpperCase() ?? "?"}
+                </Avatar>
+                <Text fz={12} fw={600} c={assignedToMe ? "brand" : undefined}>
+                  {assigneeLabel}
+                </Text>
+              </Group>
             </Tooltip>
-          )}
-          {due && (
-            <Tooltip label={due.overdue ? "Overdue" : "Due date"}>
-              <Badge
-                variant={due.overdue ? "filled" : "light"}
-                color={due.overdue ? "red" : "gray"}
-                leftSection={<IconCalendar size={12} />}
-              >
-                {due.label}
-              </Badge>
-            </Tooltip>
-          )}
-          {!due && task.assignee_id == null && (
-            <Text size="xs" c="dimmed">
-              {new Date(task.created_at).toLocaleDateString()}
-            </Text>
           )}
         </Group>
-      </Group>
+      )}
     </Card>
   );
 }
