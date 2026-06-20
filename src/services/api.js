@@ -49,6 +49,8 @@ export const workspaceService = {
   create: (data) => api.post("workspaces", data),
   update: (id, data) => api.patch(`workspaces/${id}`, data),
   remove: (id) => api.delete(`workspaces/${id}`),
+  // [{ user_id, role, user: { id, username } }] — backend #2 members endpoint
+  members: (id, params) => api.get(`workspaces/${id}/members`, { params }),
 };
 
 // Invite-only membership (backend increment #2)

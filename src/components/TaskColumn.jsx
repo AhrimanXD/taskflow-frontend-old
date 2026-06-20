@@ -2,7 +2,7 @@ import { Box, Group, Paper, Stack, Text } from "@mantine/core";
 import TaskCard from "./TaskCard";
 import { statusMeta } from "../constants/tasks";
 
-function TaskColumn({ status, tasks, onEdit, onDelete, onStatusChange, currentUserId, onAssignToggle }) {
+function TaskColumn({ status, tasks, onEdit, onDelete, onStatusChange, currentUserId, onAssignToggle, membersById }) {
   const meta = statusMeta(status);
 
   return (
@@ -49,6 +49,7 @@ function TaskColumn({ status, tasks, onEdit, onDelete, onStatusChange, currentUs
               onStatusChange={onStatusChange}
               currentUserId={currentUserId}
               onAssignToggle={onAssignToggle}
+              membersById={membersById}
             />
           ))
         )}

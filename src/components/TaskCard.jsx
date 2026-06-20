@@ -8,6 +8,7 @@ import {
   ActionIcon,
   UnstyledButton,
   Tooltip,
+  Avatar,
 } from "@mantine/core";
 import { IconCalendar, IconUserCircle } from "@tabler/icons-react";
 import { TASK_STATUSES, statusMeta } from "../constants/tasks";
@@ -28,11 +29,18 @@ function TaskCard({
   onStatusChange,
   currentUserId,
   onAssignToggle,
+  membersById,
 }) {
   const meta = statusMeta(task.status);
   const due = dueMeta(task);
   const assignedToMe =
     task.assignee_id != null && task.assignee_id === currentUserId;
+  // Resolve the assignee's username from the workspace members (when available).
+  const assignee =
+    task.assignee_id != null ? membersById?.[task.assignee_id] : null;
+  const assigneeLabel = assignedToMe
+    ? "You"
+    : assignee?.username ?? `#${task.assignee_id}`;
 
   return (
     <Card
@@ -99,14 +107,28 @@ function TaskCard({
         <Group gap={6}>
           {task.assignee_id != null && (
             <Tooltip
-              label={assignedToMe ? "Assigned to you" : `Assigned to user #${task.assignee_id}`}
+              label={
+                assignee
+                  ? `Assigned to ${assignee.username}`
+                  : assignedToMe
+                    ? "Assigned to you"
+                    : `Assigned to user #${task.assignee_id}`
+              }
             >
               <Badge
                 variant="light"
                 color={assignedToMe ? "teal" : "gray"}
-                leftSection={<IconUserCircle size={12} />}
+                leftSection={
+                  assignee ? (
+                    <Avatar size={14} radius="xl" color={assignedToMe ? "teal" : "gray"}>
+                      {assignee.username?.[0]?.toUpperCase() ?? "?"}
+                    </Avatar>
+                  ) : (
+                    <IconUserCircle size={12} />
+                  )
+                }
               >
-                {assignedToMe ? "You" : `#${task.assignee_id}`}
+                {assigneeLabel}
               </Badge>
             </Tooltip>
           )}

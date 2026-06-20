@@ -28,6 +28,7 @@ import {
 } from "../hooks/useTasks";
 import { useAuth } from "../context/auth-context";
 import { useWorkspaceSocket } from "../hooks/useWorkspaceSocket";
+import { useWorkspaceMembers } from "../hooks/useWorkspaces";
 import TaskCard from "./TaskCard";
 import TaskBoard from "./TaskBoard";
 import TaskSkeleton from "./TaskSkeleton";
@@ -76,6 +77,13 @@ function WorkspaceTasks({ workspaceId }) {
   const { user } = useAuth();
   const { status: connStatus } = useWorkspaceSocket(workspaceId);
   const { data: tasks = [], isLoading, isError } = useTasks(workspaceId);
+  const { data: members = [] } = useWorkspaceMembers(workspaceId);
+
+  // user_id -> { id, username } for resolving assignee names on the cards.
+  const membersById = useMemo(
+    () => Object.fromEntries(members.map((m) => [m.user_id, m.user])),
+    [members]
+  );
   const createTask = useCreateTask(workspaceId);
   const updateTask = useUpdateTask(workspaceId);
   const deleteTask = useDeleteTask(workspaceId);
@@ -198,6 +206,7 @@ function WorkspaceTasks({ workspaceId }) {
           onStatusChange={handleStatusChange}
           currentUserId={user?.id}
           onAssignToggle={handleAssignToggle}
+          membersById={membersById}
         />
       );
     }
@@ -213,6 +222,7 @@ function WorkspaceTasks({ workspaceId }) {
             onStatusChange={handleStatusChange}
             currentUserId={user?.id}
             onAssignToggle={handleAssignToggle}
+            membersById={membersById}
           />
         ))}
       </SimpleGrid>
@@ -269,6 +279,7 @@ function WorkspaceTasks({ workspaceId }) {
         onSubmit={handleSubmit}
         initialValues={editingTask}
         mode={editingTask ? "edit" : "create"}
+        members={members}
       />
     </>
   );

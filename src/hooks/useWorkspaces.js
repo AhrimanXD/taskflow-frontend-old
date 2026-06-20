@@ -19,6 +19,15 @@ export function useWorkspace(id) {
   });
 }
 
+// Members of one workspace — drives the assignee picker. Keyed per workspace.
+export function useWorkspaceMembers(workspaceId) {
+  return useQuery({
+    queryKey: ["workspace-members", workspaceId],
+    queryFn: async () => (await workspaceService.members(workspaceId)).data,
+    enabled: workspaceId != null,
+  });
+}
+
 export function useCreateWorkspace() {
   const qc = useQueryClient();
   return useMutation({

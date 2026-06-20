@@ -2,7 +2,7 @@ import { Box, Group } from "@mantine/core";
 import TaskColumn from "./TaskColumn";
 import { groupByStatus } from "../utils/tasks";
 
-function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onAssignToggle }) {
+function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onAssignToggle, membersById }) {
   const groups = groupByStatus(tasks);
 
   return (
@@ -18,6 +18,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
             onStatusChange={onStatusChange}
             currentUserId={currentUserId}
             onAssignToggle={onAssignToggle}
+            membersById={membersById}
           />
         ))}
       </Group>
