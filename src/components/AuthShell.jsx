@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Group, Title, Text } from "@mantine/core";
+import { Box, Flex, Stack, Group, Title, Text, Card } from "@mantine/core";
 
 const FEATURES = [
   "Organize work into shared workspaces",
