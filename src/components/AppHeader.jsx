@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Container,
@@ -11,7 +10,6 @@ import {
   Badge,
   ActionIcon,
   Tooltip,
-  Button,
   useMantineColorScheme,
   useComputedColorScheme,
 } from "@mantine/core";
@@ -20,12 +18,10 @@ import {
   IconLogout,
   IconMoon,
   IconSun,
-  IconSparkles,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useMyInvitations } from "../hooks/useInvitations";
-import FeaturePreviewDrawer from "./FeaturePreviewDrawer";
 
 const NAV = [
   { label: "Tasks", to: "/dashboard" },
@@ -76,7 +72,6 @@ function AppHeader() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const { data: pendingInvites = [] } = useMyInvitations("pending");
-  const [previewOpened, setPreviewOpened] = useState(false);
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
 
   return (
@@ -128,17 +123,6 @@ function AppHeader() {
           </Group>
 
           <Group gap="sm">
-            <Button
-              size="xs"
-              variant="gradient"
-              gradient={{ from: "#f59e0b", to: "#d97706" }}
-              leftSection={<IconSparkles size={14} />}
-              onClick={() => setPreviewOpened(true)}
-              style={{ borderRadius: 10, fontWeight: 700 }}
-            >
-              Beta Features
-            </Button>
-
             <ColorSchemeToggle />
 
             <Menu position="bottom-end" withinPortal width={200}>
@@ -174,8 +158,8 @@ function AppHeader() {
           </Group>
         </Group>
       </Container>
-      <FeaturePreviewDrawer opened={previewOpened} onClose={() => setPreviewOpened(false)} />
     </Box>
   );
 }
+
 export default AppHeader;

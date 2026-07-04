@@ -10,10 +10,6 @@ import {
   Center,
   Alert,
   Tooltip,
-  Card,
-  Progress,
-  Badge,
-  ThemeIcon,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
@@ -23,9 +19,6 @@ import {
   IconLayoutGrid,
   IconClipboardList,
   IconPlus,
-  IconAlertCircle,
-  IconActivity,
-  IconCheck,
 } from "@tabler/icons-react";
 import {
   useTasks,
@@ -106,15 +99,6 @@ function WorkspaceTasks({ workspaceId }) {
   const { status: connStatus } = useWorkspaceSocket(workspaceId);
   const { data: tasks = [], isLoading, isError } = useTasks(workspaceId);
   const { data: members = [] } = useWorkspaceMembers(workspaceId);
-
-  const stats = useMemo(() => {
-    const total = tasks.length;
-    const pending = tasks.filter((t) => t.status === "pending").length;
-    const ongoing = tasks.filter((t) => t.status === "ongoing").length;
-    const completed = tasks.filter((t) => t.status === "completed").length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    return { total, pending, ongoing, completed, completionRate };
-  }, [tasks]);
 
   // user_id -> { id, username } for resolving assignee names on the cards.
   const membersById = useMemo(
@@ -268,63 +252,6 @@ function WorkspaceTasks({ workspaceId }) {
 
   return (
     <>
-      {/* Workspace KPI Stats Cards */}
-      {!isLoading && !isError && tasks.length > 0 && (
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md" mb="xl">
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--tf-primary)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Total Tasks</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.total}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="blue">
-                <IconClipboardList size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--mantine-color-yellow-5)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Pending</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.pending}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="yellow">
-                <IconAlertCircle size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--mantine-color-indigo-5)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Ongoing</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.ongoing}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="indigo">
-                <IconActivity size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--tf-online)" }}>
-            <Group justify="space-between">
-              <div style={{ flex: 1 }}>
-                <Group gap="xs" align="baseline">
-                  <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Completed</Text>
-                  <Badge size="xs" color="green">{stats.completionRate}% Done</Badge>
-                </Group>
-                <Text size="28px" fw={900} mt={4}>{stats.completed}</Text>
-                <Progress value={stats.completionRate} size="xs" radius="xl" color="teal" mt="sm" />
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="teal" style={{ alignSelf: "flex-start" }}>
-                <IconCheck size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-        </SimpleGrid>
-      )}
-
       <Group justify="space-between" mb="md" gap="sm" wrap="wrap">
         <TextInput
           placeholder="Search tasks…"
@@ -359,7 +286,7 @@ function WorkspaceTasks({ workspaceId }) {
               },
             ]}
           />
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate} style={{ borderRadius: 10 }}>
+          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
             New task
           </Button>
         </Group>

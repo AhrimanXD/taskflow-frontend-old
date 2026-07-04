@@ -10,9 +10,6 @@ import {
   SegmentedControl,
   Center,
   Alert,
-  Card,
-  Progress,
-  Badge,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
@@ -22,11 +19,6 @@ import {
   IconLayoutGrid,
   IconInbox,
   IconPlus,
-  IconClipboardList,
-  IconAlertCircle,
-  IconActivity,
-  IconCheck,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 import {
   useTasks,
@@ -63,15 +55,6 @@ function Dashboard() {
     () => filterAndSortTasks(tasks, { query, sort }),
     [tasks, query, sort]
   );
-
-  const stats = useMemo(() => {
-    const total = tasks.length;
-    const pending = tasks.filter((t) => t.status === "pending").length;
-    const ongoing = tasks.filter((t) => t.status === "ongoing").length;
-    const completed = tasks.filter((t) => t.status === "completed").length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    return { total, pending, ongoing, completed, completionRate };
-  }, [tasks]);
 
   function changeView(value) {
     setView(value);
@@ -194,94 +177,37 @@ function Dashboard() {
   return (
     <PageShell>
       <Group justify="space-between" mb="lg" wrap="nowrap">
-        <div>
-          <Title order={2} style={{ letterSpacing: "-0.02em" }}>My Tasks</Title>
-          <Text c="dimmed" size="sm">
-            Everything on your plate.
-          </Text>
-        </div>
-        <Button leftSection={<IconPlus size={16} />} onClick={openCreate} style={{ borderRadius: 10 }}>
-          New task
-        </Button>
-      </Group>
+          <div>
+            <Title order={2}>My Tasks</Title>
+            <Text c="dimmed" size="sm">
+              Everything on your plate.
+            </Text>
+          </div>
+          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+            New task
+          </Button>
+        </Group>
 
-      {/* KPI Stats Cards */}
-      {!isLoading && !isError && tasks.length > 0 && (
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md" mb="xl">
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--tf-primary)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Total Tasks</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.total}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="blue">
-                <IconClipboardList size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--mantine-color-yellow-5)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Pending</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.pending}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="yellow">
-                <IconAlertCircle size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--mantine-color-indigo-5)" }}>
-            <Group justify="space-between">
-              <div>
-                <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Ongoing</Text>
-                <Text size="28px" fw={900} mt={4}>{stats.ongoing}</Text>
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="indigo">
-                <IconActivity size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-
-          <Card withBorder padding="md" radius="lg" style={{ background: "var(--tf-surface)", borderLeft: "4px solid var(--tf-online)" }}>
-            <Group justify="space-between">
-              <div style={{ flex: 1 }}>
-                <Group gap="xs" align="baseline">
-                  <Text size="xs" c="dimmed" fw={700} tt="uppercase" className="tf-mono">Completed</Text>
-                  <Badge size="xs" color="green">{stats.completionRate}% Done</Badge>
-                </Group>
-                <Text size="28px" fw={900} mt={4}>{stats.completed}</Text>
-                <Progress value={stats.completionRate} size="xs" radius="xl" color="teal" mt="sm" />
-              </div>
-              <ThemeIcon variant="light" size="lg" radius="md" color="teal" style={{ alignSelf: "flex-start" }}>
-                <IconCheck size={20} />
-              </ThemeIcon>
-            </Group>
-          </Card>
-        </SimpleGrid>
-      )}
-
-      <Group justify="space-between" mb="lg" gap="sm" wrap="wrap">
-        <TextInput
-          placeholder="Search tasks…"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-          leftSection={<IconSearch size={16} />}
-          style={{ flex: 1, minWidth: 220 }}
-        />
-        <Group gap="sm">
-          <Select
-            value={sort}
-            onChange={(v) => setSort(v || "newest")}
-            allowDeselect={false}
-            w={150}
-            data={[
-              { value: "newest", label: "Newest first" },
-              { value: "oldest", label: "Oldest first" },
-              { value: "title", label: "Title A–Z" },
-            ]}
+        <Group justify="space-between" mb="lg" gap="sm" wrap="wrap">
+          <TextInput
+            placeholder="Search tasks…"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            leftSection={<IconSearch size={16} />}
+            style={{ flex: 1, minWidth: 220 }}
           />
+          <Group gap="sm">
+            <Select
+              value={sort}
+              onChange={(v) => setSort(v || "newest")}
+              allowDeselect={false}
+              w={150}
+              data={[
+                { value: "newest", label: "Newest first" },
+                { value: "oldest", label: "Oldest first" },
+                { value: "title", label: "Title A–Z" },
+              ]}
+            />
             <SegmentedControl
               value={view}
               onChange={changeView}
