@@ -1,3 +1,72 @@
+/* ====================================================================== */
+/* Tailwind v4 — preflight intentionally OFF while Mantine coexists       */
+/* during the migration; enable it (import "tailwindcss") once the last  */
+/* Mantine component is gone.                                            */
+/* ====================================================================== */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Dark mode follows Mantine's color-scheme attribute so both systems
+   stay in sync during migration; retarget to `.dark` after removal. */
+@custom-variant dark (&:where([data-mantine-color-scheme="dark"], [data-mantine-color-scheme="dark"] *));
+
+/* shadcn/ui semantic tokens, sourced from the --tf-* Precision palette
+   (defined below) so light/dark flip automatically with the scheme. */
+:root,
+[data-mantine-color-scheme="dark"] {
+  --radius: 0.625rem;
+  --background: var(--tf-bg);
+  --foreground: var(--tf-text);
+  --card: var(--tf-surface);
+  --card-foreground: var(--tf-text);
+  --popover: var(--tf-surface);
+  --popover-foreground: var(--tf-text);
+  --primary: var(--tf-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--tf-surface-2);
+  --secondary-foreground: var(--tf-text);
+  --muted: var(--tf-surface-2);
+  --muted-foreground: var(--tf-text-2);
+  --accent: var(--tf-primary-soft);
+  --accent-foreground: var(--tf-text);
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: var(--tf-border);
+  --input: var(--tf-border-2);
+  --ring: var(--tf-accent-soft);
+}
+
+@theme inline {
+  --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
 html,
 body,
 #root {
