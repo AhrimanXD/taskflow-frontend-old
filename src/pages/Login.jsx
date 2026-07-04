@@ -1,17 +1,13 @@
 import { useState } from "react";
-import {
-  TextInput,
-  PasswordInput,
-  Button,
-  Stack,
-  Group,
-  Text,
-  Anchor,
-  Alert,
-} from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
+import { CircleAlert, Loader2 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 import AuthShell from "../components/AuthShell";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -51,43 +47,57 @@ function Login() {
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to your account to continue.">
       <form onSubmit={handleSubmit} noValidate>
-        <Stack gap="md">
+        <div className="flex flex-col gap-4">
           {errors.form && (
-            <Alert color="red" variant="light" radius="md">
-              {errors.form}
+            <Alert variant="destructive">
+              <CircleAlert className="size-4" />
+              <AlertDescription>{errors.form}</AlertDescription>
             </Alert>
           )}
-          <TextInput
-            label="Email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            size="md"
-            error={errors.email}
-            required
-          />
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
-            size="md"
-            required
-          />
-          <Button type="submit" fullWidth size="md" mt="xs" loading={loading}>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="login-email">Email</Label>
+            <Input
+              id="login-email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              aria-invalid={Boolean(errors.email)}
+              required
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="login-password">Password</Label>
+            <PasswordInput
+              id="login-password"
+              placeholder="Your password"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              required
+            />
+          </div>
+
+          <Button type="submit" className="mt-1 w-full" disabled={loading}>
+            {loading && <Loader2 className="size-4 animate-spin" />}
             Sign in
           </Button>
-        </Stack>
+        </div>
       </form>
 
-      <Group justify="center" gap={6}>
-        <Text c="dimmed" size="sm">
-          Don&apos;t have an account?
-        </Text>
-        <Anchor component={Link} to="/register" size="sm" fw={500}>
+      <p className="text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link
+          to="/register"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
           Create one
-        </Anchor>
-      </Group>
+        </Link>
+      </p>
     </AuthShell>
   );
 }

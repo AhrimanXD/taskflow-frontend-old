@@ -67,6 +67,51 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Minimal preflight bridge for migrated (Tailwind-styled) markup. Lives in
+   @layer base so Mantine's unlayered CSS always overrides it; delete when
+   full preflight is enabled at the end of the migration. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--color-border);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+    list-style: none;
+  }
+
+  button {
+    background-color: transparent;
+    background-image: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+}
+
 html,
 body,
 #root {

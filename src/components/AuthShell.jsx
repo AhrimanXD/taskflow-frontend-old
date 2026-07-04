@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, Group, Title, Text } from "@mantine/core";
+import { Check } from "lucide-react";
 
 const FEATURES = [
   "Organize work into shared workspaces",
@@ -6,139 +6,72 @@ const FEATURES = [
   "Stay in sync with real-time updates",
 ];
 
-function LogoMark({ size = 40, radius = 12 }) {
-  return (
-    <Box
-      style={{
-        width: size,
-        height: size,
-        borderRadius: radius,
-        display: "grid",
-        placeItems: "center",
-        background: "rgba(255, 255, 255, 0.16)",
-        backdropFilter: "blur(4px)",
-      }}
-    >
-      <svg
-        width={size * 0.5}
-        height={size * 0.5}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20 6L9 17l-5-5" />
-      </svg>
-    </Box>
-  );
-}
-
 function AuthShell({ title, subtitle, children }) {
   return (
-    <Flex mih="100vh">
+    <div className="flex min-h-screen">
       {/* Brand panel — hidden on small screens */}
-      <Box
-        visibleFrom="md"
-        p={48}
+      <div
+        className="hidden flex-1 flex-col justify-between p-12 text-white md:flex"
         style={{
-          flex: 1,
-          color: "white",
           background: [
             "radial-gradient(at 80% 0%, rgba(255,255,255,0.18) 0px, transparent 50%)",
             "radial-gradient(at 0% 100%, rgba(0,0,0,0.18) 0px, transparent 50%)",
             "var(--tf-auth-gradient)",
           ].join(", "),
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
         }}
       >
-        <Group gap="sm">
-          <LogoMark />
-          <Text fw={800} fz="xl" style={{ letterSpacing: "-0.02em" }}>
-            Taskflow
-          </Text>
-        </Group>
+        <div className="flex items-center gap-3">
+          <div className="grid size-10 place-items-center rounded-xl bg-white/15 backdrop-blur-sm">
+            <Check className="size-5" strokeWidth={3} aria-hidden="true" />
+          </div>
+          <span className="text-xl font-extrabold tracking-tight">Taskflow</span>
+        </div>
 
-        <Stack gap="lg" maw={420}>
-          <Title order={1} fz={36} lh={1.15}>
+        <div className="flex max-w-md flex-col gap-5">
+          <h1 className="text-4xl font-extrabold leading-[1.15] tracking-tight">
             Get your team on the same page.
-          </Title>
-          <Text opacity={0.85} fz="lg">
+          </h1>
+          <p className="text-lg opacity-85">
             Plan, assign, and track work together — and watch it update live.
-          </Text>
-          <Stack gap="sm" mt="md">
+          </p>
+          <ul className="mt-4 flex flex-col gap-3">
             {FEATURES.map((feature) => (
-              <Group key={feature} gap="sm" wrap="nowrap">
-                <Box
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: "50%",
-                    background: "rgba(255,255,255,0.2)",
-                    display: "grid",
-                    placeItems: "center",
-                    flexShrink: 0,
-                    fontSize: 13,
-                  }}
-                >
-                  ✓
-                </Box>
-                <Text opacity={0.9}>{feature}</Text>
-              </Group>
+              <li key={feature} className="flex items-center gap-3">
+                <span className="grid size-[22px] shrink-0 place-items-center rounded-full bg-white/20">
+                  <Check className="size-3" strokeWidth={3} aria-hidden="true" />
+                </span>
+                <span className="opacity-90">{feature}</span>
+              </li>
             ))}
-          </Stack>
-        </Stack>
+          </ul>
+        </div>
 
-        <Text opacity={0.65} fz="sm">
-          © {new Date().getFullYear()} TaskFlow
-        </Text>
-      </Box>
+        <p className="text-sm opacity-65">© {new Date().getFullYear()} TaskFlow</p>
+      </div>
 
       {/* Form panel */}
-      <Flex
-        style={{ flex: 1 }}
-        align="center"
-        justify="center"
-        p="xl"
-        bg="var(--tf-page-bg)"
-      >
-        <Stack w="100%" maw={400} gap="xl">
-          <Group gap="xs" hiddenFrom="md">
-            <Box className="tf-brandmark" style={{ width: 32, height: 32, borderRadius: 9 }}>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-            </Box>
-            <Text fw={800} fz="lg" style={{ letterSpacing: "-0.02em" }}>
+      <div className="flex flex-1 items-center justify-center bg-background p-6">
+        <div className="flex w-full max-w-sm flex-col gap-8">
+          <div className="flex items-center gap-2 md:hidden">
+            <div className="tf-brandmark size-8 rounded-[9px]">
+              <Check className="size-4" strokeWidth={3} aria-hidden="true" />
+            </div>
+            <span className="text-lg font-extrabold tracking-tight text-foreground">
               Taskflow
-            </Text>
-          </Group>
+            </span>
+          </div>
 
-          <Stack gap={4}>
-            <Title order={2}>{title}</Title>
-            {subtitle && (
-              <Text c="dimmed" fz="sm">
-                {subtitle}
-              </Text>
-            )}
-          </Stack>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
+              {title}
+            </h2>
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          </div>
 
           {children}
-        </Stack>
-      </Flex>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 }
 

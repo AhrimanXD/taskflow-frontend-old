@@ -26,4 +26,12 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    // shadcn/ui components export variant helpers (e.g. buttonVariants)
+    // alongside the component, which trips the fast-refresh rule.
+    files: ['src/components/ui/**/*.{js,jsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])
