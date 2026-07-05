@@ -1,14 +1,13 @@
-import { Box, Container } from "@mantine/core";
 import AppHeader from "./AppHeader";
 
-function PageShell({ children, size = "lg" }) {
+function PageShell({ children }) {
   return (
-    <Box mih="100vh" bg="var(--tf-page-bg)">
+    <div className="min-h-screen bg-background">
       <AppHeader />
-      <Container size={size} py="xl" className="tf-page">
+      <main className="tf-page mx-auto w-full max-w-[1140px] px-4 py-8 md:px-6">
         {children}
-      </Container>
-    </Box>
+      </main>
+    </div>
   );
 }
 

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { Center, Loader } from "@mantine/core";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 
 function ProtectedRoute({ children }) {
@@ -7,9 +7,9 @@ function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <Center h="100vh">
-        <Loader />
-      </Center>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="size-8 animate-spin text-primary" aria-label="Loading" />
+      </div>
     );
   }
 

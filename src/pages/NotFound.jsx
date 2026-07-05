@@ -1,22 +1,22 @@
-import { Center, Stack, Title, Text, Button } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 function NotFound() {
   return (
-    <Center h="100vh" bg="var(--tf-page-bg)">
-      <Stack align="center" gap="xs">
-        <Text fw={800} fz={64} c="brand" lh={1}>
-          404
-        </Text>
-        <Title order={3}>Page not found</Title>
-        <Text c="dimmed" size="sm" ta="center" maw={340}>
+    <div className="flex h-screen items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-2 px-6 text-center">
+        <p className="text-[64px] font-extrabold leading-none text-primary">404</p>
+        <h1 className="text-xl font-extrabold tracking-tight text-foreground">
+          Page not found
+        </h1>
+        <p className="max-w-[340px] text-sm text-muted-foreground">
           The page you&apos;re looking for doesn&apos;t exist or has moved.
-        </Text>
-        <Button component={Link} to="/dashboard" mt="sm">
-          Back to dashboard
+        </p>
+        <Button asChild className="mt-3">
+          <Link to="/dashboard">Back to dashboard</Link>
         </Button>
-      </Stack>
-    </Center>
+      </div>
+    </div>
   );
 }
 
