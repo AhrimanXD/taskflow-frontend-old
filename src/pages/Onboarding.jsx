@@ -1,91 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Check, Loader2, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateWorkspace } from "../hooks/useWorkspaces";
 import { invitationService } from "../services/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 
 const STEPS = ["Workspace", "Invite team"];
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
-
-function BrandMark({ size = 38 }) {
-  return (
-    <div
-      className="tf-brandmark"
-      style={{ width: size, height: size, borderRadius: 11 }}
-    >
-      <Check
-        style={{ width: size * 0.55, height: size * 0.55 }}
-        color="#fff"
-        strokeWidth={3}
-        aria-hidden="true"
-      />
-    </div>
-  );
-}
-
-// Custom two-step indicator matching the reference (check / number + connector).
-function Stepper({ current }) {
-  return (
-    <div className="flex flex-nowrap items-center justify-center">
-      {STEPS.map((label, i) => {
-        const done = i < current;
-        const active = i === current;
-        return (
-          <div key={label} className="flex flex-nowrap items-center">
-            <div className="flex flex-nowrap items-center gap-2">
-              <span
-                className="grid size-[26px] shrink-0 place-items-center rounded-full text-xs font-bold"
-                style={{
-                  color: done || active ? "#fff" : "var(--tf-text-3)",
-                  background: done
-                    ? "var(--tf-done-text)"
-                    : active
-                      ? "var(--tf-primary)"
-                      : "var(--tf-surface-2)",
-                }}
-              >
-                {done ? <Check className="size-[15px]" strokeWidth={3} /> : i + 1}
-              </span>
-              <span
-                className={cn(
-                  "text-sm",
-                  active
-                    ? "font-bold text-primary"
-                    : done
-                      ? "font-bold text-foreground"
-                      : "font-semibold text-muted-foreground"
-                )}
-              >
-                {label}
-              </span>
-            </div>
-            {i < STEPS.length - 1 && (
-              <span
-                className="mx-3.5 h-0.5 w-14 rounded-sm"
-                style={{
-                  background: done ? "var(--tf-primary)" : "var(--tf-border-2)",
-                }}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 function WorkspaceStep({ onCreated }) {
   const createWorkspace = useCreateWorkspace();
@@ -112,53 +32,39 @@ function WorkspaceStep({ onCreated }) {
 
   return (
     <form onSubmit={submit}>
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1.5">
-          <h2 className="text-[26px] font-extrabold tracking-tight text-foreground">
-            Create your workspace
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            A workspace is where you and your team plan and track work together.
-          </p>
-        </div>
+      <h2>Create your workspace</h2>
+      <p>A workspace is where you and your team plan and track work together.</p>
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="onboarding-name">
-            Workspace name <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="onboarding-name"
-            placeholder="e.g. Acme Inc"
-            autoFocus
-            value={name}
-            onChange={(e) => {
-              setName(e.currentTarget.value);
-              if (nameError) setNameError(null);
-            }}
-            aria-invalid={nameError ? true : undefined}
-          />
-          {nameError && <p className="text-sm text-destructive">{nameError}</p>}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="onboarding-description">Description</Label>
-          <Textarea
-            id="onboarding-description"
-            placeholder="What is this workspace for? (optional)"
-            rows={2}
-            value={description}
-            onChange={(e) => setDescription(e.currentTarget.value)}
-          />
-        </div>
-
-        <div className="mt-1 flex justify-end">
-          <Button type="submit" disabled={createWorkspace.isPending}>
-            {createWorkspace.isPending && <Loader2 className="animate-spin" />}
-            Continue
-            <ArrowRight className="size-4" />
-          </Button>
-        </div>
+      <div>
+        <label htmlFor="onboarding-name">Workspace name (required)</label>
+        <input
+          id="onboarding-name"
+          placeholder="e.g. Acme Inc"
+          autoFocus
+          value={name}
+          onChange={(e) => {
+            setName(e.currentTarget.value);
+            if (nameError) setNameError(null);
+          }}
+          aria-invalid={nameError ? true : undefined}
+        />
+        {nameError && <p>{nameError}</p>}
       </div>
+
+      <div>
+        <label htmlFor="onboarding-description">Description</label>
+        <textarea
+          id="onboarding-description"
+          placeholder="What is this workspace for? (optional)"
+          rows={2}
+          value={description}
+          onChange={(e) => setDescription(e.currentTarget.value)}
+        />
+      </div>
+
+      <button type="submit" disabled={createWorkspace.isPending}>
+        Continue
+      </button>
     </form>
   );
 }
@@ -224,96 +130,62 @@ function InviteStep({ workspace, onDone }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1.5">
-        <h2 className="text-[26px] font-extrabold tracking-tight text-foreground">
-          Invite your team
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Taskflow is better together. Add teammates to{" "}
-          <span className="font-bold">{workspace.name}</span> to start
-          collaborating.
-        </p>
-      </div>
+    <div>
+      <h2>Invite your team</h2>
+      <p>
+        Taskflow is better together. Add teammates to{" "}
+        <strong>{workspace.name}</strong> to start collaborating.
+      </p>
 
-      <div className="flex flex-col gap-3">
-        {rows.map((row, i) => (
-          <div key={i} className="flex flex-nowrap items-start gap-3">
-            <div className="relative min-w-0 flex-1">
-              <Input
-                placeholder="teammate@example.com"
-                value={row.email}
-                disabled={row.sent}
-                aria-invalid={row.error ? true : undefined}
-                className={row.sent ? "pr-9" : undefined}
-                onChange={(e) =>
-                  patchRow(i, { email: e.currentTarget.value, error: null })
-                }
-              />
-              {row.sent && (
-                <span className="absolute right-2.5 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
-                  <Check className="size-[13px]" strokeWidth={3} />
-                </span>
-              )}
-              {row.error && (
-                <p className="mt-1.5 text-sm text-destructive">{row.error}</p>
-              )}
-            </div>
-            <Select
-              value={row.role}
-              onValueChange={(v) => patchRow(i, { role: v || "member" })}
-              disabled={row.sent}
-            >
-              <SelectTrigger className="w-[130px]" aria-label="Role">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="member">Member</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-            <button
-              type="button"
-              aria-label="Remove row"
-              disabled={rows.length === 1 || row.sent}
-              onClick={() => removeRow(i)}
-              className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-        ))}
+      {rows.map((row, i) => (
+        <div key={i}>
+          <input
+            placeholder="teammate@example.com"
+            value={row.email}
+            disabled={row.sent}
+            aria-invalid={row.error ? true : undefined}
+            onChange={(e) =>
+              patchRow(i, { email: e.currentTarget.value, error: null })
+            }
+          />
+          {row.sent && <span> (sent)</span>}
+          {row.error && <p>{row.error}</p>}
+          <select
+            aria-label="Role"
+            value={row.role}
+            disabled={row.sent}
+            onChange={(e) => patchRow(i, { role: e.currentTarget.value || "member" })}
+          >
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button
+            type="button"
+            aria-label="Remove row"
+            disabled={rows.length === 1 || row.sent}
+            onClick={() => removeRow(i)}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
 
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full border-dashed"
-          onClick={addRow}
-        >
-          <Plus />
-          Add another
-        </Button>
-      </div>
+      <button type="button" onClick={addRow}>
+        Add another
+      </button>
 
-      <div className="mt-1 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={onDone}
-          className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-        >
+      <div>
+        <button type="button" onClick={onDone}>
           Skip for now
         </button>
         {pending > 0 ? (
-          <Button disabled={sending} onClick={sendAll}>
-            {sending && <Loader2 className="animate-spin" />}
+          <button type="button" disabled={sending} onClick={sendAll}>
             Send {pending} invite{pending === 1 ? "" : "s"}
-            <ArrowRight className="size-4" />
-          </Button>
+          </button>
         ) : (
-          <Button onClick={onDone}>
+          <button type="button" onClick={onDone}>
             Go to workspace
-            <ArrowRight className="size-4" />
-          </Button>
+          </button>
         )}
       </div>
     </div>
@@ -330,39 +202,22 @@ function Onboarding() {
   }
 
   return (
-    <div
-      className="flex min-h-screen flex-col items-center p-6"
-      style={{
-        background:
-          "radial-gradient(1100px 460px at 50% -8%, rgba(47,108,246,0.08), transparent 60%), var(--tf-bg)",
-      }}
-    >
-      <div className="mb-8 mt-10 flex items-center gap-3">
-        <BrandMark />
-        <span className="text-[22px] font-extrabold tracking-[-0.02em] text-foreground">
-          Taskflow
-        </span>
-      </div>
+    <div>
+      <h1>Taskflow</h1>
+      <p>
+        Step {step + 1} of {STEPS.length}: {STEPS[step]}
+      </p>
 
-      <div className="mb-9">
-        <Stepper current={step} />
-      </div>
-
-      <div
-        className="w-full max-w-[520px] rounded-xl border border-border bg-card p-9"
-        style={{ boxShadow: "var(--tf-shadow-md)" }}
-      >
-        {step === 0 ? (
-          <WorkspaceStep
-            onCreated={(ws) => {
-              setWorkspace(ws);
-              setStep(1);
-            }}
-          />
-        ) : (
-          <InviteStep workspace={workspace} onDone={goToWorkspace} />
-        )}
-      </div>
+      {step === 0 ? (
+        <WorkspaceStep
+          onCreated={(ws) => {
+            setWorkspace(ws);
+            setStep(1);
+          }}
+        />
+      ) : (
+        <InviteStep workspace={workspace} onDone={goToWorkspace} />
+      )}
     </div>
   );
 }

@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CircleAlert, Loader2 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
-import AuthShell from "../components/AuthShell";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/ui/password-input";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -51,82 +44,63 @@ function Register() {
   }
 
   return (
-    <AuthShell
-      title="Create your account"
-      subtitle="Start organizing work with your team."
-    >
+    <div>
+      <h1>Create your account</h1>
+      <p>Start organizing work with your team.</p>
+
       <form onSubmit={handleSubmit} noValidate>
-        <div className="flex flex-col gap-4">
-          {errors.form && (
-            <Alert variant="destructive">
-              <CircleAlert className="size-4" />
-              <AlertDescription>{errors.form}</AlertDescription>
-            </Alert>
-          )}
+        {errors.form && <p role="alert">{errors.form}</p>}
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="register-email">Email</Label>
-            <Input
-              id="register-email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-              aria-invalid={Boolean(errors.email)}
-              required
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="register-username">Username</Label>
-            <Input
-              id="register-username"
-              placeholder="yourusername"
-              value={username}
-              onChange={(e) => setUsername(e.currentTarget.value)}
-              aria-invalid={Boolean(errors.username)}
-              required
-            />
-            {errors.username && (
-              <p className="text-sm text-destructive">{errors.username}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="register-password">Password</Label>
-            <PasswordInput
-              id="register-password"
-              placeholder="At least 6 characters"
-              value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-              aria-invalid={Boolean(errors.password)}
-              required
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
-            )}
-          </div>
-
-          <Button type="submit" className="mt-1 w-full" disabled={loading}>
-            {loading && <Loader2 className="size-4 animate-spin" />}
-            Create account
-          </Button>
+        <div>
+          <label htmlFor="register-email">Email</label>
+          <input
+            id="register-email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.currentTarget.value)}
+            aria-invalid={Boolean(errors.email)}
+            required
+          />
+          {errors.email && <p>{errors.email}</p>}
         </div>
+
+        <div>
+          <label htmlFor="register-username">Username</label>
+          <input
+            id="register-username"
+            placeholder="yourusername"
+            value={username}
+            onChange={(e) => setUsername(e.currentTarget.value)}
+            aria-invalid={Boolean(errors.username)}
+            required
+          />
+          {errors.username && <p>{errors.username}</p>}
+        </div>
+
+        <div>
+          <label htmlFor="register-password">Password</label>
+          <input
+            id="register-password"
+            type="password"
+            placeholder="At least 6 characters"
+            value={password}
+            onChange={(e) => setPassword(e.currentTarget.value)}
+            aria-invalid={Boolean(errors.password)}
+            required
+          />
+          {errors.password && <p>{errors.password}</p>}
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating account…" : "Create account"}
+        </button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
-        <Link
-          to="/login"
-          className="font-medium text-primary underline-offset-4 hover:underline"
-        >
-          Sign in
-        </Link>
+      <p>
+        Already have an account? <Link to="/login">Sign in</Link>
       </p>
-    </AuthShell>
+    </div>
   );
 }
 

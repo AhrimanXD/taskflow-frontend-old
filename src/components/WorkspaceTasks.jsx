@@ -1,13 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  CircleAlert,
-  ClipboardList,
-  Columns3,
-  LayoutGrid,
-  Plus,
-  Search,
-} from "lucide-react";
-import {
   useTasks,
   useCreateTask,
   useUpdateTask,
@@ -23,99 +15,14 @@ import TaskFormModal from "./TaskFormModal";
 import EmptyState from "./EmptyState";
 import ConfirmDialog from "./ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 
 const VIEW_KEY = "taskflow:ws-view";
 
-const CONN_META = {
-  connected: {
-    label: "Live",
-    tip: "Realtime updates are on",
-    dot: "var(--tf-online)",
-    text: "var(--tf-done-text)",
-    bg: "var(--tf-done-bg)",
-    pulse: true,
-  },
-  connecting: {
-    label: "Connecting",
-    tip: "Connecting to live updates",
-    dot: "#fab005",
-    text: "#b08800",
-    bg: "rgba(250, 176, 5, 0.12)",
-    pulse: false,
-  },
-  reconnecting: {
-    label: "Reconnecting",
-    tip: "Connection dropped — retrying",
-    dot: "#fd7e14",
-    text: "#c2410c",
-    bg: "rgba(253, 126, 20, 0.12)",
-    pulse: false,
-  },
+const CONN_LABEL = {
+  connected: "Live — realtime updates are on",
+  connecting: "Connecting to live updates",
+  reconnecting: "Connection dropped — retrying",
 };
-
-// Unobtrusive realtime status pill for the board toolbar (reference "● Live").
-function LiveIndicator({ status }) {
-  const meta = CONN_META[status] ?? CONN_META.connecting;
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className="flex h-7 cursor-default flex-nowrap items-center gap-1.5 rounded-full px-[11px]"
-            style={{ background: meta.bg }}
-          >
-            <span
-              className={cn("size-[7px] rounded-full", meta.pulse && "tf-pulse")}
-              style={{ backgroundColor: meta.dot }}
-            />
-            <span className="tf-mono text-[11px] font-semibold" style={{ color: meta.text }}>
-              {meta.label}
-            </span>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>{meta.tip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
-
-const VIEWS = [
-  { value: "board", label: "Board", icon: Columns3 },
-  { value: "grid", label: "Grid", icon: LayoutGrid },
-];
-
-function ViewToggle({ value, onChange }) {
-  return (
-    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-1">
-      {VIEWS.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          className={cn(
-            "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors",
-            value === opt.value
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          <opt.icon className="size-4" />
-          <span>{opt.label}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // The shared task board, scoped to one workspace. Any member can create,
 // edit, and assign; deleting someone else's task is rejected by the server
@@ -183,38 +90,27 @@ function WorkspaceTasks({ workspaceId }) {
 
   function renderContent() {
     if (isLoading) {
-      return (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <TaskSkeleton key={i} />
-          ))}
-        </div>
-      );
+      return <TaskSkeleton />;
     }
 
     if (isError) {
       return (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not load tasks</AlertTitle>
-          <AlertDescription>
-            Something went wrong while loading this workspace&apos;s tasks.
-          </AlertDescription>
-        </Alert>
+        <p role="alert">
+          Could not load tasks. Something went wrong while loading this
+          workspace&apos;s tasks.
+        </p>
       );
     }
 
     if (tasks.length === 0) {
       return (
         <EmptyState
-          icon={<ClipboardList className="size-7" />}
           title="No tasks in this workspace"
           description="Create the first task for your team to work on."
           action={
-            <Button className="mt-2" onClick={openCreate}>
-              <Plus />
+            <button type="button" onClick={openCreate}>
               Create a task
-            </Button>
+            </button>
           }
         />
       );
@@ -223,13 +119,12 @@ function WorkspaceTasks({ workspaceId }) {
     if (visibleTasks.length === 0) {
       return (
         <EmptyState
-          icon={<Search className="size-[26px]" />}
           title="No matching tasks"
           description="No tasks match your search. Try a different term."
           action={
-            <Button variant="outline" className="mt-2" onClick={() => setQuery("")}>
+            <button type="button" onClick={() => setQuery("")}>
               Clear search
-            </Button>
+            </button>
           }
         />
       );
@@ -250,44 +145,45 @@ function WorkspaceTasks({ workspaceId }) {
     }
 
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul>
         {visibleTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onEdit={openEdit}
-            onDelete={setDeleteTarget}
-            onStatusChange={handleStatusChange}
-            currentUserId={user?.id}
-            onAssignToggle={handleAssignToggle}
-            membersById={membersById}
-          />
+          <li key={task.id}>
+            <TaskCard
+              task={task}
+              onEdit={openEdit}
+              onDelete={setDeleteTarget}
+              onStatusChange={handleStatusChange}
+              currentUserId={user?.id}
+              onAssignToggle={handleAssignToggle}
+              membersById={membersById}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     );
   }
 
   return (
     <>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="relative min-w-[200px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search tasks…"
-            value={query}
-            onChange={(e) => setQuery(e.currentTarget.value)}
-            className="pl-9"
-            aria-label="Search tasks"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <LiveIndicator status={connStatus} />
-          <ViewToggle value={view} onChange={changeView} />
-          <Button onClick={openCreate}>
-            <Plus />
-            New task
-          </Button>
-        </div>
+      <div>
+        <input
+          placeholder="Search tasks…"
+          aria-label="Search tasks"
+          value={query}
+          onChange={(e) => setQuery(e.currentTarget.value)}
+        />
+        <span>{CONN_LABEL[connStatus] ?? CONN_LABEL.connecting}</span>
+        <select
+          aria-label="View"
+          value={view}
+          onChange={(e) => changeView(e.currentTarget.value)}
+        >
+          <option value="board">Board</option>
+          <option value="grid">Grid</option>
+        </select>
+        <button type="button" onClick={openCreate}>
+          New task
+        </button>
       </div>
 
       {renderContent()}

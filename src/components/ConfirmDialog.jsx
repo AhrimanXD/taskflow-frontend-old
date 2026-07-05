@@ -1,15 +1,4 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
-// Confirm-before-destroy dialog, replacing Mantine's modals.openConfirmModal.
+// Confirm-before-destroy prompt. Rendered inline when open.
 function ConfirmDialog({
   open,
   onOpenChange,
@@ -18,21 +7,25 @@ function ConfirmDialog({
   confirmLabel = "Delete",
   onConfirm,
 }) {
+  if (!open) return null;
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>
-            {confirmLabel}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div role="alertdialog" aria-label={title}>
+      <h2>{title}</h2>
+      <p>{description}</p>
+      <button type="button" onClick={() => onOpenChange(false)}>
+        Cancel
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          onConfirm();
+          onOpenChange(false);
+        }}
+      >
+        {confirmLabel}
+      </button>
+    </div>
   );
 }
 

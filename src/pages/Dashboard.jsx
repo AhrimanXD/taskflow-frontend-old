@@ -1,13 +1,5 @@
 import { useMemo, useState } from "react";
 import {
-  Columns3,
-  Inbox,
-  LayoutGrid,
-  Plus,
-  Search,
-  CircleAlert,
-} from "lucide-react";
-import {
   useTasks,
   useCreateTask,
   useUpdateTask,
@@ -21,47 +13,8 @@ import TaskFormModal from "../components/TaskFormModal";
 import EmptyState from "../components/EmptyState";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 
 const VIEW_KEY = "taskflow:view";
-
-const VIEWS = [
-  { value: "board", label: "Board", icon: Columns3 },
-  { value: "grid", label: "Grid", icon: LayoutGrid },
-];
-
-function ViewToggle({ value, onChange }) {
-  return (
-    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-1">
-      {VIEWS.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onChange(opt.value)}
-          className={cn(
-            "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors",
-            value === opt.value
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          )}
-        >
-          <opt.icon className="size-4" />
-          <span>{opt.label}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function Dashboard() {
   const { data: tasks = [], isLoading, isError } = useTasks();
@@ -114,38 +67,27 @@ function Dashboard() {
 
   function renderContent() {
     if (isLoading) {
-      return (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <TaskSkeleton key={i} />
-          ))}
-        </div>
-      );
+      return <TaskSkeleton />;
     }
 
     if (isError) {
       return (
-        <Alert variant="destructive">
-          <CircleAlert />
-          <AlertTitle>Could not load tasks</AlertTitle>
-          <AlertDescription>
-            Something went wrong while loading your tasks. Please refresh.
-          </AlertDescription>
-        </Alert>
+        <p role="alert">
+          Could not load tasks. Something went wrong while loading your tasks.
+          Please refresh.
+        </p>
       );
     }
 
     if (tasks.length === 0) {
       return (
         <EmptyState
-          icon={<Inbox className="size-7" />}
           title="No tasks yet"
           description="Create your first task to start tracking your work."
           action={
-            <Button className="mt-2" onClick={openCreate}>
-              <Plus />
+            <button type="button" onClick={openCreate}>
               Create a task
-            </Button>
+            </button>
           }
         />
       );
@@ -154,13 +96,12 @@ function Dashboard() {
     if (visibleTasks.length === 0) {
       return (
         <EmptyState
-          icon={<Search className="size-[26px]" />}
           title="No matching tasks"
           description="No tasks match your search. Try a different term."
           action={
-            <Button variant="outline" className="mt-2" onClick={() => setQuery("")}>
+            <button type="button" onClick={() => setQuery("")}>
               Clear search
-            </Button>
+            </button>
           }
         />
       );
@@ -178,61 +119,53 @@ function Dashboard() {
     }
 
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul>
         {visibleTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onEdit={openEdit}
-            onDelete={setDeleteTarget}
-            onStatusChange={handleStatusChange}
-          />
+          <li key={task.id}>
+            <TaskCard
+              task={task}
+              onEdit={openEdit}
+              onDelete={setDeleteTarget}
+              onStatusChange={handleStatusChange}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     );
   }
 
   return (
     <PageShell>
-      <div className="mb-6 flex flex-nowrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-            My Tasks
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Everything on your plate.
-          </p>
-        </div>
-        <Button onClick={openCreate} className="shrink-0">
-          <Plus />
-          New task
-        </Button>
-      </div>
+      <h1>My Tasks</h1>
+      <p>Everything on your plate.</p>
+      <button type="button" onClick={openCreate}>
+        New task
+      </button>
 
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="relative min-w-[220px] flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search tasks…"
-            value={query}
-            onChange={(e) => setQuery(e.currentTarget.value)}
-            className="pl-9"
-            aria-label="Search tasks"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <Select value={sort} onValueChange={(v) => setSort(v || "newest")}>
-            <SelectTrigger className="w-[150px]" aria-label="Sort tasks">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest first</SelectItem>
-              <SelectItem value="oldest">Oldest first</SelectItem>
-              <SelectItem value="title">Title A–Z</SelectItem>
-            </SelectContent>
-          </Select>
-          <ViewToggle value={view} onChange={changeView} />
-        </div>
+      <div>
+        <input
+          placeholder="Search tasks…"
+          aria-label="Search tasks"
+          value={query}
+          onChange={(e) => setQuery(e.currentTarget.value)}
+        />
+        <select
+          aria-label="Sort tasks"
+          value={sort}
+          onChange={(e) => setSort(e.currentTarget.value || "newest")}
+        >
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="title">Title A–Z</option>
+        </select>
+        <select
+          aria-label="View"
+          value={view}
+          onChange={(e) => changeView(e.currentTarget.value)}
+        >
+          <option value="board">Board</option>
+          <option value="grid">Grid</option>
+        </select>
       </div>
 
       {renderContent()}

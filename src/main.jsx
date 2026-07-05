@@ -2,9 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
-import "./hooks/useColorScheme"; // applies the saved scheme before first paint
-import "./index.css";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import App from "./App.jsx";
 
 const queryClient = new QueryClient({
