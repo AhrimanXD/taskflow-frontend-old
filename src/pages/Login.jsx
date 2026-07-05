@@ -85,7 +85,7 @@ function Login() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-8">
+        <p className="text-center text-sm text-muted-foreground mt-12">
           Don&apos;t have an account? <Link to="/register" className="text-accent font-medium hover:opacity-80">Create one</Link>
         </p>
       </div>

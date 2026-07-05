@@ -107,7 +107,7 @@ function Register() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-8">
+        <p className="text-center text-sm text-muted-foreground mt-12">
           Already have an account? <Link to="/login" className="text-accent font-medium hover:opacity-80">Sign in</Link>
         </p>
       </div>
