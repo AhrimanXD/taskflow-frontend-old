@@ -1,10 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  useMantineColorScheme,
-  useComputedColorScheme,
-} from "@mantine/core";
 import { Check, ChevronDown, LogOut, Moon, Sun } from "lucide-react";
 import { useAuth } from "../context/auth-context";
+import { useColorScheme, setColorScheme } from "../hooks/useColorScheme";
 import { useMyInvitations } from "../hooks/useInvitations";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -39,11 +36,8 @@ function BrandMark() {
 }
 
 function ColorSchemeToggle() {
-  // Mantine still owns the color-scheme attribute both styling systems key
-  // off of; swap this to a standalone mechanism once Mantine is removed.
-  const { setColorScheme } = useMantineColorScheme();
-  const computed = useComputedColorScheme("light");
-  const dark = computed === "dark";
+  const scheme = useColorScheme();
+  const dark = scheme === "dark";
 
   return (
     <TooltipProvider>

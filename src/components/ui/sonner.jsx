@@ -1,14 +1,12 @@
-import { useComputedColorScheme } from "@mantine/core";
 import { Toaster as Sonner } from "sonner";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
-// Mantine still owns the color-scheme attribute; read it so toasts match.
-// Swap to the standalone scheme mechanism once Mantine is removed.
 function Toaster(props) {
-  const computed = useComputedColorScheme("light");
+  const scheme = useColorScheme();
 
   return (
     <Sonner
-      theme={computed}
+      theme={scheme}
       position="top-right"
       richColors
       toastOptions={{

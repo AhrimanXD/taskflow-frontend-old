@@ -1,20 +1,11 @@
-/* ====================================================================== */
-/* Tailwind v4 — preflight intentionally OFF while Mantine coexists       */
-/* during the migration; enable it (import "tailwindcss") once the last  */
-/* Mantine component is gone.                                            */
-/* ====================================================================== */
-@layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss";
 
-/* Dark mode follows Mantine's color-scheme attribute so both systems
-   stay in sync during migration; retarget to `.dark` after removal. */
-@custom-variant dark (&:where([data-mantine-color-scheme="dark"], [data-mantine-color-scheme="dark"] *));
+/* Dark mode is a `.dark` class on <html>, managed by src/hooks/useColorScheme.js */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* shadcn/ui semantic tokens, sourced from the --tf-* Precision palette
    (defined below) so light/dark flip automatically with the scheme. */
-:root,
-[data-mantine-color-scheme="dark"] {
+:root {
   --radius: 0.625rem;
   --background: var(--tf-bg);
   --foreground: var(--tf-text);
@@ -67,61 +58,29 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Minimal preflight bridge for migrated (Tailwind-styled) markup. Lives in
-   @layer base so Mantine's unlayered CSS always overrides it; delete when
-   full preflight is enabled at the end of the migration. */
 @layer base {
-  *,
-  ::before,
-  ::after {
-    box-sizing: border-box;
-    border-width: 0;
-    border-style: solid;
+  * {
     border-color: var(--color-border);
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  p,
-  ul,
-  ol {
-    margin: 0;
+  html,
+  body,
+  #root {
+    height: 100%;
   }
 
-  ul,
-  ol {
-    padding: 0;
-    list-style: none;
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  button {
-    background-color: transparent;
-    background-image: none;
-    font: inherit;
-    color: inherit;
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-
-  input,
-  textarea,
-  select {
-    font: inherit;
-    color: inherit;
-  }
-}
-
-html,
-body,
-#root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 /* ====================================================================== */
@@ -156,13 +115,9 @@ body {
   --tf-tray-active: #dce9ff;
   --tf-accent-soft: rgba(47, 108, 246, 0.25);
   --tf-header-bg: rgba(246, 247, 249, 0.8);
-
-  /* retune Mantine semantic vars to the reference neutrals */
-  --mantine-color-default-border: var(--tf-border);
-  --mantine-color-text: var(--tf-text);
 }
 
-[data-mantine-color-scheme="dark"] {
+.dark {
   --tf-bg: #121519;
   --tf-surface: #171a1f;
   --tf-surface-2: #1f242b;
@@ -185,18 +140,16 @@ body {
   --tf-tray-active: rgba(47, 108, 246, 0.14);
   --tf-accent-soft: rgba(91, 139, 255, 0.3);
   --tf-header-bg: rgba(18, 21, 25, 0.8);
-
-  --mantine-color-default-border: var(--tf-border);
 }
 
 ::selection {
-  background: var(--mantine-color-brand-2);
+  background: #b6c9ff;
   color: #11244a;
 }
 
 /* Monospace meta/labels (JetBrains Mono) — for kanban counts, eyebrows, etc. */
 .tf-mono {
-  font-family: var(--mantine-font-family-monospace);
+  font-family: var(--font-mono);
   letter-spacing: 0.04em;
 }
 
@@ -218,7 +171,7 @@ body {
 }
 
 .tf-nav-link:hover {
-  background: var(--mantine-color-default-hover);
+  background: var(--tf-surface-2);
 }
 
 .tf-nav-link[data-active="true"] {
