@@ -1,21 +1,26 @@
-import {
-  Card,
-  Box,
-  Group,
-  Stack,
-  Text,
-  Menu,
-  ActionIcon,
-  UnstyledButton,
-  Tooltip,
-  Avatar,
-} from "@mantine/core";
-import {
-  IconCalendar,
-  IconDots,
-  IconChevronDown,
-} from "@tabler/icons-react";
+import { Calendar, ChevronDown, MoreHorizontal } from "lucide-react";
 import { TASK_STATUSES, statusMeta } from "../constants/tasks";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+// Status dot colors (was Mantine's gray/blue/green-6 palette entries).
+const DOT_COLOR = {
+  gray: "#868e96",
+  blue: "var(--tf-primary)",
+  green: "#40c057",
+};
 
 function dueMeta(task) {
   if (!task.due_date) return null;
@@ -46,7 +51,7 @@ function TaskCard({
       ? "var(--tf-done-text)"
       : "var(--tf-text-2)";
   const dueColor = due?.overdue
-    ? "var(--mantine-color-red-6)"
+    ? "var(--destructive)"
     : isOngoing
       ? "var(--tf-primary)"
       : isCompleted
@@ -63,140 +68,133 @@ function TaskCard({
   const hasFooter = due || task.assignee_id != null;
 
   return (
-    <Card
-      withBorder
-      radius="lg"
-      padding="md"
-      className="tf-card"
-      style={isCompleted ? { opacity: 0.72 } : undefined}
+    <div
+      className={cn(
+        "tf-card rounded-xl border border-border bg-card p-4",
+        isCompleted && "opacity-[0.72]"
+      )}
     >
       {/* status (clickable) + actions */}
-      <Group justify="space-between" align="center" wrap="nowrap" mb={8}>
-        <Menu position="bottom-start" withinPortal>
-          <Menu.Target>
-            <UnstyledButton>
-              <Group gap={6} wrap="nowrap" className="tf-status-pill">
-                <Box
-                  w={8}
-                  h={8}
-                  className={isOngoing ? "tf-pulse" : undefined}
-                  style={{
-                    borderRadius: "50%",
-                    backgroundColor: `var(--mantine-color-${meta.color}-6)`,
-                  }}
-                />
-                <Text
-                  fz={10}
-                  fw={700}
-                  tt="uppercase"
-                  className="tf-mono"
-                  style={{ color: statusColor, letterSpacing: "0.08em" }}
-                >
-                  {meta.label}
-                </Text>
-                <IconChevronDown size={12} stroke={2.5} color={statusColor} />
-              </Group>
-            </UnstyledButton>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Label>Set status</Menu.Label>
+      <div className="mb-2 flex flex-nowrap items-center justify-between">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" className="tf-status-pill flex flex-nowrap items-center gap-1.5">
+              <span
+                className={cn("size-2 rounded-full", isOngoing && "tf-pulse")}
+                style={{ backgroundColor: DOT_COLOR[meta.color] ?? DOT_COLOR.gray }}
+              />
+              <span
+                className="tf-mono text-[10px] font-bold uppercase tracking-[0.08em]"
+                style={{ color: statusColor }}
+              >
+                {meta.label}
+              </span>
+              <ChevronDown className="size-3" strokeWidth={2.5} style={{ color: statusColor }} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuLabel>Set status</DropdownMenuLabel>
             {TASK_STATUSES.map((s) => (
-              <Menu.Item key={s.value} onClick={() => onStatusChange(task, s.value)}>
+              <DropdownMenuItem key={s.value} onClick={() => onStatusChange(task, s.value)}>
                 {s.label}
-              </Menu.Item>
+              </DropdownMenuItem>
             ))}
-          </Menu.Dropdown>
-        </Menu>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-        <Menu position="bottom-end" withinPortal>
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="gray" size="sm" aria-label="Task actions">
-              <IconDots size={16} />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item onClick={() => onEdit(task)}>Edit</Menu.Item>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Task actions"
+              className="flex size-6 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <MoreHorizontal className="size-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit(task)}>Edit</DropdownMenuItem>
             {onAssignToggle && (
-              <Menu.Item
+              <DropdownMenuItem
                 onClick={() => onAssignToggle(task, assignedToMe ? null : currentUserId)}
               >
                 {assignedToMe ? "Unassign me" : "Assign to me"}
-              </Menu.Item>
+              </DropdownMenuItem>
             )}
-            <Menu.Item color="red" onClick={() => onDelete(task)}>
+            <DropdownMenuItem variant="destructive" onClick={() => onDelete(task)}>
               Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </Group>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-      <Stack gap={4}>
-        <Text
-          fw={700}
-          fz={16}
-          lineClamp={2}
-          td={isCompleted ? "line-through" : undefined}
-          c={isCompleted ? "dimmed" : undefined}
-          style={{ lineHeight: 1.3, letterSpacing: "-0.01em" }}
+      <div className="flex flex-col gap-1">
+        <p
+          className={cn(
+            "line-clamp-2 text-base font-bold leading-[1.3] tracking-[-0.01em]",
+            isCompleted ? "text-muted-foreground line-through" : "text-foreground"
+          )}
         >
           {task.title}
-        </Text>
+        </p>
         {task.description && (
-          <Text c="dimmed" size="sm" lineClamp={2}>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
             {task.description}
-          </Text>
+          </p>
         )}
-      </Stack>
+      </div>
 
       {hasFooter && (
-        <Group
-          justify="space-between"
-          align="center"
-          wrap="nowrap"
-          mt={12}
-          pt={10}
-          style={{ borderTop: "1px solid var(--tf-border)" }}
-        >
+        <div className="mt-3 flex flex-nowrap items-center justify-between border-t border-border pt-2.5">
           {due ? (
-            <Group gap={5} wrap="nowrap">
-              <IconCalendar size={13} color={dueColor} />
-              <Text fz={11} fw={600} className="tf-mono" style={{ color: dueColor }}>
+            <div className="flex flex-nowrap items-center gap-[5px]">
+              <Calendar className="size-[13px]" style={{ color: dueColor }} />
+              <span className="tf-mono text-[11px] font-semibold" style={{ color: dueColor }}>
                 {due.label}
-              </Text>
-            </Group>
+              </span>
+            </div>
           ) : (
             <span />
           )}
 
           {task.assignee_id != null && (
-            <Tooltip
-              label={
-                assignee
-                  ? `Assigned to ${assignee.username}`
-                  : assignedToMe
-                    ? "Assigned to you"
-                    : `Assigned to user #${task.assignee_id}`
-              }
-            >
-              <Group gap={6} wrap="nowrap">
-                <Text fz={12} fw={600} c={assignedToMe ? "brand" : undefined}>
-                  {assigneeLabel}
-                </Text>
-                <Avatar
-                  size={22}
-                  radius="xl"
-                  variant={assignedToMe ? "gradient" : "filled"}
-                  gradient={{ from: "#2f6cf6", to: "#5b8bff", deg: 135 }}
-                  color="gray"
-                >
-                  {(assignee?.username ?? assigneeLabel)?.[0]?.toUpperCase() ?? "?"}
-                </Avatar>
-              </Group>
-            </Tooltip>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex flex-nowrap items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "text-xs font-semibold",
+                        assignedToMe ? "text-primary" : "text-foreground"
+                      )}
+                    >
+                      {assigneeLabel}
+                    </span>
+                    <span
+                      className="flex size-[22px] items-center justify-center rounded-full text-[10px] font-semibold text-white"
+                      style={{
+                        background: assignedToMe
+                          ? "var(--tf-brand-gradient)"
+                          : "#868e96",
+                      }}
+                    >
+                      {(assignee?.username ?? assigneeLabel)?.[0]?.toUpperCase() ?? "?"}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {assignee
+                    ? `Assigned to ${assignee.username}`
+                    : assignedToMe
+                      ? "Assigned to you"
+                      : `Assigned to user #${task.assignee_id}`}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
-        </Group>
+        </div>
       )}
-    </Card>
+    </div>
   );
 }
 

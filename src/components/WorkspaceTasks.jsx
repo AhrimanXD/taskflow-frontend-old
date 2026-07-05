@@ -1,25 +1,12 @@
 import { useMemo, useState } from "react";
 import {
-  Box,
-  Group,
-  Text,
-  Button,
-  SimpleGrid,
-  TextInput,
-  SegmentedControl,
-  Center,
-  Alert,
-  Tooltip,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { modals } from "@mantine/modals";
-import {
-  IconSearch,
-  IconLayoutColumns,
-  IconLayoutGrid,
-  IconClipboardList,
-  IconPlus,
-} from "@tabler/icons-react";
+  CircleAlert,
+  ClipboardList,
+  Columns3,
+  LayoutGrid,
+  Plus,
+  Search,
+} from "lucide-react";
 import {
   useTasks,
   useCreateTask,
@@ -34,7 +21,18 @@ import TaskBoard from "./TaskBoard";
 import TaskSkeleton from "./TaskSkeleton";
 import TaskFormModal from "./TaskFormModal";
 import EmptyState from "./EmptyState";
+import ConfirmDialog from "./ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const VIEW_KEY = "taskflow:ws-view";
 
@@ -50,17 +48,17 @@ const CONN_META = {
   connecting: {
     label: "Connecting",
     tip: "Connecting to live updates",
-    dot: "var(--mantine-color-yellow-6)",
-    text: "var(--mantine-color-yellow-7)",
-    bg: "var(--mantine-color-yellow-light)",
+    dot: "#fab005",
+    text: "#b08800",
+    bg: "rgba(250, 176, 5, 0.12)",
     pulse: false,
   },
   reconnecting: {
     label: "Reconnecting",
     tip: "Connection dropped — retrying",
-    dot: "var(--mantine-color-orange-6)",
-    text: "var(--mantine-color-orange-7)",
-    bg: "var(--mantine-color-orange-light)",
+    dot: "#fd7e14",
+    text: "#c2410c",
+    bg: "rgba(253, 126, 20, 0.12)",
     pulse: false,
   },
 };
@@ -69,25 +67,53 @@ const CONN_META = {
 function LiveIndicator({ status }) {
   const meta = CONN_META[status] ?? CONN_META.connecting;
   return (
-    <Tooltip label={meta.tip} withArrow>
-      <Group
-        gap={6}
-        h={28}
-        px={11}
-        wrap="nowrap"
-        style={{ background: meta.bg, borderRadius: 20, cursor: "default" }}
-      >
-        <Box
-          w={7}
-          h={7}
-          className={meta.pulse ? "tf-pulse" : undefined}
-          style={{ borderRadius: "50%", backgroundColor: meta.dot }}
-        />
-        <Text className="tf-mono" fz={11} fw={600} style={{ color: meta.text }}>
-          {meta.label}
-        </Text>
-      </Group>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className="flex h-7 cursor-default flex-nowrap items-center gap-1.5 rounded-full px-[11px]"
+            style={{ background: meta.bg }}
+          >
+            <span
+              className={cn("size-[7px] rounded-full", meta.pulse && "tf-pulse")}
+              style={{ backgroundColor: meta.dot }}
+            />
+            <span className="tf-mono text-[11px] font-semibold" style={{ color: meta.text }}>
+              {meta.label}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>{meta.tip}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+const VIEWS = [
+  { value: "board", label: "Board", icon: Columns3 },
+  { value: "grid", label: "Grid", icon: LayoutGrid },
+];
+
+function ViewToggle({ value, onChange }) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-1">
+      {VIEWS.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          onClick={() => onChange(opt.value)}
+          className={cn(
+            "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors",
+            value === opt.value
+              ? "bg-card text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <opt.icon className="size-4" />
+          <span>{opt.label}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -114,8 +140,9 @@ function WorkspaceTasks({ workspaceId }) {
     () => localStorage.getItem(VIEW_KEY) || "board"
   );
 
-  const [formOpened, formHandlers] = useDisclosure(false);
+  const [formOpened, setFormOpened] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const visibleTasks = useMemo(
     () => filterAndSortTasks(tasks, { query, sort: "newest" }),
@@ -129,12 +156,12 @@ function WorkspaceTasks({ workspaceId }) {
 
   function openCreate() {
     setEditingTask(null);
-    formHandlers.open();
+    setFormOpened(true);
   }
 
   function openEdit(task) {
     setEditingTask(task);
-    formHandlers.open();
+    setFormOpened(true);
   }
 
   async function handleSubmit(values) {
@@ -154,36 +181,25 @@ function WorkspaceTasks({ workspaceId }) {
     updateTask.mutate({ id: task.id, data: { assignee_id: assigneeId } });
   }
 
-  function requestDelete(task) {
-    modals.openConfirmModal({
-      title: "Delete task",
-      centered: true,
-      children: (
-        <Text size="sm">
-          Delete &ldquo;{task.title}&rdquo;? This can&apos;t be undone.
-        </Text>
-      ),
-      labels: { confirm: "Delete", cancel: "Cancel" },
-      confirmProps: { color: "red" },
-      onConfirm: () => deleteTask.mutate(task.id),
-    });
-  }
-
   function renderContent() {
     if (isLoading) {
       return (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <TaskSkeleton key={i} />
           ))}
-        </SimpleGrid>
+        </div>
       );
     }
 
     if (isError) {
       return (
-        <Alert color="red" title="Could not load tasks">
-          Something went wrong while loading this workspace&apos;s tasks.
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Could not load tasks</AlertTitle>
+          <AlertDescription>
+            Something went wrong while loading this workspace&apos;s tasks.
+          </AlertDescription>
         </Alert>
       );
     }
@@ -191,11 +207,12 @@ function WorkspaceTasks({ workspaceId }) {
     if (tasks.length === 0) {
       return (
         <EmptyState
-          icon={<IconClipboardList size={28} />}
+          icon={<ClipboardList className="size-7" />}
           title="No tasks in this workspace"
           description="Create the first task for your team to work on."
           action={
-            <Button mt="sm" leftSection={<IconPlus size={16} />} onClick={openCreate}>
+            <Button className="mt-2" onClick={openCreate}>
+              <Plus />
               Create a task
             </Button>
           }
@@ -206,11 +223,11 @@ function WorkspaceTasks({ workspaceId }) {
     if (visibleTasks.length === 0) {
       return (
         <EmptyState
-          icon={<IconSearch size={26} />}
+          icon={<Search className="size-[26px]" />}
           title="No matching tasks"
           description="No tasks match your search. Try a different term."
           action={
-            <Button mt="sm" variant="default" onClick={() => setQuery("")}>
+            <Button variant="outline" className="mt-2" onClick={() => setQuery("")}>
               Clear search
             </Button>
           }
@@ -223,7 +240,7 @@ function WorkspaceTasks({ workspaceId }) {
         <TaskBoard
           tasks={visibleTasks}
           onEdit={openEdit}
-          onDelete={requestDelete}
+          onDelete={setDeleteTarget}
           onStatusChange={handleStatusChange}
           currentUserId={user?.id}
           onAssignToggle={handleAssignToggle}
@@ -233,74 +250,63 @@ function WorkspaceTasks({ workspaceId }) {
     }
 
     return (
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visibleTasks.map((task) => (
           <TaskCard
             key={task.id}
             task={task}
             onEdit={openEdit}
-            onDelete={requestDelete}
+            onDelete={setDeleteTarget}
             onStatusChange={handleStatusChange}
             currentUserId={user?.id}
             onAssignToggle={handleAssignToggle}
             membersById={membersById}
           />
         ))}
-      </SimpleGrid>
+      </div>
     );
   }
 
   return (
     <>
-      <Group justify="space-between" mb="md" gap="sm" wrap="wrap">
-        <TextInput
-          placeholder="Search tasks…"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-          leftSection={<IconSearch size={16} />}
-          style={{ flex: 1, minWidth: 200 }}
-        />
-        <Group gap="sm">
-          <LiveIndicator status={connStatus} />
-          <SegmentedControl
-            value={view}
-            onChange={changeView}
-            data={[
-              {
-                value: "board",
-                label: (
-                  <Center style={{ gap: 6 }}>
-                    <IconLayoutColumns size={16} />
-                    <span>Board</span>
-                  </Center>
-                ),
-              },
-              {
-                value: "grid",
-                label: (
-                  <Center style={{ gap: 6 }}>
-                    <IconLayoutGrid size={16} />
-                    <span>Grid</span>
-                  </Center>
-                ),
-              },
-            ]}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="relative min-w-[200px] flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search tasks…"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            className="pl-9"
+            aria-label="Search tasks"
           />
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
+        </div>
+        <div className="flex items-center gap-3">
+          <LiveIndicator status={connStatus} />
+          <ViewToggle value={view} onChange={changeView} />
+          <Button onClick={openCreate}>
+            <Plus />
             New task
           </Button>
-        </Group>
-      </Group>
+        </div>
+      </div>
 
       {renderContent()}
 
       <TaskFormModal
         opened={formOpened}
-        onClose={formHandlers.close}
+        onClose={() => setFormOpened(false)}
         onSubmit={handleSubmit}
         initialValues={editingTask}
         mode={editingTask ? "edit" : "create"}
         members={members}
+      />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete task"
+        description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
+        onConfirm={() => deleteTask.mutate(deleteTarget.id)}
       />
     </>
   );

@@ -1,4 +1,3 @@
-import { SimpleGrid } from "@mantine/core";
 import TaskColumn from "./TaskColumn";
 import { groupByStatus } from "../utils/tasks";
 
@@ -8,7 +7,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
   const groups = groupByStatus(tasks);
 
   return (
-    <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" verticalSpacing="lg">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
       {[...groups.entries()].map(([status, columnTasks]) => (
         <TaskColumn
           key={status}
@@ -22,7 +21,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
           membersById={membersById}
         />
       ))}
-    </SimpleGrid>
+    </div>
   );
 }
 

@@ -1,4 +1,3 @@
-import { Box, Group, Stack, Text } from "@mantine/core";
 import TaskCard from "./TaskCard";
 import { statusMeta } from "../constants/tasks";
 
@@ -39,57 +38,35 @@ function TaskColumn({
   const accent = COLUMN_STYLE[status] ?? COLUMN_STYLE.pending;
 
   return (
-    <Stack gap="sm">
+    <div className="flex flex-col gap-3">
       {/* Header sits above the tray (reference layout) */}
-      <Group gap={8} px={4} wrap="nowrap">
-        <Text fz={18} fw={700} style={{ letterSpacing: "-0.01em" }}>
+      <div className="flex flex-nowrap items-center gap-2 px-1">
+        <p className="text-lg font-bold tracking-[-0.01em] text-foreground">
           {meta.label}
-        </Text>
-        <Box
-          className="tf-mono"
-          style={{
-            minWidth: 24,
-            height: 24,
-            padding: "0 7px",
-            display: "grid",
-            placeItems: "center",
-            borderRadius: 999,
-            fontSize: 11,
-            fontWeight: 700,
-            background: accent.pill,
-            color: accent.pillText,
-          }}
+        </p>
+        <span
+          className="tf-mono grid h-6 min-w-6 place-items-center rounded-full px-[7px] text-[11px] font-bold"
+          style={{ background: accent.pill, color: accent.pillText }}
         >
           {tasks.length}
-        </Box>
-      </Group>
+        </span>
+      </div>
 
-      <Box
-        style={{
-          position: "relative",
-          background: accent.tray,
-          borderRadius: 18,
-          padding: 14,
-          minHeight: 480,
-          overflow: "hidden",
-        }}
+      <div
+        className="relative min-h-[480px] overflow-hidden rounded-[18px] p-3.5"
+        style={{ background: accent.tray }}
       >
         {accent.accent && (
-          <Box
-            style={{
-              position: "absolute",
-              insetInline: 0,
-              top: 0,
-              height: 5,
-              background: "var(--tf-accent-soft)",
-            }}
+          <div
+            className="absolute inset-x-0 top-0 h-[5px]"
+            style={{ background: "var(--tf-accent-soft)" }}
           />
         )}
-        <Stack gap="sm">
+        <div className="flex flex-col gap-3">
           {tasks.length === 0 ? (
-            <Text size="sm" c="dimmed" ta="center" py="lg">
+            <p className="py-4 text-center text-sm text-muted-foreground">
               No tasks
-            </Text>
+            </p>
           ) : (
             tasks.map((task) => (
               <TaskCard
@@ -104,9 +81,9 @@ function TaskColumn({
               />
             ))
           )}
-        </Stack>
-      </Box>
-    </Stack>
+        </div>
+      </div>
+    </div>
   );
 }
 

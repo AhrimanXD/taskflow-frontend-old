@@ -1,40 +1,49 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Modal,
-  TextInput,
-  Textarea,
-  Select,
-  Button,
-  Stack,
-  Group,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { DateInput } from "@mantine/dates";
-import { IconCalendar, IconUser } from "@tabler/icons-react";
+import { Loader2, User } from "lucide-react";
 import { TASK_STATUSES } from "../constants/tasks";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 // Sentinel for the "Unassigned" option — Select values are strings, so we map
 // this back to null on submit (unassigning is allowed by the backend).
 const UNASSIGNED = "__unassigned__";
 
+const EMPTY_FORM = {
+  title: "",
+  description: "",
+  status: "pending",
+  due_date: "",
+  assignee: UNASSIGNED,
+};
+
 // members (when provided) marks workspace context: [{ user_id, user: { username } }].
 // Absent => personal task, which isn't assignable, so no assignee field shows.
 function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members }) {
   const [submitting, setSubmitting] = useState(false);
+  const [values, setValues] = useState(EMPTY_FORM);
+  const [titleError, setTitleError] = useState(null);
   const assignable = Array.isArray(members);
 
-  const form = useForm({
-    initialValues: {
-      title: "",
-      description: "",
-      status: "pending",
-      due_date: null,
-      assignee: UNASSIGNED,
-    },
-    validate: {
-      title: (v) => (!v || v.trim().length === 0 ? "Title is required" : null),
-    },
-  });
+  function setField(field, value) {
+    setValues((v) => ({ ...v, [field]: value }));
+    if (field === "title" && titleError) setTitleError(null);
+  }
 
   // Build the assignee options from members. If the task is already assigned to
   // someone not in the list (edge case), keep a fallback option so the current
@@ -61,22 +70,27 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
   // Sync form to the task being edited (or reset) each time the modal opens.
   useEffect(() => {
     if (opened) {
-      form.setValues({
+      setValues({
         title: initialValues?.title ?? "",
         description: initialValues?.description ?? "",
         status: initialValues?.status ?? "pending",
-        // server sends an ISO datetime; DateInput (v8) wants "YYYY-MM-DD"
-        due_date: initialValues?.due_date ? initialValues.due_date.slice(0, 10) : null,
+        // server sends an ISO datetime; the native date input wants "YYYY-MM-DD"
+        due_date: initialValues?.due_date ? initialValues.due_date.slice(0, 10) : "",
         assignee:
           initialValues?.assignee_id != null
             ? String(initialValues.assignee_id)
             : UNASSIGNED,
       });
+      setTitleError(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened, initialValues]);
 
-  async function submit(values) {
+  async function submit(e) {
+    e.preventDefault();
+    if (!values.title || values.title.trim().length === 0) {
+      setTitleError("Title is required");
+      return;
+    }
     setSubmitting(true);
     try {
       const payload = {
@@ -100,63 +114,95 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
   }
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={mode === "edit" ? "Edit task" : "New task"}
-      centered
-    >
-      <form onSubmit={form.onSubmit(submit)}>
-        <Stack>
-          <TextInput
-            label="Title"
-            placeholder="What needs doing?"
-            withAsterisk
-            data-autofocus
-            {...form.getInputProps("title")}
-          />
-          <Textarea
-            label="Description"
-            placeholder="Add details (optional)"
-            autosize
-            minRows={3}
-            maxRows={8}
-            {...form.getInputProps("description")}
-          />
-          <Select
-            label="Status"
-            data={TASK_STATUSES}
-            allowDeselect={false}
-            {...form.getInputProps("status")}
-          />
-          {assignable && (
-            <Select
-              label="Assignee"
-              data={assigneeOptions}
-              allowDeselect={false}
-              leftSection={<IconUser size={16} />}
-              comboboxProps={{ withinPortal: true }}
-              {...form.getInputProps("assignee")}
+    <Dialog open={opened} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{mode === "edit" ? "Edit task" : "New task"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={submit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="task-title">
+              Title <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="task-title"
+              placeholder="What needs doing?"
+              autoFocus
+              value={values.title}
+              onChange={(e) => setField("title", e.currentTarget.value)}
+              aria-invalid={titleError ? true : undefined}
             />
+            {titleError && <p className="text-sm text-destructive">{titleError}</p>}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="task-description">Description</Label>
+            <Textarea
+              id="task-description"
+              placeholder="Add details (optional)"
+              rows={3}
+              value={values.description}
+              onChange={(e) => setField("description", e.currentTarget.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="task-status">Status</Label>
+            <Select value={values.status} onValueChange={(v) => setField("status", v)}>
+              <SelectTrigger id="task-status" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TASK_STATUSES.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {assignable && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-assignee">Assignee</Label>
+              <Select value={values.assignee} onValueChange={(v) => setField("assignee", v)}>
+                <SelectTrigger id="task-assignee" className="w-full">
+                  <User className="size-4 text-muted-foreground" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {assigneeOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
-          <DateInput
-            label="Due date"
-            placeholder="Pick a date (optional)"
-            clearable
-            leftSection={<IconCalendar size={16} />}
-            {...form.getInputProps("due_date")}
-          />
-          <Group justify="flex-end" mt="sm">
-            <Button variant="default" onClick={onClose}>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="task-due-date">Due date</Label>
+            <Input
+              id="task-due-date"
+              type="date"
+              value={values.due_date}
+              onChange={(e) => setField("due_date", e.currentTarget.value)}
+            />
+          </div>
+
+          <DialogFooter className="mt-1">
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="animate-spin" />}
               {mode === "edit" ? "Save changes" : "Create task"}
             </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Modal>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
