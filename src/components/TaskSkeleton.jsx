@@ -1,18 +1,18 @@
-import { Card, Group, Skeleton, Stack } from "@mantine/core";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function TaskSkeleton() {
   return (
-    <Card withBorder radius="md" padding="md">
-      <Stack gap={8}>
-        <Skeleton height={14} width="70%" radius="sm" />
-        <Skeleton height={10} radius="sm" />
-        <Skeleton height={10} width="55%" radius="sm" />
-        <Group justify="space-between" mt="sm">
-          <Skeleton height={20} width={84} radius="xl" />
-          <Skeleton height={10} width={48} radius="sm" />
-        </Group>
-      </Stack>
-    </Card>
+    <div className="tf-card rounded-xl border border-border bg-card p-4">
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-3.5 w-[70%]" />
+        <Skeleton className="h-2.5 w-full" />
+        <Skeleton className="h-2.5 w-[55%]" />
+        <div className="mt-3 flex items-center justify-between">
+          <Skeleton className="h-5 w-[84px] rounded-full" />
+          <Skeleton className="h-2.5 w-12" />
+        </div>
+      </div>
+    </div>
   );
 }
 

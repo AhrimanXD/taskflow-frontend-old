@@ -1,25 +1,12 @@
 import { useMemo, useState } from "react";
 import {
-  Group,
-  Title,
-  Text,
-  Button,
-  SimpleGrid,
-  TextInput,
-  Select,
-  SegmentedControl,
-  Center,
-  Alert,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { modals } from "@mantine/modals";
-import {
-  IconSearch,
-  IconLayoutColumns,
-  IconLayoutGrid,
-  IconInbox,
-  IconPlus,
-} from "@tabler/icons-react";
+  Columns3,
+  Inbox,
+  LayoutGrid,
+  Plus,
+  Search,
+  CircleAlert,
+} from "lucide-react";
 import {
   useTasks,
   useCreateTask,
@@ -32,9 +19,49 @@ import TaskBoard from "../components/TaskBoard";
 import TaskSkeleton from "../components/TaskSkeleton";
 import TaskFormModal from "../components/TaskFormModal";
 import EmptyState from "../components/EmptyState";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const VIEW_KEY = "taskflow:view";
+
+const VIEWS = [
+  { value: "board", label: "Board", icon: Columns3 },
+  { value: "grid", label: "Grid", icon: LayoutGrid },
+];
+
+function ViewToggle({ value, onChange }) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-md bg-secondary p-1">
+      {VIEWS.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          onClick={() => onChange(opt.value)}
+          className={cn(
+            "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition-colors",
+            value === opt.value
+              ? "bg-card text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <opt.icon className="size-4" />
+          <span>{opt.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function Dashboard() {
   const { data: tasks = [], isLoading, isError } = useTasks();
@@ -48,8 +75,9 @@ function Dashboard() {
     () => localStorage.getItem(VIEW_KEY) || "board"
   );
 
-  const [formOpened, formHandlers] = useDisclosure(false);
+  const [formOpened, setFormOpened] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const visibleTasks = useMemo(
     () => filterAndSortTasks(tasks, { query, sort }),
@@ -63,12 +91,12 @@ function Dashboard() {
 
   function openCreate() {
     setEditingTask(null);
-    formHandlers.open();
+    setFormOpened(true);
   }
 
   function openEdit(task) {
     setEditingTask(task);
-    formHandlers.open();
+    setFormOpened(true);
   }
 
   async function handleSubmit(values) {
@@ -84,36 +112,25 @@ function Dashboard() {
     updateTask.mutate({ id: task.id, data: { status } });
   }
 
-  function requestDelete(task) {
-    modals.openConfirmModal({
-      title: "Delete task",
-      centered: true,
-      children: (
-        <Text size="sm">
-          Delete &ldquo;{task.title}&rdquo;? This can&apos;t be undone.
-        </Text>
-      ),
-      labels: { confirm: "Delete", cancel: "Cancel" },
-      confirmProps: { color: "red" },
-      onConfirm: () => deleteTask.mutate(task.id),
-    });
-  }
-
   function renderContent() {
     if (isLoading) {
       return (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <TaskSkeleton key={i} />
           ))}
-        </SimpleGrid>
+        </div>
       );
     }
 
     if (isError) {
       return (
-        <Alert color="red" title="Could not load tasks">
-          Something went wrong while loading your tasks. Please refresh.
+        <Alert variant="destructive">
+          <CircleAlert />
+          <AlertTitle>Could not load tasks</AlertTitle>
+          <AlertDescription>
+            Something went wrong while loading your tasks. Please refresh.
+          </AlertDescription>
         </Alert>
       );
     }
@@ -121,11 +138,12 @@ function Dashboard() {
     if (tasks.length === 0) {
       return (
         <EmptyState
-          icon={<IconInbox size={28} />}
+          icon={<Inbox className="size-7" />}
           title="No tasks yet"
           description="Create your first task to start tracking your work."
           action={
-            <Button mt="sm" leftSection={<IconPlus size={16} />} onClick={openCreate}>
+            <Button className="mt-2" onClick={openCreate}>
+              <Plus />
               Create a task
             </Button>
           }
@@ -136,11 +154,11 @@ function Dashboard() {
     if (visibleTasks.length === 0) {
       return (
         <EmptyState
-          icon={<IconSearch size={26} />}
+          icon={<Search className="size-[26px]" />}
           title="No matching tasks"
           description="No tasks match your search. Try a different term."
           action={
-            <Button mt="sm" variant="default" onClick={() => setQuery("")}>
+            <Button variant="outline" className="mt-2" onClick={() => setQuery("")}>
               Clear search
             </Button>
           }
@@ -153,96 +171,86 @@ function Dashboard() {
         <TaskBoard
           tasks={visibleTasks}
           onEdit={openEdit}
-          onDelete={requestDelete}
+          onDelete={setDeleteTarget}
           onStatusChange={handleStatusChange}
         />
       );
     }
 
     return (
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visibleTasks.map((task) => (
           <TaskCard
             key={task.id}
             task={task}
             onEdit={openEdit}
-            onDelete={requestDelete}
+            onDelete={setDeleteTarget}
             onStatusChange={handleStatusChange}
           />
         ))}
-      </SimpleGrid>
+      </div>
     );
   }
 
   return (
     <PageShell>
-      <Group justify="space-between" mb="lg" wrap="nowrap">
-          <div>
-            <Title order={2}>My Tasks</Title>
-            <Text c="dimmed" size="sm">
-              Everything on your plate.
-            </Text>
-          </div>
-          <Button leftSection={<IconPlus size={16} />} onClick={openCreate}>
-            New task
-          </Button>
-        </Group>
+      <div className="mb-6 flex flex-nowrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
+            My Tasks
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Everything on your plate.
+          </p>
+        </div>
+        <Button onClick={openCreate} className="shrink-0">
+          <Plus />
+          New task
+        </Button>
+      </div>
 
-        <Group justify="space-between" mb="lg" gap="sm" wrap="wrap">
-          <TextInput
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="relative min-w-[220px] flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
             placeholder="Search tasks…"
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
-            leftSection={<IconSearch size={16} />}
-            style={{ flex: 1, minWidth: 220 }}
+            className="pl-9"
+            aria-label="Search tasks"
           />
-          <Group gap="sm">
-            <Select
-              value={sort}
-              onChange={(v) => setSort(v || "newest")}
-              allowDeselect={false}
-              w={150}
-              data={[
-                { value: "newest", label: "Newest first" },
-                { value: "oldest", label: "Oldest first" },
-                { value: "title", label: "Title A–Z" },
-              ]}
-            />
-            <SegmentedControl
-              value={view}
-              onChange={changeView}
-              data={[
-                {
-                  value: "board",
-                  label: (
-                    <Center style={{ gap: 6 }}>
-                      <IconLayoutColumns size={16} />
-                      <span>Board</span>
-                    </Center>
-                  ),
-                },
-                {
-                  value: "grid",
-                  label: (
-                    <Center style={{ gap: 6 }}>
-                      <IconLayoutGrid size={16} />
-                      <span>Grid</span>
-                    </Center>
-                  ),
-                },
-              ]}
-            />
-          </Group>
-        </Group>
+        </div>
+        <div className="flex items-center gap-3">
+          <Select value={sort} onValueChange={(v) => setSort(v || "newest")}>
+            <SelectTrigger className="w-[150px]" aria-label="Sort tasks">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest first</SelectItem>
+              <SelectItem value="oldest">Oldest first</SelectItem>
+              <SelectItem value="title">Title A–Z</SelectItem>
+            </SelectContent>
+          </Select>
+          <ViewToggle value={view} onChange={changeView} />
+        </div>
+      </div>
 
-        {renderContent()}
+      {renderContent()}
 
       <TaskFormModal
         opened={formOpened}
-        onClose={formHandlers.close}
+        onClose={() => setFormOpened(false)}
         onSubmit={handleSubmit}
         initialValues={editingTask}
         mode={editingTask ? "edit" : "create"}
+      />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Delete task"
+        description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
+        onConfirm={() => deleteTask.mutate(deleteTarget.id)}
       />
     </PageShell>
   );

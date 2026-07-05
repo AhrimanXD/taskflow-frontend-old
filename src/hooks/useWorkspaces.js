@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
+import { toast } from "sonner";
 import { workspaceService } from "../services/api";
 
 const WORKSPACES_KEY = ["workspaces"];
@@ -34,10 +34,9 @@ export function useCreateWorkspace() {
     mutationFn: async (data) => (await workspaceService.create(data)).data,
     onSuccess: (ws) => {
       qc.setQueryData(WORKSPACES_KEY, (old = []) => [ws, ...old]);
-      notifications.show({ message: "Workspace created", color: "teal" });
+      toast.success("Workspace created");
     },
-    onError: () =>
-      notifications.show({ message: "Could not create workspace", color: "red" }),
+    onError: () => toast.error("Could not create workspace"),
   });
 }
 
@@ -50,9 +49,8 @@ export function useDeleteWorkspace() {
     },
     onSuccess: (id) => {
       qc.setQueryData(WORKSPACES_KEY, (old = []) => old.filter((w) => w.id !== id));
-      notifications.show({ message: "Workspace deleted", color: "gray" });
+      toast("Workspace deleted");
     },
-    onError: () =>
-      notifications.show({ message: "Could not delete workspace", color: "red" }),
+    onError: () => toast.error("Could not delete workspace"),
   });
 }

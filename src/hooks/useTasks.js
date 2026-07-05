@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
+import { toast } from "sonner";
 import { taskService, workspaceTaskService } from "../services/api";
 
 // One set of hooks for both trees: pass a workspaceId for workspace tasks,
@@ -42,13 +42,9 @@ export function useCreateTask(workspaceId) {
       qc.setQueryData(key, (old = []) =>
         old.some((t) => t.id === task.id) ? old : [task, ...old]
       );
-      notifications.show({ message: "Task created", color: "teal" });
+      toast.success("Task created");
     },
-    onError: (err) =>
-      notifications.show({
-        message: errMsg(err, "Could not create task"),
-        color: "red",
-      }),
+    onError: (err) => toast.error(errMsg(err, "Could not create task")),
   });
 }
 
@@ -69,10 +65,7 @@ export function useUpdateTask(workspaceId) {
     },
     onError: (err, _vars, ctx) => {
       if (ctx?.previous) qc.setQueryData(key, ctx.previous);
-      notifications.show({
-        message: errMsg(err, "Could not update task"),
-        color: "red",
-      });
+      toast.error(errMsg(err, "Could not update task"));
     },
     onSuccess: (task) => {
       qc.setQueryData(key, (old = []) =>
@@ -92,12 +85,8 @@ export function useDeleteTask(workspaceId) {
     },
     onSuccess: (id) => {
       qc.setQueryData(key, (old = []) => old.filter((t) => t.id !== id));
-      notifications.show({ message: "Task deleted", color: "gray" });
+      toast("Task deleted");
     },
-    onError: (err) =>
-      notifications.show({
-        message: errMsg(err, "Could not delete task"),
-        color: "red",
-      }),
+    onError: (err) => toast.error(errMsg(err, "Could not delete task")),
   });
 }

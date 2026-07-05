@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { notifications } from "@mantine/notifications";
+import { toast } from "sonner";
 import { invitationService } from "../services/api";
 
 const MINE_KEY = ["invitations", "mine"];
@@ -25,13 +25,12 @@ export function useRespondInvitation() {
       if (action === "accept") {
         // accepting grants membership — refresh the workspace list
         qc.invalidateQueries({ queryKey: ["workspaces"] });
-        notifications.show({ message: "Invitation accepted", color: "teal" });
+        toast.success("Invitation accepted");
       } else {
-        notifications.show({ message: "Invitation declined", color: "gray" });
+        toast("Invitation declined");
       }
     },
-    onError: () =>
-      notifications.show({ message: "Could not respond to invitation", color: "red" }),
+    onError: () => toast.error("Could not respond to invitation"),
   });
 }
 
@@ -57,7 +56,7 @@ export function useCreateInvitation(workspaceId) {
       (await invitationService.create(workspaceId, data)).data,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspace", workspaceId, "invitations"] });
-      notifications.show({ message: "Invitation sent", color: "teal" });
+      toast.success("Invitation sent");
     },
     // error handled by the caller so it can show field-level feedback
   });
@@ -72,9 +71,8 @@ export function useRevokeInvitation(workspaceId) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspace", workspaceId, "invitations"] });
-      notifications.show({ message: "Invitation revoked", color: "gray" });
+      toast("Invitation revoked");
     },
-    onError: () =>
-      notifications.show({ message: "Could not revoke invitation", color: "red" }),
+    onError: () => toast.error("Could not revoke invitation"),
   });
 }

@@ -15,7 +15,7 @@ import {
   ThemeIcon,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
+import { toast } from "sonner";
 import { IconCheck, IconArrowRight, IconPlus, IconX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateWorkspace } from "../hooks/useWorkspaces";
@@ -217,16 +217,10 @@ function InviteStep({ workspace, onDone }) {
 
     const justSent = next.filter((r) => r.sent).length;
     if (failures === 0) {
-      notifications.show({
-        message: `${justSent} invite${justSent === 1 ? "" : "s"} sent`,
-        color: "teal",
-      });
+      toast.success(`${justSent} invite${justSent === 1 ? "" : "s"} sent`);
       onDone();
     } else if (justSent > sentCount) {
-      notifications.show({
-        message: "Some invites need attention",
-        color: "yellow",
-      });
+      toast.warning("Some invites need attention");
     }
   }
 
