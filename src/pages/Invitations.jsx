@@ -1,18 +1,10 @@
-import {
-  Title,
-  Text,
-  Card,
-  Group,
-  Stack,
-  Button,
-  Badge,
-  SimpleGrid,
-} from "@mantine/core";
-import { IconMail } from "@tabler/icons-react";
+import { Loader2, Mail } from "lucide-react";
 import { useMyInvitations, useRespondInvitation } from "../hooks/useInvitations";
 import PageShell from "../components/PageShell";
 import TaskSkeleton from "../components/TaskSkeleton";
 import EmptyState from "../components/EmptyState";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 function Invitations() {
   const { data: invites = [], isLoading } = useMyInvitations("pending");
@@ -21,18 +13,18 @@ function Invitations() {
   function renderContent() {
     if (isLoading) {
       return (
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {Array.from({ length: 2 }).map((_, i) => (
             <TaskSkeleton key={i} />
           ))}
-        </SimpleGrid>
+        </div>
       );
     }
 
     if (invites.length === 0) {
       return (
         <EmptyState
-          icon={<IconMail size={28} />}
+          icon={<Mail className="size-7" />}
           title="No pending invitations"
           description="When someone invites you to a workspace, it'll show up here."
         />
@@ -40,56 +32,60 @@ function Invitations() {
     }
 
     return (
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {invites.map((inv) => {
           const busy = respond.isPending && respond.variables?.id === inv.id;
+          const accepting = busy && respond.variables?.action === "accept";
+          const declining = busy && respond.variables?.action === "decline";
           return (
-            <Card key={inv.id} withBorder padding="md" className="tf-card">
-              <Stack gap="xs">
-                <Group justify="space-between" wrap="nowrap">
-                  <Text fw={600} lineClamp={1}>
+            <div key={inv.id} className="tf-card rounded-xl border border-border bg-card p-4">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-nowrap items-center justify-between gap-2">
+                  <p className="truncate font-semibold text-foreground">
                     {inv.workspace?.name}
-                  </Text>
-                  <Badge variant="light" color="brand">
-                    {inv.role}
-                  </Badge>
-                </Group>
-                <Text c="dimmed" size="sm">
+                  </p>
+                  <Badge className="bg-accent text-primary">{inv.role}</Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">
                   <strong>{inv.inviter?.username}</strong> invited you to join.
-                </Text>
-                <Group mt="sm">
+                </p>
+                <div className="mt-2 flex items-center gap-2">
                   <Button
-                    size="xs"
-                    loading={busy && respond.variables?.action === "accept"}
+                    size="sm"
+                    disabled={accepting}
                     onClick={() => respond.mutate({ id: inv.id, action: "accept" })}
                   >
+                    {accepting && <Loader2 className="animate-spin" />}
                     Accept
                   </Button>
                   <Button
-                    size="xs"
-                    variant="default"
-                    loading={busy && respond.variables?.action === "decline"}
+                    size="sm"
+                    variant="outline"
+                    disabled={declining}
                     onClick={() => respond.mutate({ id: inv.id, action: "decline" })}
                   >
+                    {declining && <Loader2 className="animate-spin" />}
                     Decline
                   </Button>
-                </Group>
-              </Stack>
-            </Card>
+                </div>
+              </div>
+            </div>
           );
         })}
-      </SimpleGrid>
+      </div>
     );
   }
 
   return (
     <PageShell>
-      <Stack gap={4} mb="lg">
-        <Title order={2}>Invitations</Title>
-        <Text c="dimmed" size="sm">
+      <div className="mb-6 flex flex-col gap-1">
+        <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
+          Invitations
+        </h1>
+        <p className="text-sm text-muted-foreground">
           Workspace invitations waiting for your response.
-        </Text>
-      </Stack>
+        </p>
+      </div>
       {renderContent()}
     </PageShell>
   );

@@ -1,30 +1,13 @@
-import {
-  Title,
-  Text,
-  Card,
-  Group,
-  Stack,
-  Button,
-  Badge,
-  TextInput,
-  Select,
-  Anchor,
-  Divider,
-  Alert,
-  Loader,
-  Center,
-  Tabs,
-  Avatar,
-  Tooltip,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import {
-  IconArrowLeft,
-  IconSend,
-  IconClipboardList,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  CircleAlert,
+  ClipboardList,
+  Loader2,
+  Send,
+  Users,
+} from "lucide-react";
 import { useAuth } from "../context/auth-context";
 import { useWorkspace, useWorkspaceMembers } from "../hooks/useWorkspaces";
 import {
@@ -34,15 +17,39 @@ import {
 } from "../hooks/useInvitations";
 import PageShell from "../components/PageShell";
 import WorkspaceTasks from "../components/WorkspaceTasks";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
-const STATUS_COLORS = {
-  pending: "yellow",
-  accepted: "green",
-  declined: "gray",
-  revoked: "red",
+const STATUS_BADGE = {
+  pending: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
+  accepted: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+  declined: "bg-secondary text-secondary-foreground",
+  revoked: "bg-destructive/10 text-destructive",
 };
 
-const ROLE_COLORS = { owner: "brand", admin: "violet", member: "gray" };
+const ROLE_BADGE = {
+  owner: "bg-accent text-primary",
+  admin: "bg-violet-500/15 text-violet-700 dark:text-violet-400",
+  member: "bg-secondary text-secondary-foreground",
+};
 
 // Deterministic avatar tint from a username, so each person reads consistently.
 const AVATAR_COLORS = [
@@ -56,13 +63,12 @@ function avatarColor(name = "") {
 
 function MemberAvatar({ username, size = 32 }) {
   return (
-    <Avatar
-      size={size}
-      radius="xl"
-      style={{ background: avatarColor(username), color: "#fff" }}
+    <span
+      className="flex items-center justify-center rounded-full text-xs font-semibold text-white"
+      style={{ width: size, height: size, background: avatarColor(username) }}
     >
       {username?.[0]?.toUpperCase() ?? "?"}
-    </Avatar>
+    </span>
   );
 }
 
@@ -73,18 +79,25 @@ function MemberStack({ workspaceId }) {
   const shown = members.slice(0, 5);
   const extra = members.length - shown.length;
   return (
-    <Tooltip label={`${members.length} member${members.length === 1 ? "" : "s"}`}>
-      <Group gap={0} className="tf-avatar-stack" style={{ cursor: "default" }}>
-        {shown.map((m) => (
-          <MemberAvatar key={m.user_id} username={m.user?.username} size={30} />
-        ))}
-        {extra > 0 && (
-          <Avatar size={30} radius="xl" color="gray">
-            +{extra}
-          </Avatar>
-        )}
-      </Group>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="tf-avatar-stack flex cursor-default items-center">
+            {shown.map((m) => (
+              <MemberAvatar key={m.user_id} username={m.user?.username} size={30} />
+            ))}
+            {extra > 0 && (
+              <span className="flex size-[30px] items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
+                +{extra}
+              </span>
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          {members.length} member{members.length === 1 ? "" : "s"}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
@@ -92,27 +105,27 @@ function MembersList({ workspaceId }) {
   const { data: members = [], isLoading } = useWorkspaceMembers(workspaceId);
   if (isLoading) {
     return (
-      <Center py="md">
-        <Loader size="sm" />
-      </Center>
+      <div className="flex justify-center py-4">
+        <Loader2 className="size-5 animate-spin text-primary" />
+      </div>
     );
   }
   return (
-    <Stack gap="sm">
+    <div className="flex flex-col gap-3">
       {members.map((m) => (
-        <Group key={m.user_id} justify="space-between" wrap="nowrap">
-          <Group gap="sm" wrap="nowrap">
+        <div key={m.user_id} className="flex flex-nowrap items-center justify-between gap-2">
+          <div className="flex flex-nowrap items-center gap-3">
             <MemberAvatar username={m.user?.username} />
-            <Text fw={600} fz="sm">
+            <p className="text-sm font-semibold text-foreground">
               {m.user?.username}
-            </Text>
-          </Group>
-          <Badge variant="light" color={ROLE_COLORS[m.role] ?? "gray"} tt="capitalize">
+            </p>
+          </div>
+          <Badge className={cn("capitalize", ROLE_BADGE[m.role] ?? ROLE_BADGE.member)}>
             {m.role}
           </Badge>
-        </Group>
+        </div>
       ))}
-    </Stack>
+    </div>
   );
 }
 
@@ -121,115 +134,145 @@ function InviteManager({ workspaceId }) {
   const createInvitation = useCreateInvitation(workspaceId);
   const revokeInvitation = useRevokeInvitation(workspaceId);
 
-  const form = useForm({
-    initialValues: { invitee_email: "", role: "member" },
-    validate: {
-      invitee_email: (v) =>
-        /^\S+@\S+\.\S+$/.test(v) ? null : "Enter a valid email",
-    },
-  });
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("member");
+  const [emailError, setEmailError] = useState(null);
 
   // Plain members can't manage invitations — the API returns 403.
   if (invitesQuery.isError) {
     const status = invitesQuery.error?.response?.status;
     if (status === 403) {
       return (
-        <Alert color="gray" variant="light">
-          Only the workspace owner or admins can manage invitations.
+        <Alert>
+          <AlertDescription>
+            Only the workspace owner or admins can manage invitations.
+          </AlertDescription>
         </Alert>
       );
     }
-    return <Alert color="red">Could not load invitations.</Alert>;
+    return (
+      <Alert variant="destructive">
+        <CircleAlert />
+        <AlertDescription>Could not load invitations.</AlertDescription>
+      </Alert>
+    );
   }
 
-  async function submit(values) {
+  async function submit(e) {
+    e.preventDefault();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setEmailError("Enter a valid email");
+      return;
+    }
     try {
       await createInvitation.mutateAsync({
-        invitee_email: values.invitee_email.trim(),
-        role: values.role,
+        invitee_email: email.trim(),
+        role,
       });
-      form.reset();
-    } catch (e) {
-      const detail = e?.response?.data?.detail;
-      form.setFieldError("invitee_email", detail || "Could not send invitation");
+      setEmail("");
+      setRole("member");
+      setEmailError(null);
+    } catch (err) {
+      const detail = err?.response?.data?.detail;
+      setEmailError(detail || "Could not send invitation");
     }
   }
 
   const invites = invitesQuery.data ?? [];
 
   return (
-    <Stack>
-      <form onSubmit={form.onSubmit(submit)}>
-        <Group align="flex-start" gap="sm" wrap="wrap">
-          <TextInput
-            label="Invite by email"
-            placeholder="teammate@example.com"
-            style={{ flex: 1, minWidth: 240 }}
-            {...form.getInputProps("invitee_email")}
-          />
-          <Select
-            label="Role"
-            w={140}
-            allowDeselect={false}
-            data={[
-              { value: "member", label: "Member" },
-              { value: "admin", label: "Admin" },
-            ]}
-            {...form.getInputProps("role")}
-          />
+    <div className="flex flex-col gap-4">
+      <form onSubmit={submit}>
+        <div className="flex flex-wrap items-start gap-3">
+          <div className="flex min-w-[240px] flex-1 flex-col gap-2">
+            <Label htmlFor="invite-email">Invite by email</Label>
+            <Input
+              id="invite-email"
+              placeholder="teammate@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.currentTarget.value);
+                if (emailError) setEmailError(null);
+              }}
+              aria-invalid={emailError ? true : undefined}
+            />
+            {emailError && (
+              <p className="text-sm text-destructive">{emailError}</p>
+            )}
+          </div>
+          <div className="flex w-[140px] flex-col gap-2">
+            <Label htmlFor="invite-role">Role</Label>
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger id="invite-role" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="member">Member</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <Button
-            mt={25}
-            leftSection={<IconSend size={16} />}
             type="submit"
-            loading={createInvitation.isPending}
+            className="mt-[22px]"
+            disabled={createInvitation.isPending}
           >
+            {createInvitation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Send />
+            )}
             Send
           </Button>
-        </Group>
+        </div>
       </form>
 
-      <Divider label="Pending invitations" labelPosition="left" />
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-medium text-muted-foreground">
+          Pending invitations
+        </span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
 
       {invitesQuery.isLoading ? (
-        <Center py="md">
-          <Loader size="sm" />
-        </Center>
+        <div className="flex justify-center py-4">
+          <Loader2 className="size-5 animate-spin text-primary" />
+        </div>
       ) : invites.length === 0 ? (
-        <Text c="dimmed" size="sm">
-          No pending invitations.
-        </Text>
+        <p className="text-sm text-muted-foreground">No pending invitations.</p>
       ) : (
-        <Stack gap="xs">
-          {invites.map((inv) => (
-            <Group key={inv.id} justify="space-between" wrap="nowrap">
-              <Group gap="xs" wrap="nowrap">
-                <Text size="sm" fw={500}>
-                  {inv.invitee?.username}
-                </Text>
-                <Badge size="sm" variant="light" color="brand">
-                  {inv.role}
-                </Badge>
-                <Badge size="sm" variant="light" color={STATUS_COLORS[inv.status]}>
-                  {inv.status}
-                </Badge>
-              </Group>
-              <Button
-                size="compact-sm"
-                variant="subtle"
-                color="red"
-                loading={
-                  revokeInvitation.isPending &&
-                  revokeInvitation.variables === inv.id
-                }
-                onClick={() => revokeInvitation.mutate(inv.id)}
-              >
-                Revoke
-              </Button>
-            </Group>
-          ))}
-        </Stack>
+        <div className="flex flex-col gap-2">
+          {invites.map((inv) => {
+            const revoking =
+              revokeInvitation.isPending &&
+              revokeInvitation.variables === inv.id;
+            return (
+              <div key={inv.id} className="flex flex-nowrap items-center justify-between gap-2">
+                <div className="flex flex-nowrap items-center gap-2">
+                  <p className="text-sm font-medium text-foreground">
+                    {inv.invitee?.username}
+                  </p>
+                  <Badge className="bg-accent text-primary">{inv.role}</Badge>
+                  <Badge className={STATUS_BADGE[inv.status] ?? STATUS_BADGE.declined}>
+                    {inv.status}
+                  </Badge>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-destructive hover:text-destructive"
+                  disabled={revoking}
+                  onClick={() => revokeInvitation.mutate(inv.id)}
+                >
+                  {revoking && <Loader2 className="animate-spin" />}
+                  Revoke
+                </Button>
+              </div>
+            );
+          })}
+        </div>
       )}
-    </Stack>
+    </div>
   );
 }
 
@@ -242,26 +285,34 @@ function WorkspaceDetail() {
   if (isLoading) {
     return (
       <PageShell>
-        <Center py={80}>
-          <Loader />
-        </Center>
+        <div className="flex justify-center py-20">
+          <Loader2 className="size-7 animate-spin text-primary" />
+        </div>
       </PageShell>
     );
   }
+
+  const backLink = (
+    <Link
+      to="/workspaces"
+      className="inline-flex items-center gap-1 text-sm text-muted-foreground no-underline transition-colors hover:text-foreground"
+    >
+      <ArrowLeft className="size-3.5" /> Back to workspaces
+    </Link>
+  );
 
   if (isError) {
     const status = error?.response?.status;
     return (
       <PageShell>
-        <Anchor component={Link} to="/workspaces" size="sm">
-          <Group gap={4}>
-            <IconArrowLeft size={14} /> Back to workspaces
-          </Group>
-        </Anchor>
-        <Alert color="red" mt="md">
-          {status === 403 || status === 404
-            ? "This workspace doesn't exist or you don't have access to it."
-            : "Could not load this workspace."}
+        {backLink}
+        <Alert variant="destructive" className="mt-4">
+          <CircleAlert />
+          <AlertDescription>
+            {status === 403 || status === 404
+              ? "This workspace doesn't exist or you don't have access to it."
+              : "Could not load this workspace."}
+          </AlertDescription>
         </Alert>
       </PageShell>
     );
@@ -271,59 +322,63 @@ function WorkspaceDetail() {
 
   return (
     <PageShell>
-      <Anchor component={Link} to="/workspaces" size="sm" c="dimmed">
-        <Group gap={4}>
-          <IconArrowLeft size={14} /> Back to workspaces
-        </Group>
-      </Anchor>
+      {backLink}
 
-      <Group justify="space-between" align="flex-start" mt="sm" mb="lg" wrap="nowrap">
+      <div className="mb-6 mt-3 flex flex-nowrap items-start justify-between gap-3">
         <div>
-          <Group gap="sm">
-            <Title order={2}>{workspace.name}</Title>
-            <Badge variant="light" color={isOwner ? "brand" : "gray"}>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
+              {workspace.name}
+            </h1>
+            <Badge
+              className={
+                isOwner ? "bg-accent text-primary" : "bg-secondary text-secondary-foreground"
+              }
+            >
               {isOwner ? "Owner" : "Member"}
             </Badge>
-          </Group>
+          </div>
           {workspace.description && (
-            <Text c="dimmed" size="sm" mt={4}>
+            <p className="mt-1 text-sm text-muted-foreground">
               {workspace.description}
-            </Text>
+            </p>
           )}
         </div>
         <MemberStack workspaceId={workspaceId} />
-      </Group>
+      </div>
 
-      <Tabs defaultValue="tasks" keepMounted={false}>
-        <Tabs.List mb="lg">
-          <Tabs.Tab value="tasks" leftSection={<IconClipboardList size={16} />}>
+      <Tabs defaultValue="tasks">
+        <TabsList className="mb-6">
+          <TabsTrigger value="tasks">
+            <ClipboardList className="size-4" />
             Tasks
-          </Tabs.Tab>
-          <Tabs.Tab value="members" leftSection={<IconUsersGroup size={16} />}>
-            Members & invitations
-          </Tabs.Tab>
-        </Tabs.List>
+          </TabsTrigger>
+          <TabsTrigger value="members">
+            <Users className="size-4" />
+            Members &amp; invitations
+          </TabsTrigger>
+        </TabsList>
 
-        <Tabs.Panel value="tasks">
+        <TabsContent value="tasks">
           <WorkspaceTasks workspaceId={workspaceId} />
-        </Tabs.Panel>
+        </TabsContent>
 
-        <Tabs.Panel value="members">
-          <Stack gap="lg">
-            <Card withBorder radius="lg" padding="lg">
-              <Title order={4} mb="md">
+        <TabsContent value="members">
+          <div className="flex flex-col gap-6">
+            <div className="tf-card rounded-xl border border-border bg-card p-6">
+              <h2 className="mb-4 text-lg font-extrabold tracking-tight text-foreground">
                 Members
-              </Title>
+              </h2>
               <MembersList workspaceId={workspaceId} />
-            </Card>
-            <Card withBorder radius="lg" padding="lg">
-              <Title order={4} mb="md">
+            </div>
+            <div className="tf-card rounded-xl border border-border bg-card p-6">
+              <h2 className="mb-4 text-lg font-extrabold tracking-tight text-foreground">
                 Invitations
-              </Title>
+              </h2>
               <InviteManager workspaceId={workspaceId} />
-            </Card>
-          </Stack>
-        </Tabs.Panel>
+            </div>
+          </div>
+        </TabsContent>
       </Tabs>
     </PageShell>
   );
