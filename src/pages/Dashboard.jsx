@@ -136,39 +136,55 @@ function Dashboard() {
 
   return (
     <PageShell>
-      <h1>My Tasks</h1>
-      <p>Everything on your plate.</p>
-      <button type="button" onClick={openCreate}>
-        New task
-      </button>
-
-      <div>
-        <input
-          placeholder="Search tasks…"
-          aria-label="Search tasks"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-        />
-        <select
-          aria-label="Sort tasks"
-          value={sort}
-          onChange={(e) => setSort(e.currentTarget.value || "newest")}
-        >
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="title">Title A–Z</option>
-        </select>
-        <select
-          aria-label="View"
-          value={view}
-          onChange={(e) => changeView(e.currentTarget.value)}
-        >
-          <option value="board">Board</option>
-          <option value="grid">Grid</option>
-        </select>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">My Tasks</h1>
+        <p className="text-muted-foreground">Everything on your plate.</p>
       </div>
 
-      {renderContent()}
+      <div className="flex items-center gap-3 mb-8">
+        <button 
+          type="button" 
+          onClick={openCreate}
+          className="bg-accent text-accent-foreground font-medium px-4 py-2 rounded hover:opacity-90 transition-opacity"
+        >
+          New task
+        </button>
+      </div>
+
+      <div className="bg-background border border-border rounded-lg p-4 mb-8 space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            placeholder="Search tasks…"
+            aria-label="Search tasks"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            className="flex-1"
+          />
+          <select
+            aria-label="Sort tasks"
+            value={sort}
+            onChange={(e) => setSort(e.currentTarget.value || "newest")}
+            className="sm:w-auto"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A–Z</option>
+          </select>
+          <select
+            aria-label="View"
+            value={view}
+            onChange={(e) => changeView(e.currentTarget.value)}
+            className="sm:w-auto"
+          >
+            <option value="board">Board</option>
+            <option value="grid">Grid</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        {renderContent()}
+      </div>
 
       <TaskFormModal
         opened={formOpened}
@@ -182,7 +198,7 @@ function Dashboard() {
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title="Delete task"
-        description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
+        description={`Delete "${deleteTarget?.title ?? ""}"? This can't be undone.`}
         onConfirm={() => deleteTask.mutate(deleteTarget.id)}
       />
     </PageShell>

@@ -145,7 +145,7 @@ function WorkspaceTasks({ workspaceId }) {
     }
 
     return (
-      <ul>
+      <ul className="space-y-3">
         {visibleTasks.map((task) => (
           <li key={task.id}>
             <TaskCard
@@ -165,28 +165,41 @@ function WorkspaceTasks({ workspaceId }) {
 
   return (
     <>
-      <div>
-        <input
-          placeholder="Search tasks…"
-          aria-label="Search tasks"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-        />
-        <span>{CONN_LABEL[connStatus] ?? CONN_LABEL.connecting}</span>
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex-1">
+          <input
+            placeholder="Search tasks…"
+            aria-label="Search tasks"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            className="w-full"
+          />
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted px-3 py-2 rounded whitespace-nowrap">
+          <div className="w-2 h-2 bg-success rounded-full"></div>
+          {CONN_LABEL[connStatus] ?? CONN_LABEL.connecting}
+        </div>
         <select
           aria-label="View"
           value={view}
           onChange={(e) => changeView(e.currentTarget.value)}
+          className="w-28"
         >
           <option value="board">Board</option>
           <option value="grid">Grid</option>
         </select>
-        <button type="button" onClick={openCreate}>
+        <button 
+          type="button" 
+          onClick={openCreate}
+          className="bg-accent text-accent-foreground font-medium px-4 py-2 rounded hover:opacity-90 transition-opacity whitespace-nowrap"
+        >
           New task
         </button>
       </div>
 
-      {renderContent()}
+      <div className="mb-8">
+        {renderContent()}
+      </div>
 
       <TaskFormModal
         opened={formOpened}
@@ -201,7 +214,7 @@ function WorkspaceTasks({ workspaceId }) {
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title="Delete task"
-        description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
+        description={`Delete "${deleteTarget?.title ?? ""}"? This can't be undone.`}
         onConfirm={() => deleteTask.mutate(deleteTarget.id)}
       />
     </>

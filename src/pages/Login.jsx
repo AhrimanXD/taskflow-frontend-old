@@ -38,47 +38,57 @@ function Login() {
   }
 
   return (
-    <div>
-      <h1>Welcome back</h1>
-      <p>Sign in to your account to continue.</p>
-
-      <form onSubmit={handleSubmit} noValidate>
-        {errors.form && <p role="alert">{errors.form}</p>}
-
-        <div>
-          <label htmlFor="login-email">Email</label>
-          <input
-            id="login-email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            aria-invalid={Boolean(errors.email)}
-            required
-          />
-          {errors.email && <p>{errors.email}</p>}
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold mb-3">Welcome back</h1>
+          <p className="text-muted-foreground">Sign in to your account to continue.</p>
         </div>
 
-        <div>
-          <label htmlFor="login-password">Password</label>
-          <input
-            id="login-password"
-            type="password"
-            placeholder="Your password"
-            value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          {errors.form && <p role="alert">{errors.form}</p>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
+          <div className="space-y-2">
+            <label htmlFor="login-email" className="text-sm font-medium">Email</label>
+            <input
+              id="login-email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              aria-invalid={Boolean(errors.email)}
+              required
+              className="w-full"
+            />
+            {errors.email && <p className="text-xs text-error">{errors.email}</p>}
+          </div>
 
-      <p>
-        Don&apos;t have an account? <Link to="/register">Create one</Link>
-      </p>
+          <div className="space-y-2">
+            <label htmlFor="login-password" className="text-sm font-medium">Password</label>
+            <input
+              id="login-password"
+              type="password"
+              placeholder="Your password"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              required
+              className="w-full"
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-accent text-accent-foreground font-medium py-2 px-4 rounded hover:opacity-90 disabled:opacity-60 transition-opacity"
+          >
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          Don&apos;t have an account? <Link to="/register" className="text-accent font-medium hover:opacity-80">Create one</Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -44,62 +44,73 @@ function Register() {
   }
 
   return (
-    <div>
-      <h1>Create your account</h1>
-      <p>Start organizing work with your team.</p>
-
-      <form onSubmit={handleSubmit} noValidate>
-        {errors.form && <p role="alert">{errors.form}</p>}
-
-        <div>
-          <label htmlFor="register-email">Email</label>
-          <input
-            id="register-email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.currentTarget.value)}
-            aria-invalid={Boolean(errors.email)}
-            required
-          />
-          {errors.email && <p>{errors.email}</p>}
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold mb-3">Create your account</h1>
+          <p className="text-muted-foreground">Start organizing work with your team.</p>
         </div>
 
-        <div>
-          <label htmlFor="register-username">Username</label>
-          <input
-            id="register-username"
-            placeholder="yourusername"
-            value={username}
-            onChange={(e) => setUsername(e.currentTarget.value)}
-            aria-invalid={Boolean(errors.username)}
-            required
-          />
-          {errors.username && <p>{errors.username}</p>}
-        </div>
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          {errors.form && <p role="alert">{errors.form}</p>}
 
-        <div>
-          <label htmlFor="register-password">Password</label>
-          <input
-            id="register-password"
-            type="password"
-            placeholder="At least 6 characters"
-            value={password}
-            onChange={(e) => setPassword(e.currentTarget.value)}
-            aria-invalid={Boolean(errors.password)}
-            required
-          />
-          {errors.password && <p>{errors.password}</p>}
-        </div>
+          <div className="space-y-2">
+            <label htmlFor="register-email" className="text-sm font-medium">Email</label>
+            <input
+              id="register-email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              aria-invalid={Boolean(errors.email)}
+              required
+              className="w-full"
+            />
+            {errors.email && <p className="text-xs text-error">{errors.email}</p>}
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating account…" : "Create account"}
-        </button>
-      </form>
+          <div className="space-y-2">
+            <label htmlFor="register-username" className="text-sm font-medium">Username</label>
+            <input
+              id="register-username"
+              placeholder="yourusername"
+              value={username}
+              onChange={(e) => setUsername(e.currentTarget.value)}
+              aria-invalid={Boolean(errors.username)}
+              required
+              className="w-full"
+            />
+            {errors.username && <p className="text-xs text-error">{errors.username}</p>}
+          </div>
 
-      <p>
-        Already have an account? <Link to="/login">Sign in</Link>
-      </p>
+          <div className="space-y-2">
+            <label htmlFor="register-password" className="text-sm font-medium">Password</label>
+            <input
+              id="register-password"
+              type="password"
+              placeholder="At least 6 characters"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              aria-invalid={Boolean(errors.password)}
+              required
+              className="w-full"
+            />
+            {errors.password && <p className="text-xs text-error">{errors.password}</p>}
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-accent text-accent-foreground font-medium py-2 px-4 rounded hover:opacity-90 disabled:opacity-60 transition-opacity"
+          >
+            {loading ? "Creating account…" : "Create account"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          Already have an account? <Link to="/login" className="text-accent font-medium hover:opacity-80">Sign in</Link>
+        </p>
+      </div>
     </div>
   );
 }

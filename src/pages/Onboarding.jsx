@@ -31,12 +31,14 @@ function WorkspaceStep({ onCreated }) {
   }
 
   return (
-    <form onSubmit={submit}>
-      <h2>Create your workspace</h2>
-      <p>A workspace is where you and your team plan and track work together.</p>
+    <form onSubmit={submit} className="space-y-6 max-w-2xl">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-2">Create your workspace</h2>
+        <p className="text-muted-foreground">A workspace is where you and your team plan and track work together.</p>
+      </div>
 
-      <div>
-        <label htmlFor="onboarding-name">Workspace name (required)</label>
+      <div className="space-y-2">
+        <label htmlFor="onboarding-name" className="text-sm font-medium">Workspace name (required)</label>
         <input
           id="onboarding-name"
           placeholder="e.g. Acme Inc"
@@ -47,22 +49,28 @@ function WorkspaceStep({ onCreated }) {
             if (nameError) setNameError(null);
           }}
           aria-invalid={nameError ? true : undefined}
+          className="w-full"
         />
-        {nameError && <p>{nameError}</p>}
+        {nameError && <p className="text-xs text-error">{nameError}</p>}
       </div>
 
-      <div>
-        <label htmlFor="onboarding-description">Description</label>
+      <div className="space-y-2">
+        <label htmlFor="onboarding-description" className="text-sm font-medium">Description</label>
         <textarea
           id="onboarding-description"
           placeholder="What is this workspace for? (optional)"
           rows={2}
           value={description}
           onChange={(e) => setDescription(e.currentTarget.value)}
+          className="w-full"
         />
       </div>
 
-      <button type="submit" disabled={createWorkspace.isPending}>
+      <button 
+        type="submit" 
+        disabled={createWorkspace.isPending}
+        className="bg-accent text-accent-foreground font-medium px-6 py-2 rounded hover:opacity-90 disabled:opacity-60 transition-opacity"
+      >
         Continue
       </button>
     </form>
@@ -130,60 +138,94 @@ function InviteStep({ workspace, onDone }) {
   }
 
   return (
-    <div>
-      <h2>Invite your team</h2>
-      <p>
-        Taskflow is better together. Add teammates to{" "}
-        <strong>{workspace.name}</strong> to start collaborating.
-      </p>
+    <div className="space-y-6 max-w-2xl">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-2">Invite your team</h2>
+        <p className="text-muted-foreground">
+          Taskflow is better together. Add teammates to{" "}
+          <strong className="text-foreground">{workspace.name}</strong> to start collaborating.
+        </p>
+      </div>
 
-      {rows.map((row, i) => (
-        <div key={i}>
-          <input
-            placeholder="teammate@example.com"
-            value={row.email}
-            disabled={row.sent}
-            aria-invalid={row.error ? true : undefined}
-            onChange={(e) =>
-              patchRow(i, { email: e.currentTarget.value, error: null })
-            }
-          />
-          {row.sent && <span> (sent)</span>}
-          {row.error && <p>{row.error}</p>}
-          <select
-            aria-label="Role"
-            value={row.role}
-            disabled={row.sent}
-            onChange={(e) => patchRow(i, { role: e.currentTarget.value || "member" })}
-          >
-            <option value="member">Member</option>
-            <option value="admin">Admin</option>
-          </select>
-          <button
-            type="button"
-            aria-label="Remove row"
-            disabled={rows.length === 1 || row.sent}
-            onClick={() => removeRow(i)}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
+      <div className="space-y-3">
+        {rows.map((row, i) => (
+          <div key={i} className="flex gap-2">
+            <input
+              placeholder="teammate@example.com"
+              value={row.email}
+              disabled={row.sent}
+              aria-invalid={row.error ? true : undefined}
+              onChange={(e) =>
+                patchRow(i, { email: e.currentTarget.value, error: null })
+              }
+              className="flex-1"
+            />
+            <select
+              aria-label="Role"
+              value={row.role}
+              disabled={row.sent}
+              onChange={(e) => patchRow(i, { role: e.currentTarget.value || "member" })}
+              className="w-24"
+            >
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button
+              type="button"
+              aria-label="Remove row"
+              disabled={rows.length === 1 || row.sent}
+              className="text-sm px-3 py-2 rounded bg-muted hover:bg-border text-foreground disabled:opacity-50 transition-colors"
+              onClick={() => removeRow(i)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        {rows.length > 0 && rows.some(r => r.error) && (
+          <div className="space-y-2">
+            {rows.map((row, i) => 
+              row.error ? <p key={i} className="text-xs text-error">{row.error}</p> : null
+            )}
+          </div>
+        )}
+        {rows.length > 0 && rows.some(r => r.sent) && (
+          <div className="text-sm text-success">
+            {rows.filter(r => r.sent).length} invite{rows.filter(r => r.sent).length === 1 ? "" : "s"} sent
+          </div>
+        )}
+      </div>
 
-      <button type="button" onClick={addRow}>
-        Add another
+      <button 
+        type="button" 
+        onClick={addRow}
+        className="text-sm font-medium text-accent hover:opacity-80"
+      >
+        + Add another
       </button>
 
-      <div>
-        <button type="button" onClick={onDone}>
+      <div className="flex gap-3 pt-4">
+        <button 
+          type="button" 
+          onClick={onDone}
+          className="bg-muted text-foreground font-medium px-6 py-2 rounded hover:bg-muted/80 transition-colors"
+        >
           Skip for now
         </button>
         {pending > 0 ? (
-          <button type="button" disabled={sending} onClick={sendAll}>
+          <button 
+            type="button" 
+            disabled={sending} 
+            onClick={sendAll}
+            className="bg-accent text-accent-foreground font-medium px-6 py-2 rounded hover:opacity-90 disabled:opacity-60 transition-opacity"
+          >
             Send {pending} invite{pending === 1 ? "" : "s"}
           </button>
         ) : (
-          <button type="button" onClick={onDone}>
+          <button 
+            type="button" 
+            onClick={onDone}
+            className="bg-accent text-accent-foreground font-medium px-6 py-2 rounded hover:opacity-90 transition-opacity"
+          >
             Go to workspace
           </button>
         )}
@@ -202,22 +244,36 @@ function Onboarding() {
   }
 
   return (
-    <div>
-      <h1>Taskflow</h1>
-      <p>
-        Step {step + 1} of {STEPS.length}: {STEPS[step]}
-      </p>
+    <div className="min-h-screen bg-background px-4 py-12">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-12">
+          <h1 className="text-3xl font-bold mb-2">Taskflow</h1>
+          <p className="text-sm text-muted-foreground">
+            Step {step + 1} of {STEPS.length}: {STEPS[step]}
+          </p>
+          <div className="flex gap-1 mt-4">
+            {STEPS.map((_, i) => (
+              <div 
+                key={i} 
+                className={`h-1 flex-1 rounded-full transition-colors ${
+                  i <= step ? "bg-accent" : "bg-muted"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
 
-      {step === 0 ? (
-        <WorkspaceStep
-          onCreated={(ws) => {
-            setWorkspace(ws);
-            setStep(1);
-          }}
-        />
-      ) : (
-        <InviteStep workspace={workspace} onDone={goToWorkspace} />
-      )}
+        {step === 0 ? (
+          <WorkspaceStep
+            onCreated={(ws) => {
+              setWorkspace(ws);
+              setStep(1);
+            }}
+          />
+        ) : (
+          <InviteStep workspace={workspace} onDone={goToWorkspace} />
+        )}
+      </div>
     </div>
   );
 }

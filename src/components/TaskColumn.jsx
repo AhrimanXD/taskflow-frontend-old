@@ -14,14 +14,18 @@ function TaskColumn({
   const meta = statusMeta(status);
 
   return (
-    <section>
-      <h2>
-        {meta.label} ({tasks.length})
-      </h2>
+    <section className="flex-1 min-w-0">
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold">
+          {meta.label} <span className="text-sm font-normal text-muted-foreground">({tasks.length})</span>
+        </h2>
+      </div>
       {tasks.length === 0 ? (
-        <p>No tasks</p>
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No tasks</p>
+        </div>
       ) : (
-        <ul>
+        <ul className="space-y-3">
           {tasks.map((task) => (
             <li key={task.id}>
               <TaskCard

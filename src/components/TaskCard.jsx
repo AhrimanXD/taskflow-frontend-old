@@ -30,48 +30,68 @@ function TaskCard({
     : assignee?.username ?? `#${task.assignee_id}`;
 
   return (
-    <article>
-      <h3>{task.title}</h3>
-      {task.description && <p>{task.description}</p>}
+    <article className="border border-border rounded-lg p-4 bg-background hover:shadow-sm transition-shadow">
+      <div className="mb-3">
+        <h3 className="text-base font-semibold mb-1">{task.title}</h3>
+        {task.description && <p className="text-sm text-muted-foreground">{task.description}</p>}
+      </div>
 
-      <p>
-        Status: {meta.label}{" "}
-        <select
-          aria-label="Set status"
-          value={task.status}
-          onChange={(e) => onStatusChange(task, e.currentTarget.value)}
+      <div className="space-y-2 text-sm mb-4">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">Status:</span>
+          <select
+            aria-label="Set status"
+            value={task.status}
+            onChange={(e) => onStatusChange(task, e.currentTarget.value)}
+            className="text-sm px-2 py-1 border border-border rounded bg-muted text-foreground"
+          >
+            {TASK_STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {due && (
+          <div>
+            <span className="text-muted-foreground">Due:</span> {due.label}
+            {due.overdue && <span className="text-error ml-2">(overdue)</span>}
+          </div>
+        )}
+
+        {task.assignee_id != null && (
+          <div>
+            <span className="text-muted-foreground">Assigned to:</span> {assigneeLabel}
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2 flex-wrap">
+        <button 
+          type="button" 
+          onClick={() => onEdit(task)}
+          className="text-sm px-3 py-1 rounded bg-muted hover:bg-accent hover:text-accent-foreground text-foreground transition-colors"
         >
-          {TASK_STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-      </p>
-
-      {due && (
-        <p>
-          Due: {due.label}
-          {due.overdue ? " (overdue)" : ""}
-        </p>
-      )}
-
-      {task.assignee_id != null && <p>Assigned to: {assigneeLabel}</p>}
-
-      <button type="button" onClick={() => onEdit(task)}>
-        Edit
-      </button>
-      {onAssignToggle && (
-        <button
-          type="button"
-          onClick={() => onAssignToggle(task, assignedToMe ? null : currentUserId)}
-        >
-          {assignedToMe ? "Unassign me" : "Assign to me"}
+          Edit
         </button>
-      )}
-      <button type="button" onClick={() => onDelete(task)}>
-        Delete
-      </button>
+        {onAssignToggle && (
+          <button
+            type="button"
+            onClick={() => onAssignToggle(task, assignedToMe ? null : currentUserId)}
+            className="text-sm px-3 py-1 rounded bg-muted hover:bg-accent hover:text-accent-foreground text-foreground transition-colors"
+          >
+            {assignedToMe ? "Unassign me" : "Assign to me"}
+          </button>
+        )}
+        <button 
+          type="button" 
+          onClick={() => onDelete(task)}
+          className="text-sm px-3 py-1 rounded bg-muted hover:bg-error hover:text-white text-foreground transition-colors ml-auto"
+        >
+          Delete
+        </button>
+      </div>
     </article>
   );
 }

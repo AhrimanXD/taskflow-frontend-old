@@ -5,7 +5,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
   const groups = groupByStatus(tasks);
 
   return (
-    <div>
+    <div className="flex gap-6 overflow-x-auto pb-4">
       {[...groups.entries()].map(([status, columnTasks]) => (
         <TaskColumn
           key={status}
