@@ -51,7 +51,7 @@ function Register() {
           <p className="text-muted-foreground">Start organizing work with your team.</p>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-5 mb-12">
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
           {errors.form && <p role="alert">{errors.form}</p>}
 
           <div className="space-y-2">
@@ -107,7 +107,7 @@ function Register() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground mt-12">
           Already have an account? <Link to="/login" className="text-accent font-medium hover:opacity-80">Sign in</Link>
         </p>
       </div>
