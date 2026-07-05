@@ -45,7 +45,7 @@ function Login() {
           <p className="text-muted-foreground">Sign in to your account to continue.</p>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        <form onSubmit={handleSubmit} noValidate className="space-y-5 mb-12">
           {errors.form && <p role="alert">{errors.form}</p>}
 
           <div className="space-y-2">
@@ -85,7 +85,7 @@ function Login() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-12">
+        <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account? <Link to="/register" className="text-accent font-medium hover:opacity-80">Create one</Link>
         </p>
       </div>
