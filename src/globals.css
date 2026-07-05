@@ -1,24 +1,37 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  /* Colors - Modern Minimalist Palette */
-  --background: #ffffff;
-  --foreground: #0f0f0f;
-  --muted: #f2f2f2;
-  --muted-foreground: #666666;
-  --accent: #2563eb;
-  --accent-foreground: #ffffff;
-  --border: #e5e5e5;
-  --input: #f8f8f8;
-  --ring: #2563eb;
-  --radius: 0.5rem;
-
-  /* Semantic colors */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
+  /* Primary Colors */
+  --bg: #f6f7f9;
+  --surface: #fff;
+  --surface2: #f8f9fb;
+  --text: #171a1f;
+  --text2: #697079;
+  --text3: #9aa1ac;
+  --border: #e8ebef;
+  --border2: #dfe3e9;
+  
+  /* Accent & Primary */
+  --primary: #2f6cf6;
+  --accent: #2f6cf6;
+  --onPrimary: #fff;
+  
+  /* Semantic */
+  --highBg: #fdeaea;
+  --highText: #d23f4f;
+  --medBg: #fdf0dd;
+  --medText: #b07415;
+  --lowBg: #e9f0ff;
+  --lowText: #2f6cf6;
+  --doneText: #138a52;
+  
+  /* Shadows */
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06);
+  --shadowLg: 0 4px 12px rgba(0,0,0,0.08);
+  
+  /* Radius */
+  --radius: 11px;
 }
 
 * {
@@ -28,9 +41,9 @@
 }
 
 html {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: Inter, system-ui, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -38,6 +51,11 @@ html {
 body {
   line-height: 1.6;
   font-size: 1rem;
+  background: var(--bg);
+}
+
+input, textarea, select {
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
 }
 
 /* Typography */
