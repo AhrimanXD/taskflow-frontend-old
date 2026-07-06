@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Taskflow — Design Template</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    :root {
+      --surface: #f8fafc;
+      --surface-secondary: #ffffff;
+      --surface-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #eef2ff;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --danger-light: #fef2f2;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --pending: #6b7280;
+      --pending-light: #f3f4f6;
+      --ongoing: #6366f1;
+      --ongoing-light: #eef2ff;
+      --completed: #10b981;
+      --completed-light: #ecfdf5;
+      --overlay: rgba(15, 23, 42, 0.4);
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 48px 32px 120px; display: flex; flex-direction: column; gap: 60px; }
+    .section-header { display: flex; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+    .section-header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+    .section-header span { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+    .mockup-label { display: flex; align-items: center; gap: 10px; padding-left: 2px; margin-bottom: 14px; }
+    .mockup-label span:first-child { font-size: 13px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.02em; }
+    .mockup-label span:last-child { font-size: 12px; font-weight: 500; font-family: 'Plus Jakarta Sans', monospace; color: var(--text-tertiary); }
+    .mockup { border-radius: 18px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .card { background: var(--surface-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .swatch { height: 54px; border-radius: 10px; border: 1px solid rgba(120,130,145,0.18); }
+    .badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px; display: inline-block; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(120,130,145,0.3); border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===================== DESIGN TOKENS ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Design tokens</h2>
+      <span>Color · Typography · Shadows · Status</span>
+    </div>
+    <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:34px;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--text-tertiary);">CORE COLORS</span>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div><div class="swatch" style="background:#f8fafc;"></div><span style="font-size:12px;font-weight:600;">surface</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#f8fafc</span></div>
+          <div><div class="swatch" style="background:#ffffff;"></div><span style="font-size:12px;font-weight:600;">surface-secondary</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#ffffff</span></div>
+          <div><div class="swatch" style="background:#f1f5f9;"></div><span style="font-size:12px;font-weight:600;">surface-hover</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#f1f5f9</span></div>
+          <div><div class="swatch" style="background:#e2e8f0;"></div><span style="font-size:12px;font-weight:600;">border</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#e2e8f0</span></div>
+          <div><div class="swatch" style="background:#cbd5e1;"></div><span style="font-size:12px;font-weight:600;">border-hover</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#cbd5e1</span></div>
+          <div><div class="swatch" style="background:#0f172a;"></div><span style="font-size:12px;font-weight:600;">text</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#0f172a</span></div>
+          <div><div class="swatch" style="background:#475569;"></div><span style="font-size:12px;font-weight:600;">text-secondary</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#475569</span></div>
+          <div><div class="swatch" style="background:#94a3b8;"></div><span style="font-size:12px;font-weight:600;">text-tertiary</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#94a3b8</span></div>
+          <div><div class="swatch" style="background:#6366f1;"></div><span style="font-size:12px;font-weight:600;">primary</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#6366f1</span></div>
+          <div><div class="swatch" style="background:#4f46e5;"></div><span style="font-size:12px;font-weight:600;">primary-hover</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#4f46e5</span></div>
+          <div><div class="swatch" style="background:#eef2ff;"></div><span style="font-size:12px;font-weight:600;">primary-light</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#eef2ff</span></div>
+          <div><div class="swatch" style="background:#ef4444;"></div><span style="font-size:12px;font-weight:600;">danger</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#ef4444</span></div>
+          <div><div class="swatch" style="background:#10b981;"></div><span style="font-size:12px;font-weight:600;">success</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#10b981</span></div>
+          <div><div class="swatch" style="background:#f59e0b;"></div><span style="font-size:12px;font-weight:600;">warning</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#f59e0b</span></div>
+          <div><div class="swatch" style="background:#6b7280;"></div><span style="font-size:12px;font-weight:600;">pending</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">#6b7280</span></div>
+          <div><div class="swatch" style="background:rgba(15,23,42,0.4);"></div><span style="font-size:12px;font-weight:600;">overlay</span><span style="display:block;font-size:10px;color:var(--text-tertiary);">rgba(15,23,42,0.4)</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <div>
+          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--text-tertiary);">TYPOGRAPHY — PLUS JAKARTA SANS</span>
+          <div style="margin-top:12px;display:flex;flex-direction:column;gap:2px;">
+            <span style="font-size:28px;font-weight:800;letter-spacing:-0.02em;">Plan, track, ship together</span>
+            <span style="font-size:18px;font-weight:700;">Heading · 18 / 700</span>
+            <span style="font-size:14px;font-weight:600;">Body strong · 14 / 600</span>
+            <span style="font-size:13px;font-weight:500;color:var(--text-secondary);">Body muted · 13 / 500</span>
+            <span style="font-size:12px;font-weight:500;color:var(--text-tertiary);">Meta · 12 / 500 · tertiary</span>
+            <span style="font-size:11px;font-weight:700;color:var(--text-tertiary);">Badge · 11 / 700 · tertiary</span>
+          </div>
+        </div>
+        <div>
+          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--text-tertiary);">STATUS COLORS</span>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge" style="background:var(--pending-light);color:var(--pending);">pending</span>
+            <span class="badge" style="background:var(--ongoing-light);color:var(--ongoing);">ongoing</span>
+            <span class="badge" style="background:var(--completed-light);color:var(--completed);">completed</span>
+            <span class="badge" style="background:var(--danger-light);color:var(--danger);">danger</span>
+            <span class="badge" style="background:var(--warning-light);color:var(--warning);">warning</span>
+          </div>
+        </div>
+        <div>
+          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--text-tertiary);">BORDER RADIUS</span>
+          <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+            <span style="font-size:13px;font-weight:600;padding:6px 14px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:8px;">rounded-lg · 8px</span>
+            <span style="font-size:13px;font-weight:600;padding:6px 14px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:10px;">rounded-xl · 10px</span>
+            <span style="font-size:13px;font-weight:600;padding:6px 14px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:12px;">rounded-2xl · 12px</span>
+            <span style="font-size:13px;font-weight:600;padding:6px 14px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;">rounded-3xl · 16px</span>
+          </div>
+        </div>
+        <div>
+          <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--text-tertiary);">BUTTON STYLES</span>
+          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:14px;font-weight:700;padding:10px 20px;background:var(--primary);color:#fff;border-radius:10px;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Primary</span>
+            <span style="font-size:14px;font-weight:600;padding:10px 20px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:10px;">Secondary</span>
+            <span style="font-size:14px;font-weight:600;padding:10px 20px;color:var(--danger);background:var(--danger-light);border-radius:10px;">Danger</span>
+            <span style="font-size:14px;font-weight:600;padding:10px 20px;color:var(--text-tertiary);border-radius:10px;">Ghost</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Sidebar</h2>
+      <span>AppHeader · Navigation · User section</span>
+    </div>
+    <div class="mockup-label">
+      <span>01 · Sidebar (expanded & collapsed)</span>
+      <span>React component</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <!-- Expanded -->
+      <div style="height:480px;border-radius:18px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.06);display:flex;">
+        <div style="width:256px;background:var(--surface-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;">
+          <div style="height:64px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);">
+            <span style="font-size:20px;font-weight:800;"><span style="color:var(--primary);">Task</span>flow</span>
+          </div>
+          <nav style="flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--primary-light);color:var(--primary);font-size:14px;font-weight:700;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+              <span>Tasks</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--text-secondary);font-size:14px;font-weight:600;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.5 2A1.5 1.5 0 003 3.5v13A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V7.621a1.5 1.5 0 00-.44-1.06l-4.12-4.122A1.5 1.5 0 0011.378 2H4.5zm2.25 8.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5zm0 3a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z"/></svg>
+              <span>Workspaces</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--text-secondary);font-size:14px;font-weight:600;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"/><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"/></svg>
+              <span>Invitations</span>
+              <span style="margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;font-size:11px;font-weight:700;border-radius:999px;background:var(--primary);color:#fff;">3</span>
+            </div>
+          </nav>
+          <div style="padding:12px;border-top:1px solid var(--border);">
+            <div style="display:flex;align-items:center;gap:12px;padding:8px 12px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary);">J</div>
+              <div><p style="margin:0;font-size:14px;font-weight:700;color:var(--text);">John Doe</p><p style="margin:0;font-size:12px;color:var(--text-tertiary);">john@acme.com</p></div>
+            </div>
+            <div style="margin-top:4px;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;color:var(--text-tertiary);font-size:14px;font-weight:600;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M17 4.25A2.25 2.25 0 0014.75 2h-5.5A2.25 2.25 0 007 4.25v2a.75.75 0 001.5 0v-2a.75.75 0 01.75-.75h5.5a.75.75 0 01.75.75v11.5a.75.75 0 01-.75.75h-5.5a.75.75 0 01-.75-.75v-2a.75.75 0 00-1.5 0v2A2.25 2.25 0 009.25 18h5.5A2.25 2.25 0 0017 15.75V4.25z"/><path fillRule="evenodd" d="M1 10a.75.75 0 01.75-.75h9.546l-1.048-.943a.75.75 0 111.004-1.114l2.5 2.25a.75.75 0 010 1.114l-2.5 2.25a.75.75 0 11-1.004-1.114l1.048-.943H1.75A.75.75 0 011 10z"/></svg>
+              <span>Log out</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;background:var(--surface);"></div>
+      </div>
+
+      <!-- Collapsed -->
+      <div style="height:480px;border-radius:18px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.06);display:flex;">
+        <div style="width:64px;background:var(--surface-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;">
+          <div style="position:absolute;top:22px;right:-12px;width:24px;height:24px;border-radius:50%;background:var(--surface-secondary);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:0 1px 4px rgba(0,0,0,0.08);cursor:pointer;">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="color:var(--text-tertiary);"><path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"/></svg>
+          </div>
+          <div style="height:64px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);">
+            <span style="font-size:20px;font-weight:800;color:var(--primary);">T</span>
+          </div>
+          <nav style="flex:1;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="display:flex;align-items:center;justify-content:center;padding:10px;border-radius:12px;background:var(--primary-light);color:var(--primary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:10px;border-radius:12px;color:var(--text-secondary);position:relative;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.5 2A1.5 1.5 0 003 3.5v13A1.5 1.5 0 004.5 18h11a1.5 1.5 0 001.5-1.5V7.621a1.5 1.5 0 00-.44-1.06l-4.12-4.122A1.5 1.5 0 0011.378 2H4.5zm2.25 8.5a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5zm0 3a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z"/></svg>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:10px;border-radius:12px;color:var(--text-secondary);position:relative;">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"/><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"/></svg>
+              <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--primary);"></span>
+            </div>
+          </nav>
+          <div style="padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;align-items:center;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary);">J</div>
+            <div style="margin-top:4px;display:flex;align-items:center;justify-content:center;padding:10px;border-radius:12px;color:var(--text-tertiary);">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M17 4.25A2.25 2.25 0 0014.75 2h-5.5A2.25 2.25 0 007 4.25v2a.75.75 0 001.5 0v-2a.75.75 0 01.75-.75h5.5a.75.75 0 01.75.75v11.5a.75.75 0 01-.75.75h-5.5a.75.75 0 01-.75-.75v-2a.75.75 0 00-1.5 0v2A2.25 2.25 0 009.25 18h5.5A2.25 2.25 0 0017 15.75V4.25z"/><path fillRule="evenodd" d="M1 10a.75.75 0 01.75-.75h9.546l-1.048-.943a.75.75 0 111.004-1.114l2.5 2.25a.75.75 0 010 1.114l-2.5 2.25a.75.75 0 11-1.004-1.114l1.048-.943H1.75A.75.75 0 011 10z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;background:var(--surface);"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== AUTH ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Authentication</h2>
+      <span>Login · Register</span>
+    </div>
+
+    <!-- LOGIN -->
+    <div>
+      <div class="mockup-label">
+        <span>02 · Login</span>
+        <span>centered card · gradient bg</span>
+      </div>
+      <div class="mockup" style="height:600px;background:linear-gradient(135deg,#eef2ff 0%,#f8fafc 50%,#ecfdf5 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="width:420px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);padding:36px;display:flex;flex-direction:column;gap:24px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <span style="font-size:27px;font-weight:800;letter-spacing:-0.02em;">Welcome back</span>
+            <span style="font-size:14px;color:var(--text-secondary);">Sign in to your Taskflow workspace.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <label style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:13px;font-weight:600;">Email</span><input value="john@acme.com" readonly style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;color:var(--text);"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:13px;font-weight:600;">Password</span><input value="········" readonly style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;color:var(--text);"></label>
+          </div>
+          <div style="height:46px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Sign in</div>
+          <span style="text-align:center;font-size:13px;color:var(--text-secondary);">Don't have an account? <span style="font-weight:700;color:var(--primary);">Sign up free</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div>
+      <div class="mockup-label">
+        <span>03 · Register</span>
+        <span>centered card · gradient bg</span>
+      </div>
+      <div class="mockup" style="height:600px;background:linear-gradient(135deg,#eef2ff 0%,#f8fafc 50%,#ecfdf5 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="width:440px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);padding:36px;display:flex;flex-direction:column;gap:22px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <span style="font-size:27px;font-weight:800;letter-spacing:-0.02em;">Create your account</span>
+            <span style="font-size:14px;color:var(--text-secondary);">Free for your whole team. No credit card needed.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <label style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:13px;font-weight:600;">Username</span><input value="johndoe" readonly style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;color:var(--text);"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:13px;font-weight:600;">Email</span><input value="john@acme.com" readonly style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;color:var(--text);"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:13px;font-weight:600;">Password</span><input value="········" readonly style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;color:var(--text);"></label>
+          </div>
+          <div style="height:46px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Create account</div>
+          <span style="text-align:center;font-size:13px;color:var(--text-secondary);">Already have an account? <span style="font-weight:700;color:var(--primary);">Sign in</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DASHBOARD ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Dashboard</h2>
+      <span>Search · Stats · Task list</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>04 · Dashboard</span>
+        <span>protected page · PageShell layout</span>
+      </div>
+      <div class="mockup" style="height:600px;display:flex;">
+        <!-- Sidebar (minimal) -->
+        <div style="width:64px;background:var(--surface-secondary);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;">
+          <div style="height:64px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);"><span style="font-size:20px;font-weight:800;color:var(--primary);">T</span></div>
+        </div>
+        <!-- Main content -->
+        <div style="flex:1;padding:28px 28px;overflow-y:auto;background:var(--surface);">
+          <!-- Header row -->
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <div><h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;">Tasks</h1><span style="font-size:13px;color:var(--text-secondary);">Manage your tasks across all workspaces</span></div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <div style="height:38px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px;background:var(--surface-secondary);">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color:var(--text-tertiary);"><path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"/></svg>
+                <span style="font-size:13px;color:var(--text-tertiary);">Search tasks...</span>
+              </div>
+              <div style="height:38px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:6px;background:var(--surface-secondary);font-size:13px;font-weight:600;color:var(--text-secondary);">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M2 3.75A.75.75 0 012.75 3h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4.167a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zm0 4.166a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zm0 4.167a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z"/></svg>
+                Sort
+              </div>
+              <div style="display:flex;border-radius:12px;border:1px solid var(--border);overflow:hidden;">
+                <div style="padding:8px 14px;background:var(--surface-secondary);font-size:13px;font-weight:600;">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
+                </div>
+                <div style="padding:8px 14px;font-size:13px;font-weight:600;color:var(--text-tertiary);">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.25 2A2.25 2.25 0 002 4.25v2.5A2.25 2.25 0 004.25 9h2.5A2.25 2.25 0 009 6.75v-2.5A2.25 2.25 0 006.75 2h-2.5zm0 9A2.25 2.25 0 002 13.25v2.5A2.25 2.25 0 004.25 18h2.5A2.25 2.25 0 009 15.75v-2.5A2.25 2.25 0 006.75 11h-2.5zm9-9A2.25 2.25 0 0011 4.25v2.5A2.25 2.25 0 0013.25 9h2.5A2.25 2.25 0 0018 6.75v-2.5A2.25 2.25 0 0015.75 2h-2.5zm0 9A2.25 2.25 0 0011 13.25v2.5A2.25 2.25 0 0013.25 18h2.5A2.25 2.25 0 0018 15.75v-2.5A2.25 2.25 0 0015.75 11h-2.5z"/></svg>
+                </div>
+              </div>
+              <div style="height:38px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;padding:0 16px;gap:6px;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/></svg>
+                New Task
+              </div>
+            </div>
+          </div>
+          <!-- Task columns (3) -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <!-- Pending column -->
+            <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:var(--pending);"></span>
+                  <span style="font-size:14px;font-weight:700;">Pending</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--text-secondary);background:var(--pending-light);padding:1px 8px;border-radius:999px;">4</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                  <span style="font-size:13px;font-weight:600;">Design system audit</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-tertiary);">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm0 4A.75.75 0 006 6.75v.5a.75.75 0 00.75.75h.5a.75.75 0 00.75-.75v-.5A.75.75 0 007.25 6h-.5z"/></svg>
+                      Jan 20
+                    </div>
+                    <div style="width:22px;height:22px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--primary);">A</div>
+                  </div>
+                  <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:8px;display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-tertiary);">
+                    <span style="display:flex;align-items:center;gap:4px;">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"/></svg>
+                      3d left
+                    </span>
+                  </div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                  <span style="font-size:13px;font-weight:600;">API rate limiting</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-tertiary);">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm0 4A.75.75 0 006 6.75v.5a.75.75 0 00.75.75h.5a.75.75 0 00.75-.75v-.5A.75.75 0 007.25 6h-.5z"/></svg>
+                      Jan 22
+                    </div>
+                    <div style="width:22px;height:22px;border-radius:50%;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--success);">B</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Ongoing column -->
+            <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:var(--ongoing);"></span>
+                  <span style="font-size:14px;font-weight:700;">Ongoing</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--text-secondary);background:var(--ongoing-light);padding:1px 8px;border-radius:999px;">3</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                  <span style="font-size:13px;font-weight:600;">User onboarding flow</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-tertiary);">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm0 4A.75.75 0 006 6.75v.5a.75.75 0 00.75.75h.5a.75.75 0 00.75-.75v-.5A.75.75 0 007.25 6h-.5z"/></svg>
+                      Jan 15
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                      <div style="width:22px;height:22px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--primary);">S</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--primary);border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                  <span style="font-size:13px;font-weight:600;">Real-time sync</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-tertiary);">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm0 4A.75.75 0 006 6.75v.5a.75.75 0 00.75.75h.5a.75.75 0 00.75-.75v-.5A.75.75 0 007.25 6h-.5z"/></svg>
+                      Jan 14
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                      <div style="width:22px;height:22px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--danger);">M</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Completed column -->
+            <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:16px;padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:8px;height:8px;border-radius:50%;background:var(--completed);"></span>
+                  <span style="font-size:14px;font-weight:700;">Completed</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--text-secondary);background:var(--completed-light);padding:1px 8px;border-radius:999px;">2</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                    <span style="font-size:13px;font-weight:600;">Database migration</span>
+                    <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--completed-light);color:var(--completed);">done</span>
+                  </div>
+                  <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:8px;display:flex;align-items:center;gap:12px;font-size:11px;color:var(--text-tertiary);">
+                    <span style="display:flex;align-items:center;gap:4px;">
+                      <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z"/></svg>
+                      Completed
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TASK MODAL ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Task modal</h2>
+      <span>TaskFormModal · ConfirmDialog · EmptyState</span>
+    </div>
+
+    <!-- Task form modal -->
+    <div>
+      <div class="mockup-label">
+        <span>05 · Task form modal</span>
+        <span>backdrop-blur-sm · centered card</span>
+      </div>
+      <div class="mockup" style="height:500px;position:relative;">
+        <div style="position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
+          <div style="width:480px;background:var(--surface-secondary);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:28px;display:flex;flex-direction:column;gap:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:18px;font-weight:800;letter-spacing:-0.02em;">New Task</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="color:var(--text-tertiary);"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/></svg>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <input placeholder="Task title" style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;">
+              <textarea placeholder="Description (optional)" style="min-height:80px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:10px 14px;font-size:14px;outline:none;resize:vertical;"></textarea>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;padding:0 14px;gap:8px;">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color:var(--text-tertiary);"><path d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2z"/></svg>
+                  <span style="font-size:13px;color:var(--text-tertiary);">Due date</span>
+                </div>
+                <div style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;padding:0 14px;gap:8px;">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color:var(--text-tertiary);"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"/></svg>
+                  <span style="font-size:13px;color:var(--text-tertiary);">Status</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+              <div style="padding:10px 18px;border-radius:10px;border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-secondary);">Cancel</div>
+              <div style="padding:10px 18px;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Create</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm dialog -->
+    <div>
+      <div class="mockup-label">
+        <span>06 · Confirm dialog</span>
+        <span>backdrop-blur-sm · danger warning</span>
+      </div>
+      <div class="mockup" style="height:400px;position:relative;">
+        <div style="position:absolute;inset:0;background:var(--overlay);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;">
+          <div style="width:400px;background:var(--surface-secondary);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:28px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+            <div style="width:48px;height:48px;border-radius:14px;background:var(--danger-light);display:flex;align-items:center;justify-content:center;">
+              <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor" style="color:var(--danger);"><path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.317 2.625-1.516 2.625H3.72c-1.198 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z"/></svg>
+            </div>
+            <div><span style="font-size:17px;font-weight:800;letter-spacing:-0.02em;">Delete task</span><p style="margin:4px 0 0;font-size:13px;color:var(--text-secondary);">Are you sure you want to delete this task? This action cannot be undone.</p></div>
+            <div style="display:flex;gap:10px;width:100%;">
+              <div style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-secondary);text-align:center;">Cancel</div>
+              <div style="flex:1;padding:10px;border-radius:10px;background:var(--danger);color:#fff;font-size:13px;font-weight:700;text-align:center;box-shadow:0 4px 12px rgba(239,68,68,0.3);">Delete</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div>
+      <div class="mockup-label">
+        <span>07 · Empty state</span>
+        <span>no tasks illustration</span>
+      </div>
+      <div class="mockup" style="height:350px;background:var(--surface);display:flex;align-items:center;justify-content:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+          <div style="width:64px;height:64px;border-radius:16px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;">
+            <svg width="28" height="28" viewBox="0 0 20 20" fill="currentColor" style="color:var(--primary);"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+          </div>
+          <div><span style="font-size:17px;font-weight:800;letter-spacing:-0.02em;">No tasks yet</span><p style="margin:4px 0 0;font-size:13px;color:var(--text-secondary);">Create your first task to get started.</p></div>
+          <div style="padding:10px 20px;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Create Task</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WORKSPACES ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Workspaces</h2>
+      <span>Workspace list · Workspace detail</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>08 · Workspaces</span>
+        <span>card grid · avatar initials</span>
+      </div>
+      <div class="mockup" style="height:420px;display:flex;">
+        <div style="width:64px;background:var(--surface-secondary);border-right:1px solid var(--border);flex-shrink:0;"></div>
+        <div style="flex:1;padding:28px;background:var(--surface);overflow-y:auto;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-0.02em;">Workspaces</h1>
+            <div style="height:38px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;padding:0 16px;gap:6px;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/></svg>
+              New Workspace
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+              <div style="width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--primary);">A</div>
+              <div><span style="font-size:15px;font-weight:700;">Acme Inc</span><p style="margin:2px 0 0;font-size:12px;color:var(--text-tertiary);">3 members</p></div>
+              <div style="display:flex;gap:4px;"><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--primary-light);color:var(--primary);">Owner</span></div>
+            </div>
+            <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+              <div style="width:44px;height:44px;border-radius:12px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--success);">B</div>
+              <div><span style="font-size:15px;font-weight:700;">Beta Corp</span><p style="margin:2px 0 0;font-size:12px;color:var(--text-tertiary);">1 member</p></div>
+              <div style="display:flex;gap:4px;"><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:#fef2f2;color:var(--danger);">Owner</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workspace detail -->
+    <div>
+      <div class="mockup-label">
+        <span>09 · Workspace detail</span>
+        <span>tabs · member list · invite form</span>
+      </div>
+      <div class="mockup" style="height:500px;display:flex;">
+        <div style="width:64px;background:var(--surface-secondary);border-right:1px solid var(--border);flex-shrink:0;"></div>
+        <div style="flex:1;padding:28px;background:var(--surface);overflow-y:auto;">
+          <div style="margin-bottom:20px;">
+            <span style="font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z"/></svg>
+              Back to Workspaces
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+            <div style="width:52px;height:52px;border-radius:14px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--primary);">A</div>
+            <div><h1 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-0.02em;">Acme Inc</h1><span style="font-size:13px;color:var(--text-secondary);">3 members · created Jan 2025</span></div>
+          </div>
+          <div style="display:flex;gap:24px;border-bottom:1px solid var(--border);margin-bottom:24px;">
+            <span style="font-size:14px;font-weight:700;padding-bottom:10px;border-bottom:2px solid var(--primary);color:var(--primary);">Tasks</span>
+            <span style="font-size:14px;font-weight:600;padding-bottom:10px;color:var(--text-secondary);">Members</span>
+            <span style="font-size:14px;font-weight:600;padding-bottom:10px;color:var(--text-secondary);">Settings</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:14px;font-weight:700;">Members</span>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:10px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary);">JD</div>
+              <div style="flex:1;"><span style="font-size:14px;font-weight:600;">John Doe</span><p style="margin:0;font-size:12px;color:var(--text-tertiary);">john@acme.com</p></div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--primary-light);color:var(--primary);">Owner</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:10px;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--success);">S</div>
+              <div style="flex:1;"><span style="font-size:14px;font-weight:600;">Sarah Smith</span><p style="margin:0;font-size:12px;color:var(--text-tertiary);">sarah@acme.com</p></div>
+              <span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--surface-hover);color:var(--text-secondary);">Member</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INVITATIONS ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Invitations</h2>
+      <span>Pending invites · accept / decline</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>10 · Invitations</span>
+        <span>card list · role badges</span>
+      </div>
+      <div class="mockup" style="height:400px;display:flex;">
+        <div style="width:64px;background:var(--surface-secondary);border-right:1px solid var(--border);flex-shrink:0;"></div>
+        <div style="flex:1;padding:28px;background:var(--surface);overflow-y:auto;">
+          <h1 style="margin:0 0 20px;font-size:24px;font-weight:800;letter-spacing:-0.02em;">Invitations</h1>
+          <div style="background:var(--surface-secondary);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;align-items:flex-start;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+            <div style="width:44px;height:44px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor" style="color:var(--primary);"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"/><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"/></svg>
+            </div>
+            <div style="flex:1;">
+              <span style="font-size:15px;font-weight:700;">Acme Inc</span>
+              <p style="margin:2px 0 0;font-size:13px;color:var(--text-secondary);">You have been invited to join Acme Inc as <span style="font-weight:700;">Admin</span></p>
+              <div style="display:flex;gap:10px;margin-top:14px;">
+                <div style="padding:8px 18px;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Accept</div>
+                <div style="padding:8px 18px;border-radius:10px;border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text-secondary);">Decline</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ONBOARDING ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Onboarding</h2>
+      <span>Step indicator · create workspace</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>11 · Onboarding</span>
+        <span>gradient bg · centered card</span>
+      </div>
+      <div class="mockup" style="height:500px;background:linear-gradient(135deg,#eef2ff 0%,#f8fafc 50%,#ecfdf5 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:0;margin-bottom:30px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--completed);display:flex;align-items:center;justify-content:center;">
+              <svg width="13" height="13" viewBox="0 0 20 20" fill="#fff"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"/></svg>
+            </div>
+            <span style="font-size:13px;font-weight:700;">Workspace</span>
+          </div>
+          <div style="width:48px;height:2px;background:var(--primary);margin:0 14px;"></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">2</div>
+            <span style="font-size:13px;font-weight:700;">Invite team</span>
+          </div>
+          <div style="width:48px;height:2px;background:var(--border);margin:0 14px;"></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text-tertiary);">3</div>
+            <span style="font-size:13px;font-weight:600;color:var(--text-tertiary);">First project</span>
+          </div>
+        </div>
+        <div style="width:480px;background:var(--surface-secondary);border-radius:16px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.08);padding:32px;display:flex;flex-direction:column;gap:20px;">
+          <div><span style="font-size:22px;font-weight:800;letter-spacing:-0.02em;">Create workspace</span><p style="margin:4px 0 0;font-size:13px;color:var(--text-secondary);">Set up your workspace to get started.</p></div>
+          <input placeholder="Workspace name" style="height:44px;border-radius:12px;border:1px solid var(--border);background:var(--surface);padding:0 14px;font-size:14px;outline:none;">
+          <div style="height:44px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Continue</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== NOT FOUND ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Not Found</h2>
+      <span>404 page</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>12 · 404</span>
+        <span>gradient bg · centered</span>
+      </div>
+      <div class="mockup" style="height:450px;background:linear-gradient(135deg,#eef2ff 0%,#f8fafc 50%,#ecfdf5 100%);display:flex;align-items:center;justify-content:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+          <div style="width:72px;height:72px;border-radius:18px;background:var(--surface-secondary);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:var(--text-tertiary);">404</div>
+          <div><span style="font-size:22px;font-weight:800;letter-spacing:-0.02em;">Page not found</span><p style="margin:4px 0 0;font-size:13px;color:var(--text-secondary);">The page you're looking for doesn't exist.</p></div>
+          <div style="padding:10px 24px;border-radius:10px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;box-shadow:0 4px 12px rgba(99,102,241,0.3);">Go home</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SKELETON ===================== -->
+  <section style="display:flex;flex-direction:column;gap:24px;">
+    <div class="section-header">
+      <h2>Skeleton</h2>
+      <span>Loading states</span>
+    </div>
+    <div>
+      <div class="mockup-label">
+        <span>13 · Loading skeleton</span>
+        <span>shimmer placeholder · matches card layout</span>
+      </div>
+      <div class="mockup" style="height:300px;background:var(--surface);display:flex;align-items:center;justify-content:center;">
+        <div style="width:280px;background:var(--surface-secondary);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:14px;width:60%;border-radius:8px;background:var(--surface-hover);"></div>
+          <div style="height:10px;width:40%;border-radius:8px;background:var(--surface-hover);"></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--surface-hover);"></div>
+            <div style="height:10px;width:80px;border-radius:8px;background:var(--surface-hover);"></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:10px;">
+            <div style="height:10px;width:100px;border-radius:8px;background:var(--surface-hover);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

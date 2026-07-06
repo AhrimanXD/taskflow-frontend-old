@@ -15,29 +15,27 @@ import TaskFormModal from "./TaskFormModal";
 import EmptyState from "./EmptyState";
 import ConfirmDialog from "./ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
+import { Plus, Search, Columns, LayoutGrid } from "lucide-react";
 
 const VIEW_KEY = "taskflow:ws-view";
 
 const CONN_LABEL = {
-  connected: "Live — realtime updates are on",
+  connected: "Live \u2014 realtime updates are on",
   connecting: "Connecting to live updates",
-  reconnecting: "Connection dropped — retrying",
+  reconnecting: "Connection dropped \u2014 retrying",
 };
 
-// The shared task board, scoped to one workspace. Any member can create,
-// edit, and assign; deleting someone else's task is rejected by the server
-// (creator or owner/admin only) and surfaces as a toast.
 function WorkspaceTasks({ workspaceId }) {
   const { user } = useAuth();
   const { status: connStatus } = useWorkspaceSocket(workspaceId);
   const { data: tasks = [], isLoading, isError } = useTasks(workspaceId);
   const { data: members = [] } = useWorkspaceMembers(workspaceId);
 
-  // user_id -> { id, username } for resolving assignee names on the cards.
   const membersById = useMemo(
     () => Object.fromEntries(members.map((m) => [m.user_id, m.user])),
     [members]
   );
+
   const createTask = useCreateTask(workspaceId);
   const updateTask = useUpdateTask(workspaceId);
   const deleteTask = useDeleteTask(workspaceId);
@@ -88,16 +86,25 @@ function WorkspaceTasks({ workspaceId }) {
     updateTask.mutate({ id: task.id, data: { assignee_id: assigneeId } });
   }
 
+  const connDot = {
+    connected: "bg-[var(--color-success)]",
+    reconnecting: "bg-[var(--color-warning)]",
+    connecting: "bg-[var(--color-text-tertiary)]",
+  };
+
+  const connText = {
+    connected: "text-[var(--color-success)]",
+    reconnecting: "text-[var(--color-warning)]",
+    connecting: "text-[var(--color-text-tertiary)]",
+  };
+
   function renderContent() {
-    if (isLoading) {
-      return <TaskSkeleton />;
-    }
+    if (isLoading) return <TaskSkeleton />;
 
     if (isError) {
       return (
-        <p role="alert">
-          Could not load tasks. Something went wrong while loading this
-          workspace&apos;s tasks.
+        <p role="alert" className="text-sm text-[var(--color-danger)] bg-[var(--color-danger-light)] border border-[var(--color-danger)]/20 rounded-lg px-4 py-3">
+          Could not load tasks. Something went wrong while loading this workspace&apos;s tasks.
         </p>
       );
     }
@@ -108,7 +115,7 @@ function WorkspaceTasks({ workspaceId }) {
           title="No tasks in this workspace"
           description="Create the first task for your team to work on."
           action={
-            <button type="button" onClick={openCreate}>
+            <button type="button" onClick={openCreate} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary-hover)] transition-all duration-200 cursor-pointer shadow-sm">
               Create a task
             </button>
           }
@@ -122,7 +129,7 @@ function WorkspaceTasks({ workspaceId }) {
           title="No matching tasks"
           description="No tasks match your search. Try a different term."
           action={
-            <button type="button" onClick={() => setQuery("")}>
+            <button type="button" onClick={() => setQuery("")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--color-surface-secondary)] border border-[var(--color-border)] text-sm font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-text)] transition-all duration-200 cursor-pointer">
               Clear search
             </button>
           }
@@ -145,44 +152,75 @@ function WorkspaceTasks({ workspaceId }) {
     }
 
     return (
-      <ul>
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {visibleTasks.map((task) => (
-          <li key={task.id}>
-            <TaskCard
-              task={task}
-              onEdit={openEdit}
-              onDelete={setDeleteTarget}
-              onStatusChange={handleStatusChange}
-              currentUserId={user?.id}
-              onAssignToggle={handleAssignToggle}
-              membersById={membersById}
-            />
-          </li>
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={openEdit}
+            onDelete={setDeleteTarget}
+            onStatusChange={handleStatusChange}
+            currentUserId={user?.id}
+            onAssignToggle={handleAssignToggle}
+            membersById={membersById}
+          />
         ))}
-      </ul>
+      </div>
     );
   }
 
   return (
     <>
-      <div>
-        <input
-          placeholder="Search tasks…"
-          aria-label="Search tasks"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-        />
-        <span>{CONN_LABEL[connStatus] ?? CONN_LABEL.connecting}</span>
-        <select
-          aria-label="View"
-          value={view}
-          onChange={(e) => changeView(e.currentTarget.value)}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="relative flex-1 min-w-[180px] max-w-xs">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-tertiary)] pointer-events-none" />
+          <input
+            placeholder="Search tasks\u2026"
+            aria-label="Search tasks"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-secondary)] text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)] transition-all duration-200"
+          />
+        </div>
+
+        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${connText[connStatus] ?? connText.connecting}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${connDot[connStatus] ?? connDot.connecting}`} />
+          {CONN_LABEL[connStatus] ?? CONN_LABEL.connecting}
+        </span>
+
+        <div className="flex rounded-lg border border-[var(--color-border)] overflow-hidden bg-[var(--color-surface-secondary)]">
+          <button
+            type="button"
+            onClick={() => changeView("board")}
+            title="Board view"
+            className={`px-3 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+              view === "board"
+                ? "bg-[var(--color-primary)] text-white shadow-sm"
+                : "bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            }`}
+          >
+            <Columns className="w-3.5 h-3.5" /> Board
+          </button>
+          <button
+            type="button"
+            onClick={() => changeView("grid")}
+            title="Grid view"
+            className={`px-3 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+              view === "grid"
+                ? "bg-[var(--color-primary)] text-white shadow-sm"
+                : "bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text)]"
+            }`}
+          >
+            <LayoutGrid className="w-3.5 h-3.5" /> Grid
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={openCreate}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-primary-hover)] transition-all duration-200 cursor-pointer shadow-sm"
         >
-          <option value="board">Board</option>
-          <option value="grid">Grid</option>
-        </select>
-        <button type="button" onClick={openCreate}>
-          New task
+          <Plus className="w-4 h-4" /> New task
         </button>
       </div>
 
@@ -201,7 +239,7 @@ function WorkspaceTasks({ workspaceId }) {
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title="Delete task"
-        description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
+        description={`Delete \u201c${deleteTarget?.title ?? ""}\u201d? This can't be undone.`}
         onConfirm={() => deleteTask.mutate(deleteTarget.id)}
       />
     </>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Manrope', system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(120,130,145,.3); border-radius: 8px; }
+  @keyframes tfpulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.82); } }
+</style>
+</helmet>
+<div style="{{ rootStyle }}">
+  <div style="position:sticky;top:0;z-index:50;width:100%;backdrop-filter:blur(10px);background:var(--bg,#f6f7f9);border-bottom:1px solid var(--border,#e8ebef);">
+    <div style="max-width:1280px;margin:0 auto;padding:14px 0;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(47,108,246,.4);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div style="display:flex;flex-direction:column;line-height:1.1;">
+          <span style="font:800 18px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span>
+          <span style="font:500 11px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">UI reference · light + dark</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);padding:5px 10px;background:var(--surface2,#f0f2f5);border-radius:20px;">12 screens</span>
+        <button onClick="{{ toggleTheme }}" style="display:flex;align-items:center;gap:8px;cursor:pointer;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);color:var(--text,#171a1f);font:600 13px Manrope,sans-serif;padding:8px 14px;border-radius:10px;">
+          <span>{{ themeIcon }}</span><span>{{ themeLabel }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;width:1280px;display:flex;flex-direction:column;gap:60px;padding:48px 0 120px;">
+
+    <!-- ===================== TOKENS ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Design tokens</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Color · Type · Priority · People</span>
+      </div>
+      <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:var(--shadow);padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:34px;">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <span style="font:700 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">CORE COLORS</span>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <sc-for list="{{ swatches }}" as="sw" hint-placeholder-count="8">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="height:54px;border-radius:10px;background:{{ sw.value }};border:1px solid rgba(120,130,145,.18);"></div>
+                <span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">{{ sw.name }}</span>
+                <span style="font:400 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">{{ sw.hex }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <span style="font:700 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">TYPOGRAPHY — MANROPE</span>
+            <div style="display:flex;flex-direction:column;gap:2px;">
+              <span style="font:800 28px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Plan, track, ship together</span>
+              <span style="font:700 18px Manrope,sans-serif;color:var(--text,#171a1f);">Heading · 18 / 700</span>
+              <span style="font:600 14px Manrope,sans-serif;color:var(--text,#171a1f);">Body strong · 14 / 600</span>
+              <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Body muted · 13 / 500</span>
+              <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">JetBrains Mono · meta · 12</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:24px;">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <span style="font:700 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">PRIORITY</span>
+              <div style="display:flex;gap:8px;">
+                <span style="font:600 11px Manrope,sans-serif;padding:4px 10px;border-radius:6px;background:var(--highBg,#fdeaea);color:var(--highText,#d23f4f);">high</span>
+                <span style="font:600 11px Manrope,sans-serif;padding:4px 10px;border-radius:6px;background:var(--medBg,#fdf0dd);color:var(--medText,#b07415);">medium</span>
+                <span style="font:600 11px Manrope,sans-serif;padding:4px 10px;border-radius:6px;background:var(--lowBg,#e9f0ff);color:var(--lowText,#2f6cf6);">low</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <span style="font:700 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">PEOPLE</span>
+              <div style="display:flex;padding-left:6px;">
+                <sc-for list="{{ team }}" as="m" hint-placeholder-count="6">
+                  <div style="width:30px;height:30px;margin-left:-6px;border-radius:50%;background:{{ m.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 11px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AUTH ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Authentication</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Login · Sign up · Reset password</span>
+      </div>
+
+      <!-- LOGIN -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">01 · Login</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);display:flex;background:var(--surface,#fff);">
+          <div style="width:46%;background:linear-gradient(155deg,#2f6cf6 0%,#3b6ef6 45%,#6a5bf6 100%);padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;">
+            <div style="position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.10);top:-120px;right:-110px;"></div>
+            <div style="position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-80px;left:-60px;"></div>
+            <div style="display:flex;align-items:center;gap:11px;position:relative;">
+              <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <span style="font:800 20px Manrope,sans-serif;color:#fff;letter-spacing:-.02em;">Taskflow</span>
+            </div>
+            <div style="position:relative;display:flex;flex-direction:column;gap:26px;">
+              <h1 style="margin:0;font:800 38px Manrope,sans-serif;color:#fff;letter-spacing:-.03em;line-height:1.12;">Plan, track, and ship together — in real time.</h1>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg></div><span style="font:600 15px Manrope,sans-serif;color:rgba(255,255,255,.94);">Live presence — see who's online & editing</span></div>
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span style="font:600 15px Manrope,sans-serif;color:rgba(255,255,255,.94);">Comments, @mentions & threads</span></div>
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><span style="font:600 15px Manrope,sans-serif;color:rgba(255,255,255,.94);">Due dates & smart reminders</span></div>
+              </div>
+            </div>
+            <div style="position:relative;display:flex;align-items:center;gap:12px;">
+              <div style="display:flex;padding-left:6px;">
+                <sc-for list="{{ team }}" as="m" hint-placeholder-count="6">
+                  <div style="width:34px;height:34px;margin-left:-6px;border-radius:50%;background:{{ m.color }};border:2px solid #4566e6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div>
+                </sc-for>
+              </div>
+              <span style="font:600 13px Manrope,sans-serif;color:rgba(255,255,255,.9);"><b style="color:#fff;">6 teammates</b> online now</span>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px;background:var(--surface,#fff);">
+            <div style="width:380px;display:flex;flex-direction:column;gap:24px;">
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <h2 style="margin:0;font:800 27px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Welcome back</h2>
+                <span style="font:500 14px Manrope,sans-serif;color:var(--text2,#697079);">Sign in to your Taskflow workspace.</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:16px;">
+                <label style="display:flex;flex-direction:column;gap:7px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Email</span><input type="email" defaultValue="john.doe@acme.com" style="height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                <label style="display:flex;flex-direction:column;gap:7px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Password</span><span style="font:600 13px Manrope,sans-serif;color:var(--primary,#2f6cf6);cursor:pointer;">Forgot?</span></div><div style="height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;display:flex;align-items:center;justify-content:space-between;"><span style="font:500 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:2px;">••••••••••</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div></label>
+              </div>
+              <button style="height:48px;border:none;border-radius:11px;background:var(--primary,#2f6cf6);color:var(--onPrimary,#fff);font:700 15px Manrope,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(47,108,246,.32);">Sign in</button>
+              <div style="display:flex;align-items:center;gap:12px;"><div style="flex:1;height:1px;background:var(--border,#e8ebef);"></div><span style="font:500 12px Manrope,sans-serif;color:var(--text3,#9aa1ac);">or continue with</span><div style="flex:1;height:1px;background:var(--border,#e8ebef);"></div></div>
+              <div style="display:flex;gap:12px;">
+                <button style="flex:1;height:46px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);border-radius:11px;font:600 14px Manrope,sans-serif;color:var(--text,#171a1f);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>Google</button>
+                <button style="flex:1;height:46px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);border-radius:11px;font:600 14px Manrope,sans-serif;color:var(--text,#171a1f);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="var(--text,#171a1f)"><path d="M12 .5A11.5 11.5 0 0 0 8.37 22.9c.57.1.78-.25.78-.55v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.67 1.25 3.32.95.1-.74.4-1.25.72-1.53-2.55-.29-5.23-1.27-5.23-5.67 0-1.25.45-2.27 1.18-3.07-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.17a11 11 0 0 1 5.74 0c2.18-1.48 3.14-1.17 3.14-1.17.63 1.59.23 2.76.11 3.05.74.8 1.18 1.82 1.18 3.07 0 4.41-2.69 5.38-5.25 5.66.42.36.79 1.06.79 2.14v3.17c0 .31.21.66.79.55A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</button>
+              </div>
+              <span style="text-align:center;font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Don't have an account? <b style="color:var(--primary,#2f6cf6);cursor:pointer;">Sign up free</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGN UP -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">02 · Sign up</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);display:flex;background:var(--surface,#fff);">
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px;background:var(--surface,#fff);">
+            <div style="width:400px;display:flex;flex-direction:column;gap:22px;">
+              <div style="display:flex;align-items:center;gap:11px;"><div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 18px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span></div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <h2 style="margin:0;font:800 27px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Create your account</h2>
+                <span style="font:500 14px Manrope,sans-serif;color:var(--text2,#697079);">Free for your whole team. No credit card needed.</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <label style="display:flex;flex-direction:column;gap:7px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Full name</span><input defaultValue="John Doe" style="height:44px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                <label style="display:flex;flex-direction:column;gap:7px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Work email</span><input defaultValue="john.doe@acme.com" style="height:44px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                <label style="display:flex;flex-direction:column;gap:7px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Password</span><div style="height:44px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;display:flex;align-items:center;"><span style="font:500 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:2px;">••••••••</span></div><div style="display:flex;gap:5px;margin-top:2px;"><div style="flex:1;height:4px;border-radius:3px;background:var(--doneText,#138a52);"></div><div style="flex:1;height:4px;border-radius:3px;background:var(--doneText,#138a52);"></div><div style="flex:1;height:4px;border-radius:3px;background:var(--doneText,#138a52);"></div><div style="flex:1;height:4px;border-radius:3px;background:var(--surface3,#e9ecf1);"></div></div><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Strong password</span></label>
+              </div>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;"><div style="width:18px;height:18px;border-radius:5px;background:var(--primary,#2f6cf6);display:flex;align-items:center;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">I agree to the <b style="color:var(--primary,#2f6cf6);">Terms</b> & <b style="color:var(--primary,#2f6cf6);">Privacy Policy</b></span></label>
+              <button style="height:48px;border:none;border-radius:11px;background:var(--primary,#2f6cf6);color:var(--onPrimary,#fff);font:700 15px Manrope,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(47,108,246,.32);">Create account</button>
+              <span style="text-align:center;font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Already have an account? <b style="color:var(--primary,#2f6cf6);cursor:pointer;">Sign in</b></span>
+            </div>
+          </div>
+          <div style="width:44%;background:linear-gradient(155deg,#6a5bf6 0%,#3b6ef6 55%,#2f6cf6 100%);padding:48px;display:flex;flex-direction:column;justify-content:center;gap:30px;position:relative;overflow:hidden;">
+            <div style="position:absolute;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.10);bottom:-120px;right:-100px;"></div>
+            <h1 style="margin:0;font:800 30px Manrope,sans-serif;color:#fff;letter-spacing:-.02em;line-height:1.18;position:relative;">Join 40,000+ teams already shipping faster.</h1>
+            <div style="position:relative;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;backdrop-filter:blur(6px);">
+              <div style="display:flex;align-items:center;gap:10px;"><div style="width:38px;height:38px;border-radius:50%;background:#e84393;display:flex;align-items:center;justify-content:center;font:700 13px Manrope,sans-serif;color:#fff;">SS</div><div style="display:flex;flex-direction:column;"><span style="font:700 13px Manrope,sans-serif;color:#fff;">Sarah Smith</span><span style="font:500 11px Manrope,sans-serif;color:rgba(255,255,255,.75);">Lead Designer · Acme</span></div></div>
+              <span style="font:600 15px Manrope,sans-serif;color:#fff;line-height:1.5;">"Taskflow replaced three tools for us. Real-time presence means we never step on each other anymore."</span>
+            </div>
+            <div style="position:relative;display:flex;align-items:center;gap:8px;"><div style="display:flex;padding-left:6px;"><sc-for list="{{ team }}" as="m" hint-placeholder-count="6"><div style="width:30px;height:30px;margin-left:-6px;border-radius:50%;background:{{ m.color }};border:2px solid #4f5be8;display:flex;align-items:center;justify-content:center;font:700 11px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div></sc-for></div><span style="font:600 12px Manrope,sans-serif;color:rgba(255,255,255,.9);">+ thousands more</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">03 · Reset password</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div style="position:absolute;top:36px;left:40px;display:flex;align-items:center;gap:11px;"><div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 18px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span></div>
+          <div style="width:440px;background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:18px;box-shadow:var(--shadow);padding:40px;display:flex;flex-direction:column;gap:22px;">
+            <div style="width:54px;height:54px;border-radius:14px;background:var(--primarySoft,#e9f0ff);display:flex;align-items:center;justify-content:center;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--primary,#2f6cf6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <h2 style="margin:0;font:800 25px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Reset your password</h2>
+              <span style="font:500 14px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;">Enter the email tied to your account and we'll send a secure reset link.</span>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:7px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Email address</span><input defaultValue="john.doe@acme.com" style="height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+            <button style="height:48px;border:none;border-radius:11px;background:var(--primary,#2f6cf6);color:var(--onPrimary,#fff);font:700 15px Manrope,sans-serif;cursor:pointer;box-shadow:0 6px 16px rgba(47,108,246,.32);">Send reset link</button>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span style="font:600 13px Manrope,sans-serif;color:var(--text2,#697079);cursor:pointer;">Back to sign in</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== BOARD ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Board</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Kanban with live presence, due dates & comment counts</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">04 · Board view</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;">
+
+          <!-- TOPBAR -->
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;">
+              <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+              <span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span>
+              <span style="margin-left:auto;font:500 11px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);border:1px solid var(--border2,#dfe3e9);border-radius:5px;padding:1px 6px;">⌘K</span>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;">
+              <div style="display:flex;align-items:center;gap:8px;"><div style="display:flex;padding-left:5px;"><sc-for list="{{ onlineNow }}" as="m" hint-placeholder-count="4"><div style="position:relative;width:28px;height:28px;margin-left:-5px;border-radius:50%;background:{{ m.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div></sc-for></div><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">4 online</span></div>
+              <div style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--highText,#d23f4f);border:2px solid var(--surface,#fff);"></div></div>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div>
+            </div>
+          </div>
+
+          <div style="flex:1;display:flex;min-height:0;">
+            <!-- LEFT NAV -->
+            <div style="width:210px;flex:none;background:var(--surface,#fff);border-right:1px solid var(--border,#e8ebef);display:flex;flex-direction:column;padding:14px 12px;gap:4px;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:6px 10px 4px;">WORKSPACE</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>My Tasks</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;background:var(--primarySoft,#e9f0ff);font:700 13.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>Board</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Reports</div>
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:14px 10px 4px;">PROJECTS</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text,#171a1f);"><span style="width:9px;height:9px;border-radius:3px;background:#2f6cf6;"></span>Acme Website</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#16b364;"></span>Mobile App</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#f5821f;"></span>Marketing Q1</div>
+              <div style="margin-top:auto;display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;border:1px dashed var(--border2,#dfe3e9);font:600 13px Manrope,sans-serif;color:var(--text2,#697079);cursor:pointer;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Invite member</div>
+            </div>
+
+            <!-- BOARD AREA -->
+            <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+              <div style="height:62px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border,#e8ebef);">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <h3 style="margin:0;font:800 18px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Acme Website</h3>
+                  <span style="font:600 11px Manrope,sans-serif;color:var(--doneText,#138a52);background:var(--doneBg,#e7f7ee);padding:3px 9px;border-radius:20px;">● Live</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>Filter</div>
+                  <div style="display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M6 12h12M9 18h6"/></svg>Sort</div>
+                  <div style="display:flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:9px;background:var(--primary,#2f6cf6);font:700 12.5px Manrope,sans-serif;color:var(--onPrimary,#fff);box-shadow:0 4px 12px rgba(47,108,246,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>New task</div>
+                </div>
+              </div>
+              <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:18px 20px;min-height:0;">
+                <sc-for list="{{ columns }}" as="col" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;gap:12px;min-width:0;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                      <div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:{{ col.dot }};"></span><span style="font:700 13.5px Manrope,sans-serif;color:var(--text,#171a1f);">{{ col.title }}</span><span style="font:700 11px Manrope,sans-serif;color:var(--text2,#697079);background:var(--surface2,#f0f2f5);padding:1px 7px;border-radius:20px;">{{ col.count }}</span></div>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <sc-for list="{{ col.cards }}" as="card" hint-placeholder-count="3">
+                        <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);">
+                          <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;">
+                            <span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);line-height:1.35;">{{ card.title }}</span>
+                            <sc-if value="{{ card.priority }}" hint-placeholder-val="{{ true }}"><span style="flex:none;font:700 10px Manrope,sans-serif;padding:3px 7px;border-radius:6px;background:{{ card.prioBg }};color:{{ card.prioText }};text-transform:capitalize;">{{ card.priority }}</span></sc-if>
+                            <sc-if value="{{ card.done }}"><span style="flex:none;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--doneBg,#e7f7ee);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--doneText,#138a52)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></sc-if>
+                          </div>
+                          <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <div style="display:flex;padding-left:5px;">
+                              <sc-for list="{{ card.assignees }}" as="a" hint-placeholder-count="1"><div style="width:22px;height:22px;margin-left:-5px;border-radius:50%;background:{{ a.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 9px Manrope,sans-serif;color:#fff;">{{ a.initials }}</div></sc-for>
+                            </div>
+                            <sc-if value="{{ card.live }}"><div style="display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--online,#22c55e);animation:tfpulse 1.6s infinite;"></span><span style="font:600 10.5px Manrope,sans-serif;color:var(--online,#22c55e);">editing</span></div></sc-if>
+                          </div>
+                          <div style="display:flex;align-items:center;gap:12px;padding-top:2px;border-top:1px solid var(--border,#e8ebef);padding-top:9px;">
+                            <span style="display:flex;align-items:center;gap:4px;font:600 11px Manrope,sans-serif;color:{{ card.dueColor }};"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ card.due }}</span>
+                            <span style="display:flex;align-items:center;gap:4px;font:600 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>{{ card.comments }}</span>
+                            <span style="display:flex;align-items:center;gap:4px;font:600 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>{{ card.files }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TASK DETAIL ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Task detail</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Comments, subtasks, due date & live viewers</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">05 · Task detail panel</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div style="position:absolute;inset:0;background:rgba(10,14,26,.42);backdrop-filter:blur(2px);"></div>
+          <div style="position:relative;width:880px;height:680px;background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:18px;box-shadow:0 30px 70px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;">
+            <div style="height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border,#e8ebef);">
+              <div style="display:flex;align-items:center;gap:8px;font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#2f6cf6;"></span>Acme Website<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg><span style="color:var(--text,#171a1f);">In Progress</span></div>
+              <div style="display:flex;align-items:center;gap:14px;">
+                <div style="display:flex;align-items:center;gap:7px;background:var(--doneBg,#e7f7ee);padding:4px 10px;border-radius:20px;"><div style="display:flex;padding-left:4px;"><div style="width:20px;height:20px;margin-left:-4px;border-radius:50%;background:#16b364;border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 8px Manrope,sans-serif;color:#fff;">MJ</div><div style="width:20px;height:20px;margin-left:-4px;border-radius:50%;background:#f6517f;border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 8px Manrope,sans-serif;color:#fff;">EW</div></div><span style="font:600 11px Manrope,sans-serif;color:var(--doneText,#138a52);">2 viewing now</span></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;min-height:0;">
+              <div style="flex:1;min-width:0;padding:24px 26px;display:flex;flex-direction:column;gap:20px;overflow:hidden;">
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;align-items:flex-start;gap:11px;"><div style="width:26px;height:26px;flex:none;border-radius:8px;border:2px solid var(--primary,#2f6cf6);display:flex;align-items:center;justify-content:center;margin-top:2px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--primary,#2f6cf6)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/></svg></div><h1 style="margin:0;font:800 24px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;line-height:1.25;">Implement user authentication</h1></div>
+                  <p style="margin:0 0 0 37px;font:500 13.5px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.6;">Set up email/password and OAuth (Google, GitHub) sign-in with secure session handling and password reset. Must pass the security review before launch.</p>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:11px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font:700 12px Manrope,sans-serif;color:var(--text,#171a1f);">Subtasks</span><span style="font:600 11px Manrope,sans-serif;color:var(--text2,#697079);">2 / 3 done</span></div>
+                  <div style="height:6px;border-radius:4px;background:var(--surface2,#f0f2f5);overflow:hidden;"><div style="width:66%;height:100%;background:var(--primary,#2f6cf6);border-radius:4px;"></div></div>
+                  <div style="display:flex;align-items:center;gap:9px;"><div style="width:18px;height:18px;border-radius:50%;background:var(--doneBg,#e7f7ee);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--doneText,#138a52)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:500 13px Manrope,sans-serif;color:var(--text3,#9aa1ac);text-decoration:line-through;">Email + password flow</span></div>
+                  <div style="display:flex;align-items:center;gap:9px;"><div style="width:18px;height:18px;border-radius:50%;background:var(--doneBg,#e7f7ee);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--doneText,#138a52)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:500 13px Manrope,sans-serif;color:var(--text3,#9aa1ac);text-decoration:line-through;">Google OAuth</span></div>
+                  <div style="display:flex;align-items:center;gap:9px;"><div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border2,#dfe3e9);"></div><span style="font:500 13px Manrope,sans-serif;color:var(--text,#171a1f);">GitHub OAuth + session refresh</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:13px;border-top:1px solid var(--border,#e8ebef);padding-top:18px;flex:1;min-height:0;">
+                  <span style="font:700 12px Manrope,sans-serif;color:var(--text,#171a1f);">Comments</span>
+                  <div style="display:flex;gap:10px;"><div style="width:30px;height:30px;flex:none;border-radius:50%;background:#16b364;display:flex;align-items:center;justify-content:center;font:700 11px Manrope,sans-serif;color:#fff;">MJ</div><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;gap:8px;"><span style="font:700 12.5px Manrope,sans-serif;color:var(--text,#171a1f);">Mike Johnson</span><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">12 min ago</span></div><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.55;">Google OAuth is merged. <span style="color:var(--primary,#2f6cf6);background:var(--primarySoft,#e9f0ff);padding:1px 5px;border-radius:5px;font-weight:600;">@Emma Wilson</span> can you take the GitHub side?</span></div></div>
+                  <div style="display:flex;gap:10px;"><div style="width:30px;height:30px;flex:none;border-radius:50%;background:#f6517f;display:flex;align-items:center;justify-content:center;font:700 11px Manrope,sans-serif;color:#fff;">EW</div><div style="display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;gap:8px;"><span style="font:700 12.5px Manrope,sans-serif;color:var(--text,#171a1f);">Emma Wilson</span><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">just now</span><span style="width:6px;height:6px;border-radius:50%;background:var(--online,#22c55e);"></span></div><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.55;">On it — should have a PR up before the Jan 14 due date 👍</span></div></div>
+                </div>
+                <div style="flex:none;display:flex;align-items:center;gap:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);border-radius:12px;padding:8px 8px 8px 14px;"><span style="flex:1;font:500 13px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Write a comment, @mention a teammate…</span><div style="width:34px;height:34px;border-radius:9px;background:var(--primary,#2f6cf6);display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div></div>
+              </div>
+              <div style="width:262px;flex:none;border-left:1px solid var(--border,#e8ebef);background:var(--surface,#fff);padding:22px 20px;display:flex;flex-direction:column;gap:20px;">
+                <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">ASSIGNEES</span><div style="display:flex;flex-direction:column;gap:8px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:#16b364;display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">MJ</div><span style="font:600 12.5px Manrope,sans-serif;color:var(--text,#171a1f);">Mike Johnson</span></div><div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:#f6517f;display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">EW</div><span style="font:600 12.5px Manrope,sans-serif;color:var(--text,#171a1f);">Emma Wilson</span></div></div></div>
+                <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">DUE DATE</span><div style="display:flex;align-items:center;gap:8px;background:var(--medBg,#fdf0dd);padding:7px 11px;border-radius:9px;width:fit-content;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--medText,#b07415)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span style="font:700 12.5px Manrope,sans-serif;color:var(--medText,#b07415);">Jan 14 · in 2 days</span></div></div>
+                <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">PRIORITY</span><span style="font:700 12px Manrope,sans-serif;padding:5px 11px;border-radius:7px;background:var(--highBg,#fdeaea);color:var(--highText,#d23f4f);width:fit-content;">High</span></div>
+                <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">LABELS</span><div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="font:600 11px Manrope,sans-serif;color:var(--text2,#697079);background:var(--surface2,#f0f2f5);padding:4px 9px;border-radius:7px;">backend</span><span style="font:600 11px Manrope,sans-serif;color:var(--text2,#697079);background:var(--surface2,#f0f2f5);padding:4px 9px;border-radius:7px;">security</span></div></div>
+                <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--border,#e8ebef);padding-top:16px;"><span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">ATTACHMENTS · 3</span><div style="display:flex;align-items:center;gap:8px;font:500 12px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>auth-spec.pdf</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Dashboard</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Home overview — my work, activity & project health</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">06 · Dashboard</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;">
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;"><div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span><span style="margin-left:auto;font:500 11px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);border:1px solid var(--border2,#dfe3e9);border-radius:5px;padding:1px 6px;">⌘K</span></div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;"><div style="display:flex;align-items:center;gap:8px;"><div style="display:flex;padding-left:5px;"><sc-for list="{{ onlineNow }}" as="m" hint-placeholder-count="4"><div style="width:28px;height:28px;margin-left:-5px;border-radius:50%;background:{{ m.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div></sc-for></div><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">4 online</span></div><div style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--highText,#d23f4f);border:2px solid var(--surface,#fff);"></div></div><div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div></div>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:210px;flex:none;background:var(--surface,#fff);border-right:1px solid var(--border,#e8ebef);display:flex;flex-direction:column;padding:14px 12px;gap:4px;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:6px 10px 4px;">WORKSPACE</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;background:var(--primarySoft,#e9f0ff);font:700 13.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>My Tasks</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>Board</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Reports</div>
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:14px 10px 4px;">PROJECTS</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#2f6cf6;"></span>Acme Website</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#16b364;"></span>Mobile App</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#f5821f;"></span>Marketing Q1</div>
+              <div style="margin-top:auto;display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:10px;border:1px dashed var(--border2,#dfe3e9);font:600 13px Manrope,sans-serif;color:var(--text2,#697079);justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Invite member</div>
+            </div>
+            <div style="flex:1;min-width:0;overflow:hidden;padding:24px 26px;display:flex;flex-direction:column;gap:20px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;flex-direction:column;gap:3px;"><h1 style="margin:0;font:800 24px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Good morning, John 👋</h1><span style="font:500 13.5px Manrope,sans-serif;color:var(--text2,#697079);">Monday, January 13 · You have 4 tasks due today</span></div>
+                <div style="display:flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:10px;background:var(--primary,#2f6cf6);font:700 13px Manrope,sans-serif;color:var(--onPrimary,#fff);box-shadow:0 4px 12px rgba(47,108,246,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>New task</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">Completed</span><span style="font:800 26px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">128</span><span style="font:600 11px Manrope,sans-serif;color:var(--doneText,#138a52);">▲ 12% this week</span></div>
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">In progress</span><span style="font:800 26px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">24</span><span style="font:600 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">across 3 projects</span></div>
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">Due this week</span><span style="font:800 26px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">9</span><span style="font:600 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">4 assigned to you</span></div>
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">Overdue</span><span style="font:800 26px Manrope,sans-serif;color:var(--highText,#d23f4f);letter-spacing:-.02em;">3</span><span style="font:600 11px Manrope,sans-serif;color:var(--highText,#d23f4f);">needs attention</span></div>
+              </div>
+              <div style="flex:1;display:grid;grid-template-columns:1.45fr 1fr;gap:16px;min-height:0;">
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font:800 15px Manrope,sans-serif;color:var(--text,#171a1f);">My tasks today</span><span style="font:600 12px Manrope,sans-serif;color:var(--primary,#2f6cf6);">View all</span></div>
+                  <sc-for list="{{ myTasks }}" as="t" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:11px;padding:10px;border:1px solid var(--border,#e8ebef);border-radius:11px;">
+                      <div style="width:18px;height:18px;flex:none;border-radius:50%;border:2px solid var(--border2,#dfe3e9);"></div>
+                      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">{{ t.title }}</span><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">{{ t.project }}</span></div>
+                      <span style="display:flex;align-items:center;gap:4px;font:600 11px Manrope,sans-serif;color:{{ t.dueColor }};"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ t.due }}</span>
+                      <span style="flex:none;font:700 10px Manrope,sans-serif;padding:3px 8px;border-radius:6px;background:{{ t.prioBg }};color:{{ t.prioText }};text-transform:capitalize;">{{ t.priority }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:16px;min-height:0;">
+                  <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:13px;">
+                    <span style="font:800 15px Manrope,sans-serif;color:var(--text,#171a1f);">Project health</span>
+                    <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+                      <div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:7px;"><span style="width:9px;height:9px;border-radius:3px;background:{{ p.color }};"></span><span style="font:600 12.5px Manrope,sans-serif;color:var(--text,#171a1f);">{{ p.name }}</span></div><span style="font:600 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">{{ p.pct }}%</span></div><div style="height:6px;border-radius:4px;background:var(--surface2,#f0f2f5);overflow:hidden;"><div style="width:{{ p.pct }}%;height:100%;background:{{ p.color }};border-radius:4px;"></div></div></div>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:12px;overflow:hidden;">
+                    <span style="font:800 15px Manrope,sans-serif;color:var(--text,#171a1f);">Recent activity</span>
+                    <sc-for list="{{ activity }}" as="a" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:flex-start;gap:9px;"><div style="width:26px;height:26px;flex:none;border-radius:50%;background:{{ a.member.color }};display:flex;align-items:center;justify-content:center;font:700 9px Manrope,sans-serif;color:#fff;">{{ a.who }}</div><div style="display:flex;flex-direction:column;gap:1px;min-width:0;"><span style="font:500 12px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.45;"><b style="color:var(--text,#171a1f);font-weight:700;">{{ a.name }}</b> {{ a.action }} <b style="color:var(--text,#171a1f);font-weight:700;">{{ a.target }}</b></span><span style="font:500 10.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">{{ a.time }}</span></div></div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LIST VIEW ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">List view</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Dense table — sort, group, and scan by status</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">07 · List view</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;">
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;"><div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span><span style="margin-left:auto;font:500 11px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);border:1px solid var(--border2,#dfe3e9);border-radius:5px;padding:1px 6px;">⌘K</span></div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;"><div style="display:flex;align-items:center;gap:8px;"><div style="display:flex;padding-left:5px;"><sc-for list="{{ onlineNow }}" as="m" hint-placeholder-count="4"><div style="width:28px;height:28px;margin-left:-5px;border-radius:50%;background:{{ m.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div></sc-for></div><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">4 online</span></div><div style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--highText,#d23f4f);border:2px solid var(--surface,#fff);"></div></div><div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div></div>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:210px;flex:none;background:var(--surface,#fff);border-right:1px solid var(--border,#e8ebef);display:flex;flex-direction:column;padding:14px 12px;gap:4px;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:6px 10px 4px;">WORKSPACE</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;background:var(--primarySoft,#e9f0ff);font:700 13.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>My Tasks</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>Board</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Reports</div>
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:14px 10px 4px;">PROJECTS</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#2f6cf6;"></span>Acme Website</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#16b364;"></span>Mobile App</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><span style="width:9px;height:9px;border-radius:3px;background:#f5821f;"></span>Marketing Q1</div>
+            </div>
+            <div style="flex:1;min-width:0;overflow:hidden;padding:22px 24px;display:flex;flex-direction:column;gap:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:4px;background:var(--surface2,#f0f2f5);padding:4px;border-radius:11px;">
+                  <span style="display:flex;align-items:center;gap:6px;font:700 12.5px Manrope,sans-serif;color:var(--text,#171a1f);background:var(--surface,#fff);padding:6px 13px;border-radius:8px;box-shadow:var(--shadow);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>List</span>
+                  <span style="display:flex;align-items:center;gap:6px;font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);padding:6px 13px;border-radius:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>Board</span>
+                  <span style="display:flex;align-items:center;gap:6px;font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);padding:6px 13px;border-radius:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;"><div style="display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);font:600 12.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>Filter</div><div style="display:flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:9px;background:var(--primary,#2f6cf6);font:700 12.5px Manrope,sans-serif;color:var(--onPrimary,#fff);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>New task</div></div>
+              </div>
+              <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+                <div style="display:grid;grid-template-columns:26px 1fr 120px 110px 96px 120px;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border,#e8ebef);background:var(--surface2,#f8f9fb);">
+                  <span></span>
+                  <span style="font:700 10.5px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">TASK</span>
+                  <span style="font:700 10.5px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">ASSIGNEE</span>
+                  <span style="font:700 10.5px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">DUE</span>
+                  <span style="font:700 10.5px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">PRIORITY</span>
+                  <span style="font:700 10.5px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;">STATUS</span>
+                </div>
+                <sc-for list="{{ listRows }}" as="r" hint-placeholder-count="9">
+                  <div style="display:grid;grid-template-columns:26px 1fr 120px 110px 96px 120px;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border,#e8ebef);">
+                    <div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--border2,#dfe3e9);"></div>
+                    <div style="display:flex;align-items:center;gap:9px;min-width:0;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.title }}</span><span style="display:flex;align-items:center;gap:3px;font:600 10.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>{{ r.comments }}</span></div>
+                    <div style="display:flex;padding-left:5px;"><sc-for list="{{ r.assignees }}" as="a" hint-placeholder-count="1"><div style="width:24px;height:24px;margin-left:-5px;border-radius:50%;background:{{ a.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 9px Manrope,sans-serif;color:#fff;">{{ a.initials }}</div></sc-for></div>
+                    <span style="display:flex;align-items:center;gap:5px;font:600 12px Manrope,sans-serif;color:{{ r.dueColor }};"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>{{ r.due }}</span>
+                    <sc-if value="{{ r.priority }}" hint-placeholder-val="{{ true }}"><span style="font:700 10px Manrope,sans-serif;padding:3px 9px;border-radius:6px;background:{{ r.prioBg }};color:{{ r.prioText }};text-transform:capitalize;width:fit-content;">{{ r.priority }}</span></sc-if>
+                    <span style="display:flex;align-items:center;gap:6px;font:600 11.5px Manrope,sans-serif;color:var(--text2,#697079);background:{{ r.statusBg }};padding:4px 10px;border-radius:20px;width:fit-content;"><span style="width:7px;height:7px;border-radius:50%;background:{{ r.statusColor }};"></span>{{ r.status }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== TEAM ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Team</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Members, roles, presence & workload</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">08 · Team members</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;">
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;"><div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span><span style="margin-left:auto;font:500 11px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);border:1px solid var(--border2,#dfe3e9);border-radius:5px;padding:1px 6px;">⌘K</span></div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;"><div style="display:flex;align-items:center;gap:8px;"><div style="display:flex;padding-left:5px;"><sc-for list="{{ onlineNow }}" as="m" hint-placeholder-count="4"><div style="width:28px;height:28px;margin-left:-5px;border-radius:50%;background:{{ m.color }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 10px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div></sc-for></div><span style="font:600 12px Manrope,sans-serif;color:var(--text2,#697079);">4 online</span></div><div style="position:relative;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--highText,#d23f4f);border:2px solid var(--surface,#fff);"></div></div><div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div></div>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:210px;flex:none;background:var(--surface,#fff);border-right:1px solid var(--border,#e8ebef);display:flex;flex-direction:column;padding:14px 12px;gap:4px;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:6px 10px 4px;">WORKSPACE</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>My Tasks</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>Board</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Reports</div>
+              <div style="margin-top:8px;display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;background:var(--primarySoft,#e9f0ff);font:700 13.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Team</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+            </div>
+            <div style="flex:1;min-width:0;overflow:hidden;padding:24px 26px;display:flex;flex-direction:column;gap:18px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;flex-direction:column;gap:3px;"><h1 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Team members</h1><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">6 members · 4 online now</span></div>
+                <div style="display:flex;align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:10px;background:var(--primary,#2f6cf6);font:700 13px Manrope,sans-serif;color:var(--onPrimary,#fff);box-shadow:0 4px 12px rgba(47,108,246,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>Invite member</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+                <sc-for list="{{ team }}" as="m" hint-placeholder-count="6">
+                  <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:14px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <div style="position:relative;"><div style="width:46px;height:46px;border-radius:50%;background:{{ m.color }};display:flex;align-items:center;justify-content:center;font:700 16px Manrope,sans-serif;color:#fff;">{{ m.initials }}</div><sc-if value="{{ m.online }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;bottom:0;right:0;width:13px;height:13px;border-radius:50%;background:var(--online,#22c55e);border:2.5px solid var(--surface,#fff);"></div></sc-if></div>
+                      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;"><span style="font:800 15px Manrope,sans-serif;color:var(--text,#171a1f);">{{ m.name }}</span><span style="font:500 12px Manrope,sans-serif;color:var(--text2,#697079);">{{ m.role }}</span></div>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                    </div>
+                    <span style="font:500 12px Manrope,sans-serif;color:var(--text3,#9aa1ac);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ m.email }}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border,#e8ebef);padding-top:13px;">
+                      <div style="display:flex;gap:18px;"><div style="display:flex;flex-direction:column;"><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);">{{ m.active }}</span><span style="font:500 10.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">active</span></div><div style="display:flex;flex-direction:column;"><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);">{{ m.done }}</span><span style="font:500 10.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">done</span></div></div>
+                      <span style="font:600 11px Manrope,sans-serif;color:var(--text2,#697079);background:var(--surface2,#f0f2f5);padding:4px 10px;border-radius:20px;">{{ m.access }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SETTINGS ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Settings</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Profile, preferences & real-time controls</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">09 · Settings &amp; profile</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;">
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;"><div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span></div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2,#697079)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div></div>
+          </div>
+          <div style="flex:1;display:flex;min-height:0;">
+            <div style="width:210px;flex:none;background:var(--surface,#fff);border-right:1px solid var(--border,#e8ebef);display:flex;flex-direction:column;padding:14px 12px;gap:3px;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.08em;padding:6px 10px 6px;">SETTINGS</span>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;background:var(--primarySoft,#e9f0ff);font:700 13.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Account &amp; security</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Notifications</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Members</div>
+              <div style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>Billing</div>
+            </div>
+            <div style="flex:1;min-width:0;overflow:hidden;padding:28px 32px;display:flex;flex-direction:column;gap:22px;">
+              <div style="display:flex;flex-direction:column;gap:3px;"><h1 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Profile</h1><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Update your personal details and how you appear to teammates.</span></div>
+              <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:22px;">
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:20px;">
+                  <div style="display:flex;align-items:center;gap:16px;">
+                    <div style="width:64px;height:64px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 22px Manrope,sans-serif;color:#fff;">JD</div>
+                    <div style="display:flex;flex-direction:column;gap:8px;"><span style="font:700 14px Manrope,sans-serif;color:var(--text,#171a1f);">Profile photo</span><div style="display:flex;gap:8px;"><span style="font:700 12px Manrope,sans-serif;color:var(--primary,#2f6cf6);border:1px solid var(--border2,#dfe3e9);padding:6px 12px;border-radius:8px;">Upload new</span><span style="font:600 12px Manrope,sans-serif;color:var(--text3,#9aa1ac);padding:6px 12px;">Remove</span></div></div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">Full name</span><input defaultValue="John Doe" style="height:42px;border-radius:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 13px;font:500 13.5px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">Role</span><input defaultValue="Product Manager" style="height:42px;border-radius:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 13px;font:500 13.5px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">Email</span><input defaultValue="john.doe@acme.com" style="height:42px;border-radius:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 13px;font:500 13.5px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">Timezone</span><div style="height:42px;border-radius:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 13px;display:flex;align-items:center;justify-content:space-between;font:500 13.5px Manrope,sans-serif;color:var(--text,#171a1f);">GMT−5 · Eastern<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></label>
+                  </div>
+                  <label style="display:flex;flex-direction:column;gap:6px;"><span style="font:600 12px Manrope,sans-serif;color:var(--text,#171a1f);">Bio</span><div style="min-height:62px;border-radius:10px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:11px 13px;font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;">Product lead for the Acme Website. I keep launches on track and the team unblocked.</div></label>
+                  <div style="display:flex;justify-content:flex-end;gap:10px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text2,#697079);padding:10px 16px;">Cancel</span><span style="font:700 13px Manrope,sans-serif;color:var(--onPrimary,#fff);background:var(--primary,#2f6cf6);padding:10px 18px;border-radius:10px;box-shadow:0 4px 12px rgba(47,108,246,.3);">Save changes</span></div>
+                </div>
+                <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:14px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;gap:18px;height:fit-content;">
+                  <span style="font:800 15px Manrope,sans-serif;color:var(--text,#171a1f);">Real-time &amp; presence</span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><div style="display:flex;flex-direction:column;gap:2px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Show my presence</span><span style="font:500 11.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Let teammates see when you're online</span></div><div style="width:42px;height:24px;border-radius:20px;background:var(--primary,#2f6cf6);position:relative;flex:none;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#fff;"></div></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><div style="display:flex;flex-direction:column;gap:2px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Live cursors</span><span style="font:500 11.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Show cursors on shared boards</span></div><div style="width:42px;height:24px;border-radius:20px;background:var(--primary,#2f6cf6);position:relative;flex:none;"><div style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#fff;"></div></div></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;"><div style="display:flex;flex-direction:column;gap:2px;"><span style="font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Email digest</span><span style="font:500 11.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Daily summary at 9:00 AM</span></div><div style="width:42px;height:24px;border-radius:20px;background:var(--surface3,#e9ecf1);position:relative;flex:none;"><div style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);"></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== NOTIFICATIONS PANEL ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Notifications</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Mentions, assignments & due reminders</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">10 · Notifications panel</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);display:flex;flex-direction:column;position:relative;">
+          <div style="height:58px;flex:none;background:var(--surface,#fff);border-bottom:1px solid var(--border,#e8ebef);display:flex;align-items:center;padding:0 18px;gap:16px;z-index:3;">
+            <div style="display:flex;align-items:center;gap:10px;width:192px;"><div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span></div>
+            <div style="flex:1;max-width:440px;height:38px;border-radius:10px;background:var(--surface2,#f8f9fb);border:1px solid var(--border,#e8ebef);display:flex;align-items:center;gap:10px;padding:0 14px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg><span style="font:500 13.5px Manrope,sans-serif;color:var(--text3,#9aa1ac);">Search tasks, people, projects…</span></div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:16px;"><div style="position:relative;width:36px;height:36px;border-radius:10px;background:var(--primarySoft,#e9f0ff);display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary,#2f6cf6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div style="position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:var(--highText,#d23f4f);border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;font:700 9px Manrope,sans-serif;color:#fff;">3</div></div><div style="width:32px;height:32px;border-radius:50%;background:#3b6ef6;display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">JD</div></div>
+          </div>
+          <div style="position:absolute;inset:58px 0 0 0;background:rgba(10,14,26,.18);backdrop-filter:blur(1.5px);z-index:1;"></div>
+          <div style="position:absolute;top:64px;right:18px;width:392px;max-height:660px;background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);z-index:2;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border,#e8ebef);">
+              <div style="display:flex;align-items:center;gap:9px;"><span style="font:800 16px Manrope,sans-serif;color:var(--text,#171a1f);">Notifications</span><span style="font:700 10px Manrope,sans-serif;color:#fff;background:var(--highText,#d23f4f);padding:2px 7px;border-radius:10px;">3 new</span></div>
+              <span style="font:600 12px Manrope,sans-serif;color:var(--primary,#2f6cf6);">Mark all read</span>
+            </div>
+            <div style="padding:8px 0;display:flex;flex-direction:column;">
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;padding:8px 18px 6px;">NEW</span>
+              <sc-for list="{{ notifsNew }}" as="n" hint-placeholder-count="3">
+                <div style="display:flex;gap:12px;padding:11px 18px;background:var(--primarySoft,#e9f0ff);align-items:flex-start;">
+                  <div style="position:relative;width:38px;height:38px;flex:none;">
+                    <sc-if value="{{ n.member }}" hint-placeholder-val="{{ true }}"><div style="width:38px;height:38px;border-radius:50%;background:{{ n.member.color }};display:flex;align-items:center;justify-content:center;font:700 13px Manrope,sans-serif;color:#fff;">{{ n.who }}</div></sc-if>
+                    <sc-if value="{{ n.isSystem }}"><div style="width:38px;height:38px;border-radius:50%;background:{{ n.badgeBg }};display:flex;align-items:center;justify-content:center;">{{ n.iconEl }}</div></sc-if>
+                    <sc-if value="{{ n.member }}"><div style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:{{ n.badgeBg }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;">{{ n.iconEl }}</div></sc-if>
+                  </div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;"><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.45;"><b style="color:var(--text,#171a1f);font-weight:700;">{{ n.name }}</b> {{ n.verb }} <b style="color:var(--text,#171a1f);font-weight:700;">{{ n.target }}</b></span><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">{{ n.time }}</span></div>
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--primary,#2f6cf6);flex:none;margin-top:6px;"></div>
+                </div>
+              </sc-for>
+              <span style="font:700 10px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);letter-spacing:.06em;padding:14px 18px 6px;">EARLIER</span>
+              <sc-for list="{{ notifsEarlier }}" as="n" hint-placeholder-count="2">
+                <div style="display:flex;gap:12px;padding:11px 18px;align-items:flex-start;">
+                  <div style="position:relative;width:38px;height:38px;flex:none;">
+                    <div style="width:38px;height:38px;border-radius:50%;background:{{ n.member.color }};display:flex;align-items:center;justify-content:center;font:700 13px Manrope,sans-serif;color:#fff;">{{ n.who }}</div>
+                    <div style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:{{ n.badgeBg }};border:2px solid var(--surface,#fff);display:flex;align-items:center;justify-content:center;">{{ n.iconEl }}</div>
+                  </div>
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;"><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.45;"><b style="color:var(--text,#171a1f);font-weight:700;">{{ n.name }}</b> {{ n.verb }} <b style="color:var(--text,#171a1f);font-weight:700;">{{ n.target }}</b></span><span style="font:500 11px Manrope,sans-serif;color:var(--text3,#9aa1ac);">{{ n.time }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:auto;padding:13px;border-top:1px solid var(--border,#e8ebef);text-align:center;"><span style="font:700 13px Manrope,sans-serif;color:var(--primary,#2f6cf6);">View all notifications</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ONBOARDING ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Onboarding</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">Create workspace &amp; invite the team</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">11 · Create workspace</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 800</span>
+        </div>
+        <div style="width:1280px;height:800px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:radial-gradient(120% 90% at 50% 0%, var(--primarySoft,#e9f0ff) 0%, var(--bg,#f6f7f9) 55%);display:flex;flex-direction:column;align-items:center;padding:40px;">
+          <div style="display:flex;align-items:center;gap:11px;margin-bottom:30px;"><div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#2f6cf6,#5b8bff);display:flex;align-items:center;justify-content:center;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:800 18px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Taskflow</span></div>
+          <div style="display:flex;align-items:center;gap:0;margin-bottom:30px;">
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--doneText,#138a52);display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><span style="font:700 13px Manrope,sans-serif;color:var(--text,#171a1f);">Workspace</span></div>
+            <div style="width:48px;height:2px;background:var(--primary,#2f6cf6);margin:0 14px;"></div>
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--primary,#2f6cf6);display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:#fff;">2</div><span style="font:700 13px Manrope,sans-serif;color:var(--text,#171a1f);">Invite team</span></div>
+            <div style="width:48px;height:2px;background:var(--border2,#dfe3e9);margin:0 14px;"></div>
+            <div style="display:flex;align-items:center;gap:9px;"><div style="width:26px;height:26px;border-radius:50%;background:var(--surface3,#e9ecf1);display:flex;align-items:center;justify-content:center;font:700 12px Manrope,sans-serif;color:var(--text3,#9aa1ac);">3</div><span style="font:600 13px Manrope,sans-serif;color:var(--text3,#9aa1ac);">First project</span></div>
+          </div>
+          <div style="width:560px;background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:18px;box-shadow:var(--shadow);padding:34px;display:flex;flex-direction:column;gap:22px;">
+            <div style="display:flex;flex-direction:column;gap:7px;"><h1 style="margin:0;font:800 25px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Invite your team</h1><span style="font:500 14px Manrope,sans-serif;color:var(--text2,#697079);">Taskflow is better together. Add teammates to <b style="color:var(--text,#171a1f);">Acme Inc</b> to start collaborating.</span></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:10px;"><input defaultValue="sarah.smith@acme.com" style="flex:1;height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/><div style="width:120px;height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);display:flex;align-items:center;justify-content:space-between;padding:0 13px;font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Member<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+              <div style="display:flex;gap:10px;"><input defaultValue="mike.j@acme.com" style="flex:1;height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface2,#f8f9fb);padding:0 14px;font:500 14px Manrope,sans-serif;color:var(--text,#171a1f);outline:none;"/><div style="width:120px;height:46px;border-radius:11px;border:1px solid var(--border2,#dfe3e9);background:var(--surface,#fff);display:flex;align-items:center;justify-content:space-between;padding:0 13px;font:600 13px Manrope,sans-serif;color:var(--text,#171a1f);">Admin<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div></div>
+              <div style="display:flex;gap:10px;"><div style="flex:1;height:46px;border-radius:11px;border:1px dashed var(--border2,#dfe3e9);display:flex;align-items:center;gap:8px;padding:0 14px;font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Add another</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--surface2,#f8f9fb);border-radius:12px;padding:13px 15px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary,#2f6cf6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg><span style="font:500 12.5px Manrope,sans-serif;color:var(--text2,#697079);">Or share an invite link — anyone with it can join Acme Inc.</span><span style="margin-left:auto;font:700 12.5px Manrope,sans-serif;color:var(--primary,#2f6cf6);white-space:nowrap;">Copy link</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font:600 13.5px Manrope,sans-serif;color:var(--text2,#697079);">Skip for now</span><div style="display:flex;align-items:center;gap:8px;height:46px;padding:0 22px;border-radius:11px;background:var(--primary,#2f6cf6);font:700 14px Manrope,sans-serif;color:var(--onPrimary,#fff);box-shadow:0 6px 16px rgba(47,108,246,.32);">Send 2 invites<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EMPTY STATES ===================== -->
+    <section style="display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border,#e8ebef);padding-bottom:14px;">
+        <h2 style="margin:0;font:800 22px Manrope,sans-serif;color:var(--text,#171a1f);letter-spacing:-.02em;">Empty states</h2>
+        <span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);">First-run, all-caught-up, no results &amp; no notifications</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:10px;padding-left:2px;">
+          <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);letter-spacing:.02em;">12 · Empty states</span>
+          <span style="font:500 12px 'JetBrains Mono',monospace;color:var(--text3,#9aa1ac);">1280 × 560</span>
+        </div>
+        <div style="width:1280px;height:560px;border-radius:18px;overflow:hidden;border:1px solid var(--border,#e8ebef);box-shadow:var(--shadowLg);background:var(--bg,#f6f7f9);padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+          <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:16px;background:var(--primarySoft,#e9f0ff);display:flex;align-items:center;justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--primary,#2f6cf6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M14 8h3M14 12h3"/></svg></div>
+            <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:800 17px Manrope,sans-serif;color:var(--text,#171a1f);">No tasks yet</span><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;max-width:280px;">Create your first task to get the board rolling. Drag between columns as work progresses.</span></div>
+            <div style="display:flex;align-items:center;gap:7px;height:40px;padding:0 18px;border-radius:10px;background:var(--primary,#2f6cf6);font:700 13px Manrope,sans-serif;color:var(--onPrimary,#fff);box-shadow:0 4px 12px rgba(47,108,246,.3);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>New task</div>
+          </div>
+          <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:16px;background:var(--doneBg,#e7f7ee);display:flex;align-items:center;justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--doneText,#138a52)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+            <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:800 17px Manrope,sans-serif;color:var(--text,#171a1f);">You're all caught up</span><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;max-width:280px;">No tasks assigned to you right now. Enjoy the calm — or pick something from the backlog.</span></div>
+            <span style="font:700 13px Manrope,sans-serif;color:var(--primary,#2f6cf6);border:1px solid var(--border2,#dfe3e9);padding:9px 16px;border-radius:10px;">Browse backlog</span>
+          </div>
+          <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:16px;background:var(--surface2,#f0f2f5);display:flex;align-items:center;justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg></div>
+            <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:800 17px Manrope,sans-serif;color:var(--text,#171a1f);">No results for "roadmap v3"</span><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;max-width:300px;">Try a different keyword, or check filters. Search spans tasks, people and projects.</span></div>
+            <span style="font:700 13px Manrope,sans-serif;color:var(--text2,#697079);">Clear search</span>
+          </div>
+          <div style="background:var(--surface,#fff);border:1px solid var(--border,#e8ebef);border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:16px;background:var(--surface2,#f0f2f5);display:flex;align-items:center;justify-content:center;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--text3,#9aa1ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+            <div style="display:flex;flex-direction:column;gap:5px;"><span style="font:800 17px Manrope,sans-serif;color:var(--text,#171a1f);">No notifications</span><span style="font:500 13px Manrope,sans-serif;color:var(--text2,#697079);line-height:1.5;max-width:280px;">When teammates mention you, assign work, or comment, it'll show up here.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--APPEND-->
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1360,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = { theme: 'light' };
+
+  get vars() {
+    const light = {
+      '--bg':'#f6f7f9','--surface':'#ffffff','--surface2':'#f8f9fb','--surface3':'#e9ecf1',
+      '--border':'#e8ebef','--border2':'#dfe3e9',
+      '--text':'#171a1f','--text2':'#697079','--text3':'#9aa1ac',
+      '--primary':'#2f6cf6','--primaryHover':'#245fe0','--primarySoft':'#e9f0ff','--onPrimary':'#ffffff',
+      '--shadow':'0 1px 2px rgba(16,24,40,.04),0 2px 6px rgba(16,24,40,.05)',
+      '--shadowLg':'0 18px 50px rgba(16,24,40,.14)',
+      '--highBg':'#fdeaea','--highText':'#d23f4f',
+      '--medBg':'#fdf0dd','--medText':'#b07415',
+      '--lowBg':'#e9f0ff','--lowText':'#2f6cf6',
+      '--doneBg':'#e7f7ee','--doneText':'#138a52',
+      '--online':'#22c55e',
+    };
+    const dark = {
+      '--bg':'#0c0d11','--surface':'#15171d','--surface2':'#1c1f26','--surface3':'#242832',
+      '--border':'#262a32','--border2':'#2e333d',
+      '--text':'#e7e9ee','--text2':'#969da8','--text3':'#6a727d',
+      '--primary':'#5b8bff','--primaryHover':'#7aa2ff','--primarySoft':'#172339','--onPrimary':'#0b1020',
+      '--shadow':'0 1px 2px rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.35)',
+      '--shadowLg':'0 20px 50px rgba(0,0,0,.5)',
+      '--highBg':'#2c1517','--highText':'#f0828d',
+      '--medBg':'#2a2113','--medText':'#dcab63',
+      '--lowBg':'#16233f','--lowText':'#7aa2ff',
+      '--doneBg':'#10271b','--doneText':'#56c98a',
+      '--online':'#2ecc71',
+    };
+    return this.state.theme === 'dark' ? dark : light;
+  }
+
+  toggleTheme = () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' }));
+
+  renderVals() {
+    const dark = this.state.theme === 'dark';
+    const team = [
+      { initials:'JD', name:'John Doe', role:'Product Manager', color:'#3b6ef6', online:true, email:'john.doe@acme.com', access:'Admin', active:12, done:48 },
+      { initials:'SS', name:'Sarah Smith', role:'Lead Designer', color:'#e84393', online:true, email:'sarah.smith@acme.com', access:'Member', active:8, done:37 },
+      { initials:'MJ', name:'Mike Johnson', role:'Developer', color:'#16b364', online:true, email:'mike.j@acme.com', access:'Member', active:14, done:61 },
+      { initials:'EW', name:'Emma Wilson', role:'Developer', color:'#f6517f', online:false, email:'emma.w@acme.com', access:'Member', active:9, done:29 },
+      { initials:'AC', name:'Alex Chen', role:'QA Engineer', color:'#f5821f', online:true, email:'alex.chen@acme.com', access:'Member', active:6, done:22 },
+      { initials:'LB', name:'Lisa Brown', role:'Marketing', color:'#8257f5', online:false, email:'lisa.brown@acme.com', access:'Viewer', active:3, done:15 },
+    ];
+    const swatches = [
+      { name:'Primary', hex:'#2f6cf6', value:'var(--primary,#2f6cf6)' },
+      { name:'Surface', hex:'#ffffff', value:'var(--surface,#fff)' },
+      { name:'Canvas', hex:'#f6f7f9', value:'var(--bg,#f6f7f9)' },
+      { name:'Border', hex:'#e8ebef', value:'var(--border,#e8ebef)' },
+      { name:'Text', hex:'#171a1f', value:'var(--text,#171a1f)' },
+      { name:'High', hex:'#d23f4f', value:'var(--highText,#d23f4f)' },
+      { name:'Medium', hex:'#b07415', value:'var(--medText,#b07415)' },
+      { name:'Done', hex:'#138a52', value:'var(--doneText,#138a52)' },
+    ];
+
+    const byId = (c) => team.find(t => t.initials === c);
+    const av = (codes) => codes.map(byId);
+    const prio = {
+      high:   { bg:'var(--highBg,#fdeaea)', text:'var(--highText,#d23f4f)' },
+      medium: { bg:'var(--medBg,#fdf0dd)',  text:'var(--medText,#b07415)' },
+      low:    { bg:'var(--lowBg,#e9f0ff)',  text:'var(--lowText,#2f6cf6)' },
+    };
+    const mk = (o) => ({
+      ...o,
+      prioBg: o.priority ? prio[o.priority].bg : 'transparent',
+      prioText: o.priority ? prio[o.priority].text : 'transparent',
+      assignees: av(o.assignees || []),
+      dueColor: o.overdue ? 'var(--highText,#d23f4f)' : 'var(--text3,#9aa1ac)',
+    });
+    const columns = [
+      { title:'To Do', count:4, dot:'#9aa1ac', cards:[
+        mk({ title:'Design new landing page', priority:'high', assignees:['SS','JD'], due:'Jan 15', comments:3, files:2 }),
+        mk({ title:'Update user documentation', priority:'medium', assignees:['EW'], due:'Jan 18', comments:1, files:0 }),
+        mk({ title:'Design system components', priority:'medium', assignees:['SS'], due:'Jan 17', comments:4, files:5 }),
+        mk({ title:'Write test cases for login', priority:'medium', assignees:['AC'], due:'Jan 12', comments:1, files:2, overdue:true }),
+      ]},
+      { title:'In Progress', count:4, dot:'#2f6cf6', cards:[
+        mk({ title:'Implement user authentication', priority:'high', assignees:['MJ','EW'], due:'Jan 14', comments:5, files:3, live:true }),
+        mk({ title:'Create API endpoints for dashboard', priority:'high', assignees:['MJ'], due:'Jan 16', comments:2, files:1 }),
+        mk({ title:'Research competitor features', priority:'low', assignees:['LB'], due:'Jan 22', comments:0, files:1 }),
+        mk({ title:'Mobile navigation redesign', priority:'medium', assignees:['SS','EW'], due:'Jan 19', comments:2, files:0 }),
+      ]},
+      { title:'Review', count:3, dot:'#f5821f', cards:[
+        mk({ title:'Setup project repository', priority:'high', assignees:['MJ'], due:'Jan 10', comments:2, files:0 }),
+        mk({ title:'Initial wireframes', priority:'medium', assignees:['SS'], due:'Jan 11', comments:6, files:8 }),
+        mk({ title:'Onboarding email flow', priority:'low', assignees:['LB'], due:'Jan 22', comments:1, files:1 }),
+      ]},
+      { title:'Done', count:3, dot:'#16b364', cards:[
+        mk({ title:'Project kickoff meeting', done:true, assignees:['JD'], due:'Jan 8', comments:2, files:0 }),
+        mk({ title:'Brand guidelines v2', done:true, assignees:['SS'], due:'Jan 9', comments:1, files:3 }),
+        mk({ title:'Set up CI pipeline', done:true, assignees:['MJ'], due:'Jan 7', comments:0, files:1 }),
+      ]},
+    ];
+
+    const svgEl = (paths, color) => React.createElement('svg', { width:13, height:13, viewBox:'0 0 24 24', fill:'none', stroke:color, strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round' }, paths.map((d,i)=>React.createElement('path',{key:i,d})));
+    const ICON = {
+      done:    (c)=>svgEl(['M22 11.08V12a10 10 0 1 1-5.93-9.14','M22 4L12 14.01l-3-3'], c),
+      comment: (c)=>svgEl(['M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'], c),
+      flag:    (c)=>svgEl(['M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z','M4 22v-7'], c),
+      create:  (c)=>svgEl(['M12 5v14','M5 12h14'], c),
+      adduser: (c)=>svgEl(['M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2','M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8','M19 8v6','M22 11h-6'], c),
+    };
+    const activity = [
+      { who:'SS', name:'Sarah Smith', action:'completed', target:'Design homepage mockup', time:'5 minutes ago', iconEl: ICON.done('var(--doneText,#138a52)') },
+      { who:'MJ', name:'Mike Johnson', action:'commented on', target:'API Integration', time:'12 minutes ago', iconEl: ICON.comment('var(--primary,#2f6cf6)') },
+      { who:'JD', name:'John Doe', action:'set priority High on', target:'Fix login bug', time:'28 minutes ago', iconEl: ICON.flag('var(--medText,#b07415)') },
+      { who:'AC', name:'Alex Chen', action:'created', target:'Write test cases', time:'1 hour ago', iconEl: ICON.create('var(--text2,#697079)') },
+      { who:'JD', name:'John Doe', action:'added Emma Wilson to', target:'the team', time:'2 hours ago', iconEl: ICON.adduser('var(--primary,#2f6cf6)') },
+      { who:'EW', name:'Emma Wilson', action:'completed', target:'Update documentation', time:'3 hours ago', iconEl: ICON.done('var(--doneText,#138a52)') },
+    ];
+    const activityRich = activity.map(a => ({ ...a, member: byId(a.who) }));
+
+    const notifs = [
+      { who:'EW', name:'Emma Wilson', verb:'mentioned you in', target:'Implement user authentication', time:'2 min ago', unread:true, iconEl: ICON.comment('#fff'), badgeBg:'var(--primary,#2f6cf6)' },
+      { who:'MJ', name:'Mike Johnson', verb:'assigned you', target:'Review authentication PR', time:'18 min ago', unread:true, iconEl: ICON.create('#fff'), badgeBg:'var(--primary,#2f6cf6)' },
+      { who:null, name:'Due reminder', verb:'', target:'Approve Q1 roadmap is overdue', time:'1 hour ago', unread:true, iconEl: ICON.flag('#fff'), badgeBg:'var(--highText,#d23f4f)', sysColor:'#d23f4f' },
+      { who:'SS', name:'Sarah Smith', verb:'commented on', target:'Design new landing page', time:'3 hours ago', unread:false, iconEl: ICON.comment('#fff'), badgeBg:'var(--text3,#9aa1ac)' },
+      { who:'AC', name:'Alex Chen', verb:'completed', target:'Write test cases', time:'Yesterday', unread:false, iconEl: ICON.done('#fff'), badgeBg:'var(--doneText,#138a52)' },
+    ].map(n => ({ ...n, member: n.who ? byId(n.who) : null, isSystem: !n.who }));
+    const notifsNew = notifs.filter(n => n.unread);
+    const notifsEarlier = notifs.filter(n => !n.unread);
+
+    const myTasks = [
+      mk({ title:'Review authentication PR', priority:'high', assignees:['JD'], due:'Today', comments:2, files:1, project:'Acme Website' }),
+      mk({ title:'Finalize landing page copy', priority:'medium', assignees:['JD'], due:'Today', comments:0, files:0, project:'Marketing Q1' }),
+      mk({ title:'Sync with design on tokens', priority:'low', assignees:['JD'], due:'Tomorrow', comments:4, files:2, project:'Acme Website' }),
+      mk({ title:'Approve Q1 roadmap', priority:'high', assignees:['JD'], due:'Jan 12', comments:1, files:0, project:'Mobile App', overdue:true }),
+    ];
+    const projects = [
+      { name:'Acme Website', color:'#2f6cf6', pct:72, open:8, total:28 },
+      { name:'Mobile App', color:'#16b364', pct:45, open:14, total:31 },
+      { name:'Marketing Q1', color:'#f5821f', pct:90, open:2, total:19 },
+    ];
+
+    const statusColor = { 'To Do':'#9aa1ac', 'In Progress':'#2f6cf6', 'Review':'#f5821f', 'Done':'#16b364' };
+    const listRows = [].concat(...columns.map(c => c.cards.map(card => ({
+      ...card, status:c.title, statusColor:statusColor[c.title],
+      statusBg: c.title==='Done' ? 'var(--doneBg,#e7f7ee)' : 'var(--surface2,#f0f2f5)',
+    })))).slice(0, 9);
+
+    const rootStyle = {
+      minHeight:'100vh', background:'var(--bg,#f6f7f9)', display:'flex', flexDirection:'column',
+      alignItems:'center', paddingBottom:'0px', transition:'background .2s',
+      ...this.vars,
+    };
+
+    return {
+      rootStyle,
+      team, swatches, columns, activity: activityRich,
+      onlineNow: team.filter(m => m.online),
+      myTasks, projects, listRows, notifsNew, notifsEarlier,
+      toggleTheme: this.toggleTheme,
+      themeLabel: dark ? 'Dark' : 'Light',
+      themeIcon: dark ? '🌙' : '☀️',
+    };
+  }
+}
+</script>
+</body>
+</html>

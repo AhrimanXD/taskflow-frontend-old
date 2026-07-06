@@ -5,7 +5,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
   const groups = groupByStatus(tasks);
 
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
       {[...groups.entries()].map(([status, columnTasks]) => (
         <TaskColumn
           key={status}
