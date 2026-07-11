@@ -112,6 +112,10 @@ export const workspaceService = {
   remove: (id) => api.delete(`workspaces/${id}`),
   // [{ user_id, role, user: { id, username } }] — backend #2 members endpoint
   members: (id, params) => api.get(`workspaces/${id}/members`, { params }),
+  leave: (id) => api.delete(`workspaces/${id}/members/me`),
+  removeMember: (id, userId) => api.delete(`workspaces/${id}/members/${userId}`),
+  updateMemberRole: (id, userId, role) =>
+    api.patch(`workspaces/${id}/members/${userId}`, { role }),
 };
 
 // Invite-only membership (backend increment #2)

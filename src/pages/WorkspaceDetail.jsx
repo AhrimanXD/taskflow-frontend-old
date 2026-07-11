@@ -5,11 +5,19 @@ import {
   CircleAlert,
   ClipboardList,
   Loader2,
+  LogOut,
+  MoreHorizontal,
   Send,
   Users,
 } from "lucide-react";
 import { useAuth } from "../context/auth-context";
-import { useWorkspace, useWorkspaceMembers } from "../hooks/useWorkspaces";
+import {
+  useWorkspace,
+  useWorkspaceMembers,
+  useRemoveMember,
+  useUpdateMemberRole,
+  useLeaveWorkspace,
+} from "../hooks/useWorkspaces";
 import {
   useWorkspaceInvitations,
   useCreateInvitation,
@@ -17,6 +25,7 @@ import {
 } from "../hooks/useInvitations";
 import PageShell from "../components/PageShell";
 import WorkspaceTasks from "../components/WorkspaceTasks";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,6 +38,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
@@ -102,7 +118,14 @@ function MemberStack({ workspaceId }) {
 }
 
 function MembersList({ workspaceId }) {
+  const { user } = useAuth();
   const { data: members = [], isLoading } = useWorkspaceMembers(workspaceId);
+  const removeMember = useRemoveMember(workspaceId);
+  const updateRole = useUpdateMemberRole(workspaceId);
+  const leaveWorkspace = useLeaveWorkspace(workspaceId);
+  // { type: "remove" | "leave", userId, username }
+  const [pending, setPending] = useState(null);
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-4">
@@ -110,21 +133,121 @@ function MembersList({ workspaceId }) {
       </div>
     );
   }
+
+  const myRole = members.find((m) => m.user_id === user?.id)?.role;
+  const iAmOwner = myRole === "owner";
+  const iAmAdmin = myRole === "admin";
+
+  function confirmAction() {
+    if (!pending) return;
+    if (pending.type === "leave") leaveWorkspace.mutate();
+    else removeMember.mutate(pending.userId);
+    setPending(null);
+  }
+
   return (
     <div className="flex flex-col gap-3">
-      {members.map((m) => (
-        <div key={m.user_id} className="flex flex-nowrap items-center justify-between gap-2">
-          <div className="flex flex-nowrap items-center gap-3">
-            <MemberAvatar username={m.user?.username} />
-            <p className="text-sm font-semibold text-foreground">
-              {m.user?.username}
-            </p>
+      {members.map((m) => {
+        const isSelf = m.user_id === user?.id;
+        const isTargetOwner = m.role === "owner";
+        // What can the viewer do to this row?
+        const canChangeRole = iAmOwner && !isTargetOwner && !isSelf;
+        const canRemove =
+          !isSelf &&
+          !isTargetOwner &&
+          (iAmOwner || (iAmAdmin && m.role === "member"));
+        const canLeave = isSelf && !isTargetOwner;
+        const hasMenu = canChangeRole || canRemove || canLeave;
+
+        return (
+          <div key={m.user_id} className="flex flex-nowrap items-center justify-between gap-2">
+            <div className="flex flex-nowrap items-center gap-3">
+              <MemberAvatar username={m.user?.username} />
+              <p className="text-sm font-semibold text-foreground">
+                {m.user?.username}
+                {isSelf && (
+                  <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                    (you)
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="flex flex-nowrap items-center gap-2">
+              <Badge className={cn("capitalize", ROLE_BADGE[m.role] ?? ROLE_BADGE.member)}>
+                {m.role}
+              </Badge>
+              {hasMenu && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Member actions"
+                      className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                    >
+                      <MoreHorizontal className="size-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {canChangeRole && m.role === "member" && (
+                      <DropdownMenuItem
+                        onClick={() => updateRole.mutate({ userId: m.user_id, role: "admin" })}
+                      >
+                        Promote to admin
+                      </DropdownMenuItem>
+                    )}
+                    {canChangeRole && m.role === "admin" && (
+                      <DropdownMenuItem
+                        onClick={() => updateRole.mutate({ userId: m.user_id, role: "member" })}
+                      >
+                        Demote to member
+                      </DropdownMenuItem>
+                    )}
+                    {canRemove && (
+                      <>
+                        {canChangeRole && <DropdownMenuSeparator />}
+                        <DropdownMenuItem
+                          variant="destructive"
+                          onClick={() =>
+                            setPending({
+                              type: "remove",
+                              userId: m.user_id,
+                              username: m.user?.username,
+                            })
+                          }
+                        >
+                          Remove from workspace
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    {canLeave && (
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => setPending({ type: "leave" })}
+                      >
+                        <LogOut />
+                        Leave workspace
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
-          <Badge className={cn("capitalize", ROLE_BADGE[m.role] ?? ROLE_BADGE.member)}>
-            {m.role}
-          </Badge>
-        </div>
-      ))}
+        );
+      })}
+
+      <ConfirmDialog
+        open={pending != null}
+        onOpenChange={(open) => !open && setPending(null)}
+        title={pending?.type === "leave" ? "Leave workspace?" : "Remove member?"}
+        description={
+          pending?.type === "leave"
+            ? "You'll lose access to this workspace and its tasks. You can be re-invited later."
+            : `Remove ${pending?.username ?? "this member"} from the workspace? They'll lose access to its tasks.`
+        }
+        confirmLabel={pending?.type === "leave" ? "Leave" : "Remove"}
+        onConfirm={confirmAction}
+      />
     </div>
   );
 }
