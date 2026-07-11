@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV = [
+  { label: "Home", to: "/home" },
   { label: "Tasks", to: "/dashboard" },
   { label: "Workspaces", to: "/workspaces" },
   { label: "Invitations", to: "/invitations" },
@@ -73,7 +74,7 @@ function AppHeader() {
     <header className="tf-header">
       <div className="mx-auto flex h-[60px] w-full max-w-[1140px] items-center justify-between px-4 md:px-6">
         <div className="flex min-w-0 items-center gap-4 md:gap-8">
-          <Link to="/dashboard" className="flex shrink-0 items-center gap-2.5 no-underline">
+          <Link to="/home" className="flex shrink-0 items-center gap-2.5 no-underline">
             <BrandMark />
             <div className="hidden leading-[1.1] sm:block">
               <p className="text-lg font-extrabold tracking-tight text-foreground">

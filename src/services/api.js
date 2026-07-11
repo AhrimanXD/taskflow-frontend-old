@@ -119,6 +119,10 @@ export const workspaceService = {
   activity: (id, params) => api.get(`workspaces/${id}/activity`, { params }),
 };
 
+export const statsService = {
+  overview: () => api.get("stats/overview"),
+};
+
 // Comments on workspace tasks (backend P3)
 export const commentService = {
   list: (workspaceId, taskId) =>
