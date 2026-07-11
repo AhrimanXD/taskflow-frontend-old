@@ -198,7 +198,22 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
                 <SelectContent>
                   {assigneeOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
+                      {opt.value === UNASSIGNED ? (
+                        <span className="flex items-center gap-2 text-muted-foreground">
+                          <User className="size-4" />
+                          Unassigned
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="flex size-5 items-center justify-center rounded-full text-[10px] font-semibold text-white"
+                            style={{ background: "var(--tf-brand-gradient)" }}
+                          >
+                            {opt.label?.[0]?.toUpperCase() ?? "?"}
+                          </span>
+                          {opt.label}
+                        </span>
+                      )}
                     </SelectItem>
                   ))}
                 </SelectContent>
