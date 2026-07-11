@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Calendar, Loader2, Send, Trash2, User } from "lucide-react";
 import {
   useComments,
@@ -18,6 +18,29 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
+// Highlight @handles that match a real workspace member.
+function renderBody(text, memberNames) {
+  return text.split(/(@\w+)/g).map((part, i) =>
+    part[0] === "@" && memberNames.has(part.slice(1).toLowerCase()) ? (
+      <span key={i} className="font-semibold text-primary">
+        {part}
+      </span>
+    ) : (
+      <span key={i}>{part}</span>
+    )
+  );
+}
+
+// If the caret sits right after an "@handle" token, return the in-progress
+// mention so the composer can offer suggestions.
+function getMentionContext(text, cursor) {
+  const upto = text.slice(0, cursor);
+  const m = upto.match(/(?:^|\s)@(\w*)$/);
+  if (!m) return null;
+  const query = m[1];
+  return { query, start: cursor - query.length - 1, cursor };
+}
+
 function Initial({ name }) {
   return (
     <span
@@ -29,7 +52,7 @@ function Initial({ name }) {
   );
 }
 
-function CommentRow({ comment, canDelete, onDelete }) {
+function CommentRow({ comment, canDelete, onDelete, memberNames }) {
   return (
     <div className="flex gap-2.5">
       <Initial name={comment.author?.username} />
@@ -53,7 +76,7 @@ function CommentRow({ comment, canDelete, onDelete }) {
           )}
         </div>
         <p className="whitespace-pre-wrap break-words text-sm text-foreground/90">
-          {comment.body}
+          {renderBody(comment.body, memberNames)}
         </p>
       </div>
     </div>
@@ -74,8 +97,47 @@ function TaskDetailModal({
   const createComment = useCreateComment(workspaceId, taskId);
   const deleteComment = useDeleteComment(workspaceId, taskId);
   const [body, setBody] = useState("");
+  const [mention, setMention] = useState(null);
+  const textareaRef = useRef(null);
+  const memberList = useMemo(() => Object.values(membersById || {}), [membersById]);
+  const memberNames = useMemo(
+    () => new Set(memberList.map((u) => u.username?.toLowerCase()).filter(Boolean)),
+    [memberList]
+  );
 
   if (!task) return null;
+
+  const suggestions = mention
+    ? memberList
+        .filter((u) =>
+          u.username?.toLowerCase().startsWith(mention.query.toLowerCase())
+        )
+        .slice(0, 6)
+    : [];
+
+  function onBodyChange(e) {
+    setBody(e.currentTarget.value);
+    setMention(
+      getMentionContext(e.currentTarget.value, e.currentTarget.selectionStart)
+    );
+  }
+
+  function insertMention(username) {
+    if (!mention) return;
+    const before = body.slice(0, mention.start);
+    const after = body.slice(mention.cursor);
+    const insert = `@${username} `;
+    setBody(before + insert + after);
+    setMention(null);
+    const caret = (before + insert).length;
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (el) {
+        el.focus();
+        el.setSelectionRange(caret, caret);
+      }
+    });
+  }
 
   const status = statusMeta(task.status);
   const priority = priorityMeta(task.priority);
@@ -90,6 +152,7 @@ function TaskDetailModal({
     try {
       await createComment.mutateAsync(text);
       setBody("");
+      setMention(null);
     } catch {
       /* toast handled in the hook */
     }
@@ -153,36 +216,70 @@ function TaskDetailModal({
                   comment={c}
                   canDelete={canModerate || c.author_id === currentUserId}
                   onDelete={(id) => deleteComment.mutate(id)}
+                  memberNames={memberNames}
                 />
               ))}
             </div>
           )}
         </div>
 
-        <form onSubmit={submit} className="mt-1 flex items-end gap-2 border-t border-border pt-3">
-          <Textarea
-            placeholder="Write a comment…"
-            rows={2}
-            value={body}
-            onChange={(e) => setBody(e.currentTarget.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(e);
-            }}
-            className="min-h-[44px] flex-1 resize-none"
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={createComment.isPending || !body.trim()}
-            className={cn("shrink-0")}
-            aria-label="Post comment"
-          >
-            {createComment.isPending ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Send />
-            )}
-          </Button>
+        <form onSubmit={submit} className="mt-1 border-t border-border pt-3">
+          <div className="flex items-end gap-2">
+            <div className="relative flex-1">
+              {mention && suggestions.length > 0 && (
+                <div className="absolute bottom-full left-0 z-50 mb-1 w-56 overflow-hidden rounded-md border border-border bg-popover shadow-md">
+                  {suggestions.map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      // onMouseDown (not onClick) so the textarea keeps focus.
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        insertMention(u.username);
+                      }}
+                      className="flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-sm transition-colors hover:bg-secondary"
+                    >
+                      <span
+                        className="flex size-5 items-center justify-center rounded-full text-[10px] font-semibold text-white"
+                        style={{ background: "var(--tf-brand-gradient)" }}
+                      >
+                        {u.username?.[0]?.toUpperCase() ?? "?"}
+                      </span>
+                      {u.username}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <Textarea
+                ref={textareaRef}
+                placeholder="Write a comment…  use @ to mention"
+                rows={2}
+                value={body}
+                onChange={onBodyChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape" && mention) {
+                    setMention(null);
+                    return;
+                  }
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit(e);
+                }}
+                className="min-h-[44px] w-full resize-none"
+              />
+            </div>
+            <Button
+              type="submit"
+              size="icon"
+              disabled={createComment.isPending || !body.trim()}
+              className={cn("shrink-0")}
+              aria-label="Post comment"
+            >
+              {createComment.isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Send />
+              )}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
