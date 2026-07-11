@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  Activity as ActivityIcon,
   ArrowLeft,
   CircleAlert,
   ClipboardList,
@@ -18,11 +19,14 @@ import {
   useUpdateMemberRole,
   useLeaveWorkspace,
 } from "../hooks/useWorkspaces";
+import { useWorkspaceSocket } from "../hooks/useWorkspaceSocket";
+import { useActivity } from "../hooks/useActivity";
 import {
   useWorkspaceInvitations,
   useCreateInvitation,
   useRevokeInvitation,
 } from "../hooks/useInvitations";
+import { timeAgo } from "../utils/time";
 import PageShell from "../components/PageShell";
 import WorkspaceTasks from "../components/WorkspaceTasks";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -252,6 +256,36 @@ function MembersList({ workspaceId }) {
   );
 }
 
+function ActivityFeed({ workspaceId }) {
+  const { data: activity = [], isLoading } = useActivity(workspaceId);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-4">
+        <Loader2 className="size-5 animate-spin text-primary" />
+      </div>
+    );
+  }
+  if (activity.length === 0) {
+    return <p className="text-sm text-muted-foreground">No activity yet.</p>;
+  }
+  return (
+    <div className="flex flex-col gap-4">
+      {activity.map((a) => (
+        <div key={a.id} className="flex gap-3">
+          <MemberAvatar username={a.actor?.username} size={30} />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-foreground">
+              <span className="font-semibold">{a.actor?.username}</span>{" "}
+              <span className="text-foreground/80">{a.summary}</span>
+            </p>
+            <p className="text-xs text-muted-foreground">{timeAgo(a.created_at)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function InviteManager({ workspaceId }) {
   const invitesQuery = useWorkspaceInvitations(workspaceId, "pending");
   const createInvitation = useCreateInvitation(workspaceId);
@@ -404,6 +438,9 @@ function WorkspaceDetail() {
   const workspaceId = Number(id);
   const { user } = useAuth();
   const { data: workspace, isLoading, isError, error } = useWorkspace(workspaceId);
+  // Own the socket here so realtime tasks, comments and activity stay live
+  // across all tabs (the tab panels unmount their content when inactive).
+  const { status: connStatus } = useWorkspaceSocket(workspaceId);
 
   if (isLoading) {
     return (
@@ -480,10 +517,14 @@ function WorkspaceDetail() {
             <Users className="size-4" />
             Members &amp; invitations
           </TabsTrigger>
+          <TabsTrigger value="activity">
+            <ActivityIcon className="size-4" />
+            Activity
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="tasks">
-          <WorkspaceTasks workspaceId={workspaceId} />
+          <WorkspaceTasks workspaceId={workspaceId} connStatus={connStatus} />
         </TabsContent>
 
         <TabsContent value="members">
@@ -500,6 +541,15 @@ function WorkspaceDetail() {
               </h2>
               <InviteManager workspaceId={workspaceId} />
             </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <div className="tf-card rounded-xl border border-border bg-card p-6">
+            <h2 className="mb-4 text-lg font-extrabold tracking-tight text-foreground">
+              Recent activity
+            </h2>
+            <ActivityFeed workspaceId={workspaceId} />
           </div>
         </TabsContent>
       </Tabs>

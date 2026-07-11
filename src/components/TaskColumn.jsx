@@ -30,6 +30,7 @@ function TaskColumn({
   onEdit,
   onDelete,
   onStatusChange,
+  onOpen,
   currentUserId,
   onAssignToggle,
   membersById,
@@ -75,6 +76,7 @@ function TaskColumn({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onStatusChange={onStatusChange}
+                onOpen={onOpen}
                 currentUserId={currentUserId}
                 onAssignToggle={onAssignToggle}
                 membersById={membersById}

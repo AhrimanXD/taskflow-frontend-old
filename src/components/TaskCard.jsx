@@ -36,6 +36,7 @@ function TaskCard({
   onEdit,
   onDelete,
   onStatusChange,
+  onOpen,
   currentUserId,
   onAssignToggle,
   membersById,
@@ -127,6 +128,11 @@ function TaskCard({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {onOpen && (
+              <DropdownMenuItem onClick={() => onOpen(task)}>
+                Open &amp; comments
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={() => onEdit(task)}>Edit</DropdownMenuItem>
             {onAssignToggle && (
               <DropdownMenuItem
@@ -143,14 +149,27 @@ function TaskCard({
       </div>
 
       <div className="flex flex-col gap-1">
-        <p
-          className={cn(
-            "line-clamp-2 text-base font-bold leading-[1.3] tracking-[-0.01em]",
-            isCompleted ? "text-muted-foreground line-through" : "text-foreground"
-          )}
-        >
-          {task.title}
-        </p>
+        {onOpen ? (
+          <button
+            type="button"
+            onClick={() => onOpen(task)}
+            className={cn(
+              "line-clamp-2 cursor-pointer text-left text-base font-bold leading-[1.3] tracking-[-0.01em] transition-colors hover:text-primary",
+              isCompleted ? "text-muted-foreground line-through" : "text-foreground"
+            )}
+          >
+            {task.title}
+          </button>
+        ) : (
+          <p
+            className={cn(
+              "line-clamp-2 text-base font-bold leading-[1.3] tracking-[-0.01em]",
+              isCompleted ? "text-muted-foreground line-through" : "text-foreground"
+            )}
+          >
+            {task.title}
+          </p>
+        )}
         {task.description && (
           <p className="line-clamp-2 text-sm text-muted-foreground">
             {task.description}

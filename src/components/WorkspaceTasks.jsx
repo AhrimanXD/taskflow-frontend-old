@@ -14,12 +14,12 @@ import {
   useDeleteTask,
 } from "../hooks/useTasks";
 import { useAuth } from "../context/auth-context";
-import { useWorkspaceSocket } from "../hooks/useWorkspaceSocket";
 import { useWorkspaceMembers } from "../hooks/useWorkspaces";
 import TaskCard from "./TaskCard";
 import TaskBoard from "./TaskBoard";
 import TaskSkeleton from "./TaskSkeleton";
 import TaskFormModal from "./TaskFormModal";
+import TaskDetailModal from "./TaskDetailModal";
 import EmptyState from "./EmptyState";
 import ConfirmDialog from "./ConfirmDialog";
 import { filterAndSortTasks } from "../utils/tasks";
@@ -120,11 +120,12 @@ function ViewToggle({ value, onChange }) {
 // The shared task board, scoped to one workspace. Any member can create,
 // edit, and assign; deleting someone else's task is rejected by the server
 // (creator or owner/admin only) and surfaces as a toast.
-function WorkspaceTasks({ workspaceId }) {
+function WorkspaceTasks({ workspaceId, connStatus = "connecting" }) {
   const { user } = useAuth();
-  const { status: connStatus } = useWorkspaceSocket(workspaceId);
   const { data: tasks = [], isLoading, isError } = useTasks(workspaceId);
   const { data: members = [] } = useWorkspaceMembers(workspaceId);
+  const myRole = members.find((m) => m.user_id === user?.id)?.role;
+  const canModerate = myRole === "owner" || myRole === "admin";
 
   // user_id -> { id, username } for resolving assignee names on the cards.
   const membersById = useMemo(
@@ -143,6 +144,9 @@ function WorkspaceTasks({ workspaceId }) {
   const [formOpened, setFormOpened] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [detailTaskId, setDetailTaskId] = useState(null);
+  // Derive from the live list so the detail modal reflects realtime edits.
+  const detailTask = tasks.find((t) => t.id === detailTaskId) ?? null;
 
   const visibleTasks = useMemo(
     () => filterAndSortTasks(tasks, { query, sort: "newest" }),
@@ -242,6 +246,7 @@ function WorkspaceTasks({ workspaceId }) {
           onEdit={openEdit}
           onDelete={setDeleteTarget}
           onStatusChange={handleStatusChange}
+          onOpen={(task) => setDetailTaskId(task.id)}
           currentUserId={user?.id}
           onAssignToggle={handleAssignToggle}
           membersById={membersById}
@@ -258,6 +263,7 @@ function WorkspaceTasks({ workspaceId }) {
             onEdit={openEdit}
             onDelete={setDeleteTarget}
             onStatusChange={handleStatusChange}
+            onOpen={(t) => setDetailTaskId(t.id)}
             currentUserId={user?.id}
             onAssignToggle={handleAssignToggle}
             membersById={membersById}
@@ -307,6 +313,16 @@ function WorkspaceTasks({ workspaceId }) {
         title="Delete task"
         description={`Delete “${deleteTarget?.title ?? ""}”? This can’t be undone.`}
         onConfirm={() => deleteTask.mutate(deleteTarget.id)}
+      />
+
+      <TaskDetailModal
+        opened={detailTaskId != null && detailTask != null}
+        onClose={() => setDetailTaskId(null)}
+        task={detailTask}
+        workspaceId={workspaceId}
+        currentUserId={user?.id}
+        canModerate={canModerate}
+        membersById={membersById}
       />
     </>
   );

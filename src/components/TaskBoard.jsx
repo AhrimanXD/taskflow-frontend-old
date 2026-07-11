@@ -3,7 +3,7 @@ import { groupByStatus } from "../utils/tasks";
 
 // Kanban layout: three equal columns that stack on small screens
 // (reference uses a 3-up grid rather than a horizontal scroll).
-function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onAssignToggle, membersById }) {
+function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, onOpen, currentUserId, onAssignToggle, membersById }) {
   const groups = groupByStatus(tasks);
 
   return (
@@ -16,6 +16,7 @@ function TaskBoard({ tasks, onEdit, onDelete, onStatusChange, currentUserId, onA
           onEdit={onEdit}
           onDelete={onDelete}
           onStatusChange={onStatusChange}
+          onOpen={onOpen}
           currentUserId={currentUserId}
           onAssignToggle={onAssignToggle}
           membersById={membersById}

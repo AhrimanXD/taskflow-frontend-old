@@ -116,6 +116,17 @@ export const workspaceService = {
   removeMember: (id, userId) => api.delete(`workspaces/${id}/members/${userId}`),
   updateMemberRole: (id, userId, role) =>
     api.patch(`workspaces/${id}/members/${userId}`, { role }),
+  activity: (id, params) => api.get(`workspaces/${id}/activity`, { params }),
+};
+
+// Comments on workspace tasks (backend P3)
+export const commentService = {
+  list: (workspaceId, taskId) =>
+    api.get(`workspaces/${workspaceId}/tasks/${taskId}/comments`),
+  create: (workspaceId, taskId, body) =>
+    api.post(`workspaces/${workspaceId}/tasks/${taskId}/comments`, { body }),
+  remove: (workspaceId, taskId, commentId) =>
+    api.delete(`workspaces/${workspaceId}/tasks/${taskId}/comments/${commentId}`),
 };
 
 // Invite-only membership (backend increment #2)

@@ -57,6 +57,27 @@ export function useWorkspaceSocket(workspaceId) {
         queryClient.setQueryData(key, (old = []) =>
           old.filter((t) => t.id !== id)
         );
+      } else if (msg.type === "activity.created") {
+        if (!msg.activity) return;
+        queryClient.setQueryData(["workspace-activity", workspaceId], (old = []) =>
+          old.some((a) => a.id === msg.activity.id) ? old : [msg.activity, ...old]
+        );
+      } else if (msg.type === "comment.created") {
+        if (!msg.comment || msg.task_id == null) return;
+        // Only patch a thread that's actually loaded (detail modal open).
+        queryClient.setQueryData(["comments", workspaceId, msg.task_id], (old) =>
+          old == null
+            ? old
+            : old.some((c) => c.id === msg.comment.id)
+              ? old
+              : [...old, msg.comment]
+        );
+      } else if (msg.type === "comment.deleted") {
+        const id = msg.comment?.id;
+        if (id == null || msg.task_id == null) return;
+        queryClient.setQueryData(["comments", workspaceId, msg.task_id], (old) =>
+          old == null ? old : old.filter((c) => c.id !== id)
+        );
       }
     }
 
