@@ -3,6 +3,7 @@ import { Check, ChevronDown, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 import { useColorScheme, setColorScheme } from "../hooks/useColorScheme";
 import { useMyInvitations } from "../hooks/useInvitations";
+import NotificationBell from "./NotificationBell";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -116,6 +117,7 @@ function AppHeader() {
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
+          <NotificationBell />
           <ColorSchemeToggle />
 
           <DropdownMenu>

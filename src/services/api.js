@@ -123,6 +123,13 @@ export const statsService = {
   overview: () => api.get("stats/overview"),
 };
 
+export const notificationService = {
+  list: () => api.get("notifications"),
+  unreadCount: () => api.get("notifications/unread-count"),
+  markRead: (id) => api.post(`notifications/${id}/read`),
+  markAllRead: () => api.post("notifications/read-all"),
+};
+
 // Comments on workspace tasks (backend P3)
 export const commentService = {
   list: (workspaceId, taskId) =>

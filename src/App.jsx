@@ -10,11 +10,21 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/auth-context";
+import { useNotificationSocket } from "./hooks/useNotificationSocket";
 import { Route, Routes, Navigate } from "react-router-dom";
+
+// Keeps one per-user notification socket open while logged in (renders nothing).
+function NotificationListener() {
+  const { loggedIn } = useAuth();
+  useNotificationSocket(loggedIn);
+  return null;
+}
 
 function App() {
   return (
     <AuthProvider>
+      <NotificationListener />
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/register" element={<Register />} />
