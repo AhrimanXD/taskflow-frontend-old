@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, User } from "lucide-react";
-import { TASK_STATUSES } from "../constants/tasks";
+import { TASK_PRIORITIES, TASK_STATUSES } from "../constants/tasks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +28,7 @@ const EMPTY_FORM = {
   title: "",
   description: "",
   status: "pending",
+  priority: "medium",
   due_date: "",
   assignee: UNASSIGNED,
 };
@@ -74,6 +75,7 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
         title: initialValues?.title ?? "",
         description: initialValues?.description ?? "",
         status: initialValues?.status ?? "pending",
+        priority: initialValues?.priority ?? "medium",
         // server sends an ISO datetime; the native date input wants "YYYY-MM-DD"
         due_date: initialValues?.due_date ? initialValues.due_date.slice(0, 10) : "",
         assignee:
@@ -97,6 +99,7 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
         title: values.title.trim(),
         description: values.description?.trim() ? values.description.trim() : null,
         status: values.status,
+        priority: values.priority,
         due_date: values.due_date || null,
       };
       // Only workspace tasks carry an assignee; personal create/update ignore it.
@@ -146,20 +149,42 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="task-status">Status</Label>
-            <Select value={values.status} onValueChange={(v) => setField("status", v)}>
-              <SelectTrigger id="task-status" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {TASK_STATUSES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>
-                    {s.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-status">Status</Label>
+              <Select value={values.status} onValueChange={(v) => setField("status", v)}>
+                <SelectTrigger id="task-status" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TASK_STATUSES.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-priority">Priority</Label>
+              <Select value={values.priority} onValueChange={(v) => setField("priority", v)}>
+                <SelectTrigger id="task-priority" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TASK_PRIORITIES.map((p) => (
+                    <SelectItem key={p.value} value={p.value}>
+                      <span
+                        className="size-2 rounded-full"
+                        style={{ backgroundColor: p.color }}
+                      />
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {assignable && (

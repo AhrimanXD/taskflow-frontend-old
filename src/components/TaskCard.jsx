@@ -1,5 +1,5 @@
-import { Calendar, ChevronDown, MoreHorizontal } from "lucide-react";
-import { TASK_STATUSES, statusMeta } from "../constants/tasks";
+import { Calendar, ChevronDown, Flag, MoreHorizontal } from "lucide-react";
+import { TASK_STATUSES, priorityMeta, statusMeta } from "../constants/tasks";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,6 +41,7 @@ function TaskCard({
   membersById,
 }) {
   const meta = statusMeta(task.status);
+  const priority = priorityMeta(task.priority);
   const due = dueMeta(task);
   const isCompleted = task.status === "completed";
   const isOngoing = task.status === "ongoing";
@@ -74,33 +75,46 @@ function TaskCard({
         isCompleted && "opacity-[0.72]"
       )}
     >
-      {/* status (clickable) + actions */}
+      {/* status (clickable) + priority + actions */}
       <div className="mb-2 flex flex-nowrap items-center justify-between">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button type="button" className="tf-status-pill flex flex-nowrap items-center gap-1.5">
-              <span
-                className={cn("size-2 rounded-full", isOngoing && "tf-pulse")}
-                style={{ backgroundColor: DOT_COLOR[meta.color] ?? DOT_COLOR.gray }}
-              />
-              <span
-                className="tf-mono text-[10px] font-bold uppercase tracking-[0.08em]"
-                style={{ color: statusColor }}
-              >
-                {meta.label}
-              </span>
-              <ChevronDown className="size-3" strokeWidth={2.5} style={{ color: statusColor }} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Set status</DropdownMenuLabel>
-            {TASK_STATUSES.map((s) => (
-              <DropdownMenuItem key={s.value} onClick={() => onStatusChange(task, s.value)}>
-                {s.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex flex-nowrap items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="tf-status-pill flex flex-nowrap items-center gap-1.5">
+                <span
+                  className={cn("size-2 rounded-full", isOngoing && "tf-pulse")}
+                  style={{ backgroundColor: DOT_COLOR[meta.color] ?? DOT_COLOR.gray }}
+                />
+                <span
+                  className="tf-mono text-[10px] font-bold uppercase tracking-[0.08em]"
+                  style={{ color: statusColor }}
+                >
+                  {meta.label}
+                </span>
+                <ChevronDown className="size-3" strokeWidth={2.5} style={{ color: statusColor }} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuLabel>Set status</DropdownMenuLabel>
+              {TASK_STATUSES.map((s) => (
+                <DropdownMenuItem key={s.value} onClick={() => onStatusChange(task, s.value)}>
+                  {s.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <span
+            className="flex flex-nowrap items-center gap-1 rounded-md px-1.5 py-0.5"
+            style={{ color: priority.color, backgroundColor: `${priority.color}1a` }}
+            title={`${priority.label} priority`}
+          >
+            <Flag className="size-2.5" strokeWidth={2.5} fill="currentColor" />
+            <span className="tf-mono text-[10px] font-bold uppercase tracking-[0.08em]">
+              {priority.label}
+            </span>
+          </span>
+        </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -52,8 +52,16 @@ export function useUpdateTask(workspaceId) {
   const qc = useQueryClient();
   const key = keyFor(workspaceId);
   return useMutation({
-    mutationFn: async ({ id, data }) =>
-      (await serviceFor(workspaceId).update(id, data)).data,
+    mutationFn: async ({ id, data }) => {
+      // OCC: workspace edits must carry the version the client last saw. Pull it
+      // from cache so callers don't have to thread it through every mutate call.
+      let payload = data;
+      if (workspaceId != null && data.version === undefined) {
+        const cached = qc.getQueryData(key)?.find((t) => t.id === id);
+        if (cached?.version != null) payload = { ...data, version: cached.version };
+      }
+      return (await serviceFor(workspaceId).update(id, payload)).data;
+    },
     // optimistic update so status toggles feel instant
     onMutate: async ({ id, data }) => {
       await qc.cancelQueries({ queryKey: key });
@@ -64,7 +72,22 @@ export function useUpdateTask(workspaceId) {
       return { previous };
     },
     onError: (err, _vars, ctx) => {
+      // Roll back the optimistic edit first.
       if (ctx?.previous) qc.setQueryData(key, ctx.previous);
+      // 409 = someone else changed this task. The server sends the current
+      // state; show it and ask the user to retry rather than clobbering.
+      if (err?.response?.status === 409) {
+        const current = err?.response?.data?.detail?.current;
+        if (current) {
+          qc.setQueryData(key, (old = []) =>
+            old.map((t) => (t.id === current.id ? current : t))
+          );
+        }
+        toast.error(
+          "This task was just changed by someone else — showing the latest. Please review and retry."
+        );
+        return;
+      }
       toast.error(errMsg(err, "Could not update task"));
     },
     onSuccess: (task) => {
