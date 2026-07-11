@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Check, ChevronDown, LogOut, Moon, Sun } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Check, ChevronDown, LogOut, Moon, Settings, Sun } from "lucide-react";
 import { useAuth } from "../context/auth-context";
 import { useColorScheme, setColorScheme } from "../hooks/useColorScheme";
 import { useMyInvitations } from "../hooks/useInvitations";
@@ -65,6 +65,7 @@ function ColorSchemeToggle() {
 function AppHeader() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { data: pendingInvites = [] } = useMyInvitations("pending");
   const initial = user?.username?.[0]?.toUpperCase() ?? "?";
 
@@ -141,6 +142,10 @@ function AppHeader() {
                 {user?.email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <Settings />
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuItem variant="destructive" onClick={logout}>
                 <LogOut />
                 Log out
