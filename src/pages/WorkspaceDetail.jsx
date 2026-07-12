@@ -434,8 +434,7 @@ function InviteManager({ workspaceId }) {
 }
 
 function WorkspaceDetail() {
-  const { id } = useParams();
-  const workspaceId = Number(id);
+  const { id: workspaceId } = useParams();
   const { user } = useAuth();
   const { data: workspace, isLoading, isError, error } = useWorkspace(workspaceId);
   // Own the socket here so realtime tasks, comments and activity stay live

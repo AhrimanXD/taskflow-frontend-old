@@ -105,7 +105,7 @@ function TaskFormModal({ opened, onClose, onSubmit, initialValues, mode, members
       // Only workspace tasks carry an assignee; personal create/update ignore it.
       if (assignable) {
         payload.assignee_id =
-          values.assignee === UNASSIGNED ? null : Number(values.assignee);
+          values.assignee === UNASSIGNED ? null : values.assignee;
       }
       await onSubmit(payload);
       onClose();
